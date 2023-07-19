@@ -12,7 +12,30 @@ const config = {
             $test: "./src/test"
         }
     },
-    preprocess: [markdoc()],
+    preprocess: [
+        markdoc({
+            tags: {
+                mytest: {
+                    render: "Test",
+                    selfClosing: true
+                },
+                second: {
+                    render: "Test"
+                },
+                addition: {
+                    render: "Addition",
+                    attributes: {
+                        a: {
+                            type: Number
+                        },
+                        b: {
+                            type: Number
+                        }
+                    }
+                }
+            }
+        })
+    ],
     extensions: [".markdoc", ".svelte"]
 };
 

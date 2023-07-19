@@ -1,29 +1,10 @@
 import { transformer } from "./transformer.js";
 
-export default (
+export default (options) => {
     options = {
-        extensions: [".markdoc"]
-    }
-) => {
-    const tags = {
-        mytest: {
-            render: "Test",
-            selfClosing: true
-        },
-        second: {
-            render: "Test"
-        },
-        addition: {
-            render: "Addition",
-            attributes: {
-                a: {
-                    type: Number
-                },
-                b: {
-                    type: Number
-                }
-            }
-        }
+        extensions: [".markdoc"],
+        tags: {},
+        ...options
     };
     return {
         async markup({ content, filename }) {
@@ -35,11 +16,10 @@ export default (
             /**
              * Add svelte components to be used with markdoc tags
              */
-
             const code = transformer({
                 content,
                 options,
-                tags
+                tags: options.tags
             });
 
             return {
