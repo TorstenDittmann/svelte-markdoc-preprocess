@@ -1,5 +1,5 @@
 import adapter from '@sveltejs/adapter-auto';
-import { markdoc } from './src/lib/processor.js';
+import markdoc from './src/lib/processor.js';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
