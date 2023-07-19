@@ -6,4 +6,4 @@
 <p>
 	<b>{a}</b> + <b>{b}</b> = <b>{Number(a) + Number(b)}</b>
 </p>
-<p />
+£
