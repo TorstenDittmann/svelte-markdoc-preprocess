@@ -4,9 +4,11 @@ export default (options) => {
     options = {
         extensions: [".markdoc"],
         tags: {},
+        layout: null,
         ...options
     };
     return {
+        name: "markdoc",
         async markup({ content, filename }) {
             /**
              * Only use on specific extensions
@@ -18,8 +20,7 @@ export default (options) => {
              */
             const code = transformer({
                 content,
-                options,
-                tags: options.tags
+                options
             });
 
             return {

@@ -1,5 +1,7 @@
 import adapter from "@sveltejs/adapter-auto";
 import markdoc from "./src/lib/processor.js";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -14,13 +16,11 @@ const config = {
     },
     preprocess: [
         markdoc({
+            layout: join(dirname(fileURLToPath(import.meta.url)), "./src/test/Layout.svelte"),
             tags: {
                 mytest: {
                     render: "Test",
                     selfClosing: true
-                },
-                second: {
-                    render: "Test"
                 },
                 addition: {
                     render: "Addition",

@@ -1,3 +1,7 @@
+<script context="module">
+    export let options;
+</script>
+
 <script>
     export let a;
     export let b;

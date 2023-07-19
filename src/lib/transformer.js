@@ -1,6 +1,7 @@
 import Markdoc from "@markdoc/markdoc";
 
-export function transformer({ content, options, tags }) {
+export function transformer({ content, options }) {
+    const { tags, layout } = options;
     /**
      * create ast for markdoc
      */
@@ -19,6 +20,15 @@ export function transformer({ content, options, tags }) {
     }
 
     /**
+     * add used svelte components to the script tag
+     */
+    let dependencies = "";
+    if (layout) {
+        dependencies += `import INTERNAL__LAYOUT from '${layout}';`;
+        dependencies += `import {${[...components].join(", ")}} from '${layout}';`;
+    }
+
+    /**
      * transform the ast with svelte components
      */
     const nodes = Markdoc.transform(ast, {
@@ -30,13 +40,5 @@ export function transformer({ content, options, tags }) {
      */
     const code = Markdoc.renderers.html(nodes);
 
-    /**
-     * add used svelte components to the script tag
-     */
-    const dependencies = [...components].reduce(
-        (prev, curr) => `${prev}\nimport ${curr} from '$test/${curr}.svelte';`,
-        ""
-    );
-
-    return `<script>${dependencies}</script>${code}`;
+    return `<script>${dependencies}</script><INTERNAL__LAYOUT>${code}</INTERNAL__LAYOUT>`;
 }
