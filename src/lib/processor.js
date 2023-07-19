@@ -38,7 +38,7 @@ export default (
 
             const code = transformer({
                 content,
-                options: {},
+                options,
                 tags
             });
 
