@@ -34,7 +34,7 @@ export function transformer({ content, options, tags }) {
      * add used svelte components to the script tag
      */
     const dependencies = [...components].reduce(
-        (prev, curr) => `${prev}\nimport ${curr} from '$lib/${curr}.svelte';`,
+        (prev, curr) => `${prev}\nimport ${curr} from '$test/${curr}.svelte';`,
         ""
     );
 
