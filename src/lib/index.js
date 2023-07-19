@@ -1,1 +1,1 @@
-export { markdoc } from './processor.js';
+export { markdoc } from "./processor.js";
