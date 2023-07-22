@@ -21,11 +21,11 @@ npm i -D svelte-markdoc-preprocess
 
 ```js
 // svelte.config.js
-import { markdoc } from "svelte-markdoc-preprocess";
+import { markdoc } from 'svelte-markdoc-preprocess';
 
 const config = {
     preprocess: [markdoc()],
-    extensions: [".markdoc", ".svelte"]
+    extensions: ['.markdoc', '.svelte'],
 };
 ```
 
