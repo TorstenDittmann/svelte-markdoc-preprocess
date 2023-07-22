@@ -21,4 +21,3 @@ const config = {
     extensions: ['.markdoc', '.svelte'],
 };
 ```
-
