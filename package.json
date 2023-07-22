@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "check": "turbo run check",
+    "lint": "turbo run lint",
+    "format": "turbo run format"
+  },
+  "devDependencies": {
+    "@sveltejs/kit": "^1.20.4",
+    "@turbo/gen": "^1.9.7",
+		"prettier": "^2.8.0",
+    "svelte": "^4.0.5",
+    "turbo": "latest"
+  },
+  "name": "repo",
+  "packageManager": "npm@8.17.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

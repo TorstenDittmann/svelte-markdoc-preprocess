@@ -1,0 +1,25 @@
+{
+    "name": "svelte-markdoc-preprocess",
+    "version": "1.0.0",
+    "description": "",
+    "type": "module",
+    "scripts": {
+        "check": "publint",
+        "lint": "prettier --check .",
+        "format": "prettier --write .",
+        "test": "ava"
+    },
+    "source": "src/index.js",
+    "exports": {
+        "default": "./src/index.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@markdoc/markdoc": "^0.3.0",
+        "ava": "^5.3.1",
+        "prettier": "*",
+        "publint": "^0.1.16",
+        "svelte": "*"
+    }
+}
