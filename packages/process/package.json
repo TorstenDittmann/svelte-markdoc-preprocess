@@ -1,7 +1,7 @@
 {
     "name": "svelte-markdoc-preprocess",
-    "version": "0.0.0-alpha.2",
-    "description": "",
+    "version": "0.0.0-alpha.3",
+    "description": "A Svelte preprocessor that allows you to use Markdoc.",
     "type": "module",
     "scripts": {
         "check": "publint",
@@ -13,10 +13,12 @@
     "exports": {
         "default": "./src/index.js"
     },
-    "author": "",
-    "license": "ISC",
+    "author": "Torsten Dittmann",
+    "license": "MIT",
+    "dependencies": {
+        "@markdoc/markdoc": "^0.3.0"
+    },
     "devDependencies": {
-        "@markdoc/markdoc": "^0.3.0",
         "ava": "^5.3.1",
         "prettier": "*",
         "publint": "^0.1.16",
