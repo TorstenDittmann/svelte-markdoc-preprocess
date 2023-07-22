@@ -1,8 +1,15 @@
 {
     "name": "svelte-markdoc-preprocess",
-    "version": "0.0.0-alpha.4",
+    "version": "0.0.0-alpha.5",
     "description": "A Svelte preprocessor that allows you to use Markdoc.",
     "type": "module",
+    "keywords": [
+        "svelte",
+        "preprocessor",
+        "markdoc",
+        "markdown",
+        "md"
+    ],
     "scripts": {
         "check": "publint",
         "lint": "prettier --check .",
