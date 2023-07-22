@@ -1,0 +1,2 @@
+{% mytest /%}
+{% addition a=4 b=6 /%}

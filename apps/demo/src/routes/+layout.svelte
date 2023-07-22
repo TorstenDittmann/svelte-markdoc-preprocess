@@ -4,8 +4,10 @@
 			<li><strong>Demo Page</strong></li>
 		</ul>
 		<ul>
-			<li><a href="/">kitchen sync</a></li>
-			<li><a href="/svelte">svelte page</a></li>
+			<li><a href="/">home</a></li>
+			<li><a href="/svelte">svelte</a></li>
+			<li><a href="/components">components</a></li>
+			<li><a href="/markdown">markdown</a></li>
 		</ul>
 	</nav>
 	<slot />

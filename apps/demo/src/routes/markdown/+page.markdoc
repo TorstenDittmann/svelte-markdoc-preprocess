@@ -6,8 +6,6 @@ _Italic_
 
 [Links](/svelte)
 
-{% mytest /%}
-
 Lists
 - Item 1
 - Item 1
@@ -18,8 +16,6 @@ Lists
 ```
 Code fences
 ```
-
-{% addition a=4 b=6 /%}
 
 ## Why create Markdoc instead of using an alternative?
 
