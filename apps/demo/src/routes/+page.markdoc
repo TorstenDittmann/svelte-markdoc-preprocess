@@ -13,10 +13,6 @@ Lists
 - Item 1
 - Item 1
 
-{% second %}
-i am in a slot
-{% /second %}
-
 `Inline code`
 
 ```
