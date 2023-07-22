@@ -1,6 +1,6 @@
 {
     "name": "svelte-markdoc-preprocess",
-    "version": "0.0.0-alpha.3",
+    "version": "0.0.0-alpha.4",
     "description": "A Svelte preprocessor that allows you to use Markdoc.",
     "type": "module",
     "scripts": {
