@@ -33,7 +33,7 @@ export function transformer({ content, tags, layout }) {
     if (layout) {
         dependencies += `import INTERNAL__LAYOUT from '${layout}';`;
         dependencies += `import {${[...components].join(
-            ', '
+            ', ',
         )}} from '${layout}';`;
     }
 
