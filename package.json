@@ -9,11 +9,14 @@
         "format": "prettier --write \"**/*.{json,md}\" && turbo run format"
     },
     "devDependencies": {
+        "@parcel/packager-ts": "^2.9.3",
+        "@parcel/transformer-typescript-types": "^2.9.3",
         "@sveltejs/kit": "^1.20.4",
         "@turbo/gen": "^1.9.7",
         "prettier": "^2.8.0",
         "svelte": "^4.0.5",
-        "turbo": "latest"
+        "turbo": "latest",
+        "typescript": "^5.1.6"
     },
     "name": "repo",
     "packageManager": "npm@8.17.0",

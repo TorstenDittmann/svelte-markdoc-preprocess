@@ -1,12 +1,12 @@
-import { transformer } from './transformer.js';
+import { Config } from './config';
+import { transformer } from './transformer';
+import type { PreprocessorGroup } from 'svelte/compiler';
 
-/**
- * This is just a text.
- *
- * @param {import("./index.js").Config} options
- * @returns {import('svelte/compiler').PreprocessorGroup}
- */
-const processor = ({ extensions = ['.markdoc'], layout = null, tags = {} }) => {
+const processor = ({
+    extensions = ['.markdoc'],
+    layout = null,
+    tags = {},
+}: Config): PreprocessorGroup => {
     return {
         name: 'markdoc',
         async markup({ content, filename }) {

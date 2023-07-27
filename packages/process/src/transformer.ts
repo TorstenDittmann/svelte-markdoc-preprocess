@@ -1,14 +1,15 @@
 import Markdoc from '@markdoc/markdoc';
+import type { Config } from './config';
 
-/**
- * @param {{
- *  content: string,
- *  tags: import("./index").Config['tags'],
- *  layout: import("./index").Config['layout']}
- * } args
- * @returns {string}
- */
-export function transformer({ content, tags, layout }) {
+export function transformer({
+    content,
+    tags,
+    layout,
+}: {
+    content: string;
+    tags: Config['tags'];
+    layout: Config['layout'];
+}): string {
     /**
      * create ast for markdoc
      */
@@ -31,6 +32,9 @@ export function transformer({ content, tags, layout }) {
      */
     let dependencies = '';
     if (layout) {
+        // const data = readFileSync(layout, 'utf8');
+        // const t = compile(data, {});
+
         dependencies += `import INTERNAL__LAYOUT from '${layout}';`;
         dependencies += `import {${[...components].join(
             ', ',
