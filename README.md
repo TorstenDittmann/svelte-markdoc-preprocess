@@ -6,9 +6,9 @@ This is a [Svelte](https://svelte.dev) preprocessor that allows you to use Markd
 
 -   [x] Processor (kinda working)
 -   [ ] Processor
--   [ ] Configuration
--   [ ] Svelte components
--   [ ] Auto Components Import from folder
+-   [x] Configuration
+-   [x] Svelte components
+-   [x] Auto Components Import from Layout
 -   [ ] Frontmatter
 -   [ ] Layouts
 -   [ ] Tests
@@ -24,9 +24,38 @@ npm i -D svelte-markdoc-preprocess
 import { markdoc } from 'svelte-markdoc-preprocess';
 
 const config = {
-    preprocess: [markdoc()],
+    preprocess: [
+        vitePreprocess(),
+        markdoc({
+            layout: join(
+                dirname(fileURLToPath(import.meta.url)),
+                './src/lib/Layout.svelte',
+            ),
+        }),
+    ],
     extensions: ['.markdoc', '.svelte'],
 };
+```
+
+```html
+<!-- ./src/lib/Layout.svelte -->
+<script context="module">
+    export { default as Addition } from './Addition.svelte';
+    export { default as MyTest } from './Test.svelte';
+</script>
+
+<slot />
+```
+
+```md
+<!-- +page.markdoc -->
+
+# I am a heading
+
+I am a paragraph with **bold** words. But you can also use Svelte Components:
+
+{% mytest /%}
+{% addition a=4 b=6 /%}
 ```
 
 ## Experimental
