@@ -1,5 +1,6 @@
 <script context="module">
-	export { Addition, Test } from '.';
+    export { default as Addition } from './Addition.svelte';
+	export { default as MyTest } from './Test.svelte';
 </script>
 
 <slot />

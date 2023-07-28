@@ -1,8 +1,19 @@
-<script lang="ts">
-	export let a: number;
-	export let b: number;
+<script>
+    /**
+     * @type {number}
+     */
+    export let a;
+    /**
+     * @type {number}
+     */
+    export let b;
+
+    /**
+     * @type {number}
+     */
+    export let c = 0;
 </script>
 
 <p>
-	<b>{a}</b> + <b>{b}</b> = <b>{Number(a) + Number(b)}</b>
+    <b>{a}</b> + <b>{b}</b> = <b>{Number(a) + Number(b) + Number(c)}</b>
 </p>

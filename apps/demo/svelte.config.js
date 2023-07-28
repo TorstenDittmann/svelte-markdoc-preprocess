@@ -12,23 +12,6 @@ const config = {
         vitePreprocess(),
         markdoc({
             layout: join(dirname(fileURLToPath(import.meta.url)), './src/lib/Layout.svelte'),
-            tags: {
-                mytest: {
-                    render: 'Test',
-                    selfClosing: true,
-                },
-                addition: {
-                    render: 'Addition',
-                    attributes: {
-                        a: {
-                            type: Number,
-                        },
-                        b: {
-                            type: Number,
-                        },
-                    },
-                },
-            },
         }),
     ],
     extensions: ['.markdoc', '.svelte'],

@@ -5,7 +5,7 @@ import type { PreprocessorGroup } from 'svelte/compiler';
 const processor = ({
     extensions = ['.markdoc'],
     layout = null,
-    tags = {},
+    nodes = {},
 }: Config): PreprocessorGroup => {
     return {
         name: 'markdoc',
@@ -21,7 +21,7 @@ const processor = ({
              */
             const code = transformer({
                 content,
-                tags,
+                nodes,
                 layout,
             });
 

@@ -1,7 +1,7 @@
-import { Schema } from '@markdoc/markdoc';
+import { Node, Schema } from '@markdoc/markdoc';
 
 export type Config = {
     extensions: string[];
-    tags: Record<string, Schema>;
+    nodes: Record<string, Node>;
     layout: string | null;
 };
