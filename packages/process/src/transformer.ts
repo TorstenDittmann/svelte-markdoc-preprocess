@@ -1,4 +1,4 @@
-import Markdoc from '@markdoc/markdoc';
+import Markdoc, { Tag } from '@markdoc/markdoc';
 import type { Config } from './config';
 
 export function transformer({
@@ -40,12 +40,31 @@ export function transformer({
             ', ',
         )}} from '${layout}';`;
     }
-
+    console.log('asdadasd');
     /**
      * transform the ast with svelte components
      */
     const nodes = Markdoc.transform(ast, {
         tags,
+        nodes: {
+            heading: {
+                children: ['inline'],
+                attributes: {
+                    id: { type: String },
+                    level: { type: Number, required: true, default: 1 },
+                },
+                transform(node, config) {
+                    const attributes = node.transformAttributes(config);
+                    const children = node.transformChildren(config);
+                    console.log('asd');
+                    return new Tag(
+                        `h${node.attributes['level']}`,
+                        { ...attributes, class: 'heading-123' },
+                        children,
+                    );
+                },
+            },
+        },
     });
 
     /**

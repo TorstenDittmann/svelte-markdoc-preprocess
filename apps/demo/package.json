@@ -25,7 +25,7 @@
         "prettier-plugin-svelte": "^2.10.1",
         "svelte": "*",
         "svelte-check": "^3.4.3",
-        "svelte-markdoc-preprocess": "latest",
+        "svelte-markdoc-preprocess": "*",
         "tslib": "^2.4.1",
         "typescript": "^5.0.0",
         "vite": "^4.4.2"
