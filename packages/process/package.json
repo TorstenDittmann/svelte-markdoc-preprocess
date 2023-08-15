@@ -11,7 +11,7 @@
         "md"
     ],
     "scripts": {
-        "test": "npm run build && node --test",
+        "test": "node --test",
         "check": "publint && tsc --noEmit",
         "lint": "prettier --check .",
         "format": "prettier --write .",
