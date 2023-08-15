@@ -1,100 +1,11 @@
-This is a [Svelte](https://svelte.dev) preprocessor that allows you to use Markdoc.
+This library brings the power of [Markdoc](https://markdoc.dev/) right into your [Svelte](https://svelte.dev) applications! 
 
-## Usage
-
-Install the package:
-
-```bash
-npm i -D svelte-markdoc-preprocess
-```
-
-Add the preprocessor and new extensions to your `svelte.config.js`:
-```js
-import { markdoc } from 'svelte-markdoc-preprocess';
-
-const config = {
-    preprocess: [
-        vitePreprocess(),
-        markdoc({
-            layouts: {
-                default: join(
-                    dirname(fileURLToPath(import.meta.url)),
-                    './src/lib/Layout.svelte'
-                )
-            }
-        })
-    ],
-    extensions: ['.markdoc', '.svelte'],
-};
-```
-
-And use them like this:
-
-```md
-<!-- +page.markdoc -->
-
-# I am a heading
-
-I am a paragraph with **bold** words. But you can also use Svelte Components:
-```
-
-## Layouts
-
-You can define layouts in the `markdoc` options.
-
-```js
-// svelte.config.js
-markdoc({
-    layouts: {
-        default: join(
-            dirname(fileURLToPath(import.meta.url)),
-            './src/lib/Layout.svelte'
-        ),
-        some_other_layout:join(
-            dirname(fileURLToPath(import.meta.url)),
-            './src/lib/SomeOtherLayout.svelte'
-        )
-    }
-})
-```
-
-Layout files are basically Svelte components with a slot.
-
-
-```html
-<!-- ./src/lib/Layout.svelte -->
-<nav>
-    ...
-</nav>
-<slot />
-```
-
-And use them in using the `layout` key in frontmatter. If no layout is defined with frontmatter, the default layout will be used.
-
-```md
-<!-- +page.markdoc -->
----
-layout: some_other_layout
----
-
-# some other content
-```
-
-## Components
-
-You can export components from your used layout and use them in your Markdoc files.
-
-```html
-<!-- ./src/lib/Layout.svelte -->
-<script context="module">
-    export { default as Addition } from './Addition.svelte';
-</script>
-
-<slot />
-```
-
-You can use the components from a layout file like this `{% addition a=4 b=6 %}`.
+## Features
+- **Markdoc**: Use the full power of Markdoc in your Svelte applications.
+- **Components**: Access your Svelte components directly as Markdoc tags. No individual imports or configurations required.
+- **Layouts**: Add a default and also named layouts.
+- **Flexibility**: Configure Markdoc to your needs.
 
 ## Experimental
 
-This is totally experimental for now, please don't use it *yet*. Even if you're a brave one.
+This is totally experimental for now, please don't use it *yet*. Unless you're a brave one.
