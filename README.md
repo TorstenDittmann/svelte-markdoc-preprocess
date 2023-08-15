@@ -4,13 +4,12 @@ This is a [Svelte](https://svelte.dev) preprocessor that allows you to use Markd
 
 ## Features
 
--   [x] Processor (kinda working)
 -   [x] Processor
 -   [x] Configuration
 -   [x] Svelte components
 -   [x] Auto Components Import from Layout
 -   [x] Frontmatter
--   [ ] Layouts
+-   [x] Layouts
 -   [x] Tests
 
 ## Installation
