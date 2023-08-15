@@ -24,7 +24,7 @@ const processor = (
             const code = transformer({
                 content,
                 nodes,
-                layouts
+                layouts,
             });
 
             return {

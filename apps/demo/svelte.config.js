@@ -13,8 +13,11 @@ const config = {
         markdoc({
             layouts: {
                 default: join(dirname(fileURLToPath(import.meta.url)), './src/lib/Layout.svelte'),
-                alternative: join(dirname(fileURLToPath(import.meta.url)), './src/lib/LayoutAlternative.svelte')
-            }
+                alternative: join(
+                    dirname(fileURLToPath(import.meta.url)),
+                    './src/lib/LayoutAlternative.svelte',
+                ),
+            },
         }),
     ],
     extensions: ['.markdoc', '.svelte'],
