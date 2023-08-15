@@ -113,7 +113,7 @@ type Var = {
     type: StringConstructor | NumberConstructor | BooleanConstructor;
 };
 
-function getComponentVars(filename: string, layout: string): Var[] {
+export function getComponentVars(filename: string, layout: string): Var[] {
     const target = join(dirname(layout), filename);
     const data = readFileSync(target, 'utf8');
     const match = data.match(expression);
@@ -147,13 +147,13 @@ const ucMap: Record<string, string> = {
     '}': '&rcub;',
 };
 const ucRegularExpression = new RegExp(Object.keys(ucMap).join('|'), 'gi');
-function sanitizeForSvelte(str: string): string {
+export function sanitizeForSvelte(str: string): string {
     return str.replace(ucRegularExpression, function (matched) {
         return ucMap[matched.toLowerCase()];
     });
 }
 
-function tsToType(node: BindingIdentifier): Var['type'] {
+export function tsToType(node: BindingIdentifier): Var['type'] {
     if (node?.typeAnnotation?.typeAnnotation.type === 'TsKeywordType') {
         switch (node.typeAnnotation.typeAnnotation.kind) {
             case 'string':

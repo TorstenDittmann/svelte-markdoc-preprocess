@@ -2,11 +2,13 @@ import { Config } from './config';
 import { transformer } from './transformer';
 import type { PreprocessorGroup } from 'svelte/compiler';
 
-const processor = ({
-    extensions = ['.markdoc'],
-    layout = null,
-    nodes = {},
-}: Config): PreprocessorGroup => {
+const processor = (
+    { extensions = ['.markdoc'], layout = null, nodes = {} }: Config = {
+        extensions: ['.markdoc'],
+        layout: null,
+        nodes: {},
+    },
+): PreprocessorGroup => {
     return {
         name: 'markdoc',
         async markup({ content, filename }) {
