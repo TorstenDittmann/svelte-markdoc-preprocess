@@ -31,6 +31,7 @@
         "url": "https://github.com/TorstenDittmann/svelte-markdoc-preprocess.git"
     },
     "devDependencies": {
+        "@swc/core": "^1.3.76",
         "@types/node": "^20.4.5",
         "parcel": "latest",
         "prettier": "*",

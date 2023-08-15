@@ -1,4 +1,4 @@
-import { Node, Schema } from '@markdoc/markdoc';
+import { Node } from '@markdoc/markdoc';
 
 export type Config = {
     extensions: string[];

@@ -1,2 +1,6 @@
-{% mytest /%}
+{% mytest %}
+I am slot content.
+{% /mytest %}
+
 {% addition a=4 b=6 /%}
+{% multiply a=3 b=8 /%}

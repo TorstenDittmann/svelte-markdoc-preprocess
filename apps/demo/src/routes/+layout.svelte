@@ -1,7 +1,7 @@
 <main class="container">
 	<nav>
 		<ul>
-			<li><strong>Demo Page</strong></li>
+			<li><strong>svelte-markdoc-preprocess</strong></li>
 		</ul>
 		<ul>
 			<li><a href="/">home</a></li>
