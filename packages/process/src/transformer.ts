@@ -6,6 +6,7 @@ import {
     renderers,
 } from '@markdoc/markdoc';
 import { readFileSync } from 'fs';
+import { load as loadYaml } from 'js-yaml';
 import { parse as svelteParse, walk } from 'svelte/compiler';
 import { dirname, join } from 'path';
 import { parseSync as swcParse } from '@swc/core';
@@ -15,11 +16,11 @@ import type { Config } from './config';
 export function transformer({
     content,
     nodes,
-    layout,
+    layouts,
 }: {
     content: string;
     nodes: Config['nodes'];
-    layout: Config['layout'];
+    layouts: Config['layouts'];
 }): string {
     /**
      * create ast for markdoc
@@ -27,12 +28,26 @@ export function transformer({
     const ast = markdocParse(content);
 
     /**
+     * load frontmatter
+     */
+    const frontmatter = (
+        ast.attributes.frontmatter ? loadYaml(ast.attributes.frontmatter) : {}
+    ) as Record<string, string>;
+
+    /**
+     * get layout from frontmatter, use default or no at all
+     */
+    const selected_layout = layouts
+        ? layouts[frontmatter?.layout ?? 'default'] ?? undefined
+        : undefined;
+
+    /**
      * add used svelte components to the script tag
      */
     let dependencies = '';
     const tags: Record<string, Schema> = {};
-    if (layout) {
-        const data = readFileSync(layout, 'utf8');
+    if (selected_layout) {
+        const data = readFileSync(selected_layout, 'utf8');
         const t = svelteParse(data);
         //@ts-ignore weird types here
         walk(t, {
@@ -42,9 +57,9 @@ export function transformer({
                         parent?.type === 'ExportNamedDeclaration' &&
                         parent?.source
                     ) {
-                        const vars = getComponentVars(
+                        const vars = get_component_vars(
                             String(parent.source.value),
-                            layout,
+                            selected_layout,
                         );
                         tags[node.exported.name.toLowerCase()] = {
                             render: node.exported.name,
@@ -74,10 +89,10 @@ export function transformer({
             }
         }
 
-        dependencies += `import INTERNAL__LAYOUT from '${layout}';`;
+        dependencies += `import INTERNAL__LAYOUT from '${selected_layout}';`;
         dependencies += `import {${[...components].join(
             ', ',
-        )}} from '${layout}';`;
+        )}} from '${selected_layout}';`;
     }
 
     /**
@@ -86,18 +101,21 @@ export function transformer({
     const nast = transform(ast, {
         tags,
         nodes,
+        variables: {
+            frontmatter,
+        },
     });
 
     /**
      * render to html
      */
-    const code = sanitizeForSvelte(renderers.html(nast));
+    const code = sanitize_for_svelte(renderers.html(nast));
 
     let transformed = '';
     if (dependencies) {
         transformed += `<script>${dependencies}</script>`;
     }
-    if (layout) {
+    if (selected_layout) {
         transformed += `<INTERNAL__LAYOUT>${code}</INTERNAL__LAYOUT>`;
     } else {
         transformed += code;
@@ -113,7 +131,7 @@ type Var = {
     type: StringConstructor | NumberConstructor | BooleanConstructor;
 };
 
-export function getComponentVars(filename: string, layout: string): Var[] {
+export function get_component_vars(filename: string, layout: string): Var[] {
     const target = join(dirname(layout), filename);
     const data = readFileSync(target, 'utf8');
     const match = data.match(expression);
@@ -132,7 +150,7 @@ export function getComponentVars(filename: string, layout: string): Var[] {
                     if (decl.id.type === 'Identifier') {
                         prev.push({
                             name: decl.id.value,
-                            type: tsToType(decl.id),
+                            type: ts_to_type(decl.id),
                         });
                     }
                 });
@@ -142,18 +160,18 @@ export function getComponentVars(filename: string, layout: string): Var[] {
     }, []);
 }
 
-const ucMap: Record<string, string> = {
+const uc_map: Record<string, string> = {
     '{': '&lcub;',
     '}': '&rcub;',
 };
-const ucRegularExpression = new RegExp(Object.keys(ucMap).join('|'), 'gi');
-export function sanitizeForSvelte(str: string): string {
-    return str.replace(ucRegularExpression, function (matched) {
-        return ucMap[matched.toLowerCase()];
+const u_regular_expression = new RegExp(Object.keys(uc_map).join('|'), 'gi');
+export function sanitize_for_svelte(str: string): string {
+    return str.replace(u_regular_expression, function (matched) {
+        return uc_map[matched.toLowerCase()];
     });
 }
 
-export function tsToType(node: BindingIdentifier): Var['type'] {
+export function ts_to_type(node: BindingIdentifier): Var['type'] {
     if (node?.typeAnnotation?.typeAnnotation.type === 'TsKeywordType') {
         switch (node.typeAnnotation.typeAnnotation.kind) {
             case 'string':

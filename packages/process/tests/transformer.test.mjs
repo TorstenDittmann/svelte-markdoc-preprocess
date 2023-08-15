@@ -1,13 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { sanitizeForSvelte, tsToType } from '../dist/transformer.js';
+import { sanitize_for_svelte, ts_to_type } from '../dist/transformer.js';
 
 test('tsToType', async (context) => {
     const node = {
         type: 'BindingIdentifier',
     };
     await context.test('handles strings', () => {
-        const type = tsToType({
+        const type = ts_to_type({
             ...node,
             typeAnnotation: {
                 typeAnnotation: {
@@ -19,7 +19,7 @@ test('tsToType', async (context) => {
         assert.equal(type, String);
     });
     await context.test('handles numbers', () => {
-        const type = tsToType({
+        const type = ts_to_type({
             ...node,
             typeAnnotation: {
                 typeAnnotation: {
@@ -31,7 +31,7 @@ test('tsToType', async (context) => {
         assert.equal(type, Number);
     });
     await context.test('handles boolean', () => {
-        const type = tsToType({
+        const type = ts_to_type({
             ...node,
             typeAnnotation: {
                 typeAnnotation: {
@@ -43,7 +43,7 @@ test('tsToType', async (context) => {
         assert.equal(type, Boolean);
     });
     await context.test('falls back to string', () => {
-        const type = tsToType(node);
+        const type = ts_to_type(node);
         assert.equal(type, String);
     });
 });
@@ -52,7 +52,7 @@ test('sanitize for svelte', async (context) => {
     await Promise.all(
         ['{', '}'].map(async (char) =>
             context.test(`takes care of ${char}`, () => {
-                const sanitized = sanitizeForSvelte(char);
+                const sanitized = sanitize_for_svelte(char);
                 assert.ok(!sanitized.includes(char));
                 assert.ok(sanitized.startsWith('&'));
                 assert.ok(sanitized.endsWith(';'));

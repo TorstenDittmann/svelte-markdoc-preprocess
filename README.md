@@ -5,13 +5,13 @@ This is a [Svelte](https://svelte.dev) preprocessor that allows you to use Markd
 ## Features
 
 -   [x] Processor (kinda working)
--   [ ] Processor
+-   [x] Processor
 -   [x] Configuration
 -   [x] Svelte components
 -   [x] Auto Components Import from Layout
--   [ ] Frontmatter
+-   [x] Frontmatter
 -   [ ] Layouts
--   [ ] Tests
+-   [x] Tests
 
 ## Installation
 

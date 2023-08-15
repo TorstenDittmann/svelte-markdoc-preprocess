@@ -11,7 +11,10 @@ const config = {
     preprocess: [
         vitePreprocess(),
         markdoc({
-            layout: join(dirname(fileURLToPath(import.meta.url)), './src/lib/Layout.svelte'),
+            layouts: {
+                default: join(dirname(fileURLToPath(import.meta.url)), './src/lib/Layout.svelte'),
+                alternative: join(dirname(fileURLToPath(import.meta.url)), './src/lib/LayoutAlternative.svelte')
+            }
         }),
     ],
     extensions: ['.markdoc', '.svelte'],
