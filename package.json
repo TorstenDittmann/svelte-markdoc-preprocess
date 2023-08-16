@@ -6,7 +6,8 @@
         "test": "turbo run test",
         "check": "turbo run check",
         "lint": "prettier --check \"**/*.{json,md}\" && turbo run lint",
-        "format": "prettier --write \"**/*.{json,md}\" && turbo run format"
+        "format": "prettier --write \"**/*.{json,md}\" && turbo run format",
+        "publish-packages": "turbo run build lint test && npm publish --workspaces"
     },
     "devDependencies": {
         "@sveltejs/kit": "^1.20.4",
