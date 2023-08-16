@@ -57,21 +57,17 @@ export function transformer({
                         parent?.type === 'ExportNamedDeclaration' &&
                         parent?.source
                     ) {
-                        const vars = get_component_vars(
+                        /**
+                         * extract all exported variables from the components
+                         */
+                        const attributes = get_component_vars(
                             String(parent.source.value),
                             selected_layout,
                         );
+
                         tags[node.exported.name.toLowerCase()] = {
                             render: node.exported.name,
-                            attributes: vars.reduce<
-                                Record<string, SchemaAttribute>
-                            >((prev, curr) => {
-                                prev[curr.name] = {
-                                    type: String,
-                                };
-
-                                return prev;
-                            }, {}),
+                            attributes,
                         };
                     }
                 }
@@ -131,33 +127,35 @@ type Var = {
     type: StringConstructor | NumberConstructor | BooleanConstructor;
 };
 
-export function get_component_vars(filename: string, layout: string): Var[] {
+export function get_component_vars(
+    filename: string,
+    layout: string,
+): Record<string, SchemaAttribute> {
     const target = join(dirname(layout), filename);
     const data = readFileSync(target, 'utf8');
     const match = data.match(expression);
     if (!match) {
-        return [];
+        return {};
     }
     const script = match[1];
     const result = swcParse(script, {
         syntax: 'typescript',
     });
 
-    return result.body.reduce<Var[]>((prev, node) => {
+    return result.body.reduce<Record<string, SchemaAttribute>>((prev, node) => {
         if (node.type === 'ExportDeclaration') {
             if (node.declaration.type === 'VariableDeclaration') {
                 node.declaration.declarations.forEach((decl) => {
                     if (decl.id.type === 'Identifier') {
-                        prev.push({
-                            name: decl.id.value,
+                        prev[decl.id.value] = {
                             type: ts_to_type(decl.id),
-                        });
+                        };
                     }
                 });
             }
         }
         return prev;
-    }, []);
+    }, {});
 }
 
 const uc_map: Record<string, string> = {
