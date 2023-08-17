@@ -13,6 +13,11 @@ import { parseSync as swcParse } from '@swc/core';
 import type { BindingIdentifier } from '@swc/core';
 import type { Config } from './config';
 
+type Var = {
+    name: string;
+    type: StringConstructor | NumberConstructor | BooleanConstructor;
+};
+
 export function transformer({
     content,
     nodes,
@@ -49,7 +54,7 @@ export function transformer({
     if (selected_layout) {
         const data = readFileSync(selected_layout, 'utf8');
         const t = svelteParse(data);
-        //@ts-ignore weird types here
+        //@ts-ignore weird types here from svelte
         walk(t, {
             enter(node, parent) {
                 if (node.type === 'ExportSpecifier') {
@@ -108,9 +113,15 @@ export function transformer({
     const code = sanitize_for_svelte(renderers.html(nast));
 
     let transformed = '';
+    /**
+     * add all dependencies to the document
+     */
     if (dependencies) {
         transformed += `<script>${dependencies}</script>`;
     }
+    /**
+     * wrap the document in the layout
+     */
     if (selected_layout) {
         transformed += `<INTERNAL__LAYOUT>${code}</INTERNAL__LAYOUT>`;
     } else {
@@ -120,28 +131,39 @@ export function transformer({
     return transformed;
 }
 
-const expression = new RegExp('<script[^>]*>(.*?)</script>', 's');
+const script_tags_regular_expression = new RegExp(
+    '<script[^>]*>(.*?)</script>',
+    's',
+);
 
-type Var = {
-    name: string;
-    type: StringConstructor | NumberConstructor | BooleanConstructor;
-};
-
+/**
+ * Extracts all exported variables from a svelte component.
+ *
+ * @param path relative path of the component
+ * @param layout absoulte path of the layout
+ */
 export function get_component_vars(
-    filename: string,
+    path: string,
     layout: string,
 ): Record<string, SchemaAttribute> {
-    const target = join(dirname(layout), filename);
+    const target = join(dirname(layout), path);
     const data = readFileSync(target, 'utf8');
-    const match = data.match(expression);
+    const match = data.match(script_tags_regular_expression);
     if (!match) {
         return {};
     }
+
+    /**
+     * parse the script with swc
+     */
     const script = match[1];
     const result = swcParse(script, {
         syntax: 'typescript',
     });
 
+    /**
+     * find and return all exported variables
+     */
     return result.body.reduce<Record<string, SchemaAttribute>>((prev, node) => {
         if (node.type === 'ExportDeclaration') {
             if (node.declaration.type === 'VariableDeclaration') {
@@ -162,13 +184,26 @@ const uc_map: Record<string, string> = {
     '{': '&lcub;',
     '}': '&rcub;',
 };
-const u_regular_expression = new RegExp(Object.keys(uc_map).join('|'), 'gi');
-export function sanitize_for_svelte(str: string): string {
-    return str.replace(u_regular_expression, function (matched) {
-        return uc_map[matched.toLowerCase()];
-    });
+const uc_regular_expression = new RegExp(Object.keys(uc_map).join('|'), 'gi');
+/**
+ * Replaces all the special characters that might intefer with the svelte compiler.
+ *
+ * @param content string to sanitize
+ * @returns
+ */
+export function sanitize_for_svelte(content: string): string {
+    return content.replace(
+        uc_regular_expression,
+        (matched) => uc_map[matched.toLowerCase()],
+    );
 }
 
+/**
+ * Converts a typescript type to a type constructor for Markdoc.
+ *
+ * @param node typescript node
+ * @returns
+ */
 export function ts_to_type(node: BindingIdentifier): Var['type'] {
     if (node?.typeAnnotation?.typeAnnotation.type === 'TsKeywordType') {
         switch (node.typeAnnotation.typeAnnotation.kind) {
