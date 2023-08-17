@@ -1,8 +1,8 @@
-import { Node } from '@markdoc/markdoc';
+import { Node, NodeType } from '@markdoc/markdoc';
 
 export type Config = {
     extensions: string[];
-    nodes: Record<string, Node>;
+    nodes: Record<NodeType, Node>;
     layouts: {
         default: string;
         [key: string]: string;
