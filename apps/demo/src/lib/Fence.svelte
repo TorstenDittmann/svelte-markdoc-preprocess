@@ -4,7 +4,6 @@
     import javascript from 'highlight.js/lib/languages/javascript';
     import xml from 'highlight.js/lib/languages/xml';
     import shell from 'highlight.js/lib/languages/shell';
-    import latex from 'highlight.js/lib/languages/latex';
     import markdown from 'highlight.js/lib/languages/markdown';
     import json from 'highlight.js/lib/languages/json';
 
@@ -12,7 +11,6 @@
     hljs.registerLanguage('html', xml);
     hljs.registerLanguage('sh', shell);
     hljs.registerLanguage('md', markdown);
-    hljs.registerLanguage('latex', latex);
     hljs.registerLanguage('json', json);
 
     export let content: string;

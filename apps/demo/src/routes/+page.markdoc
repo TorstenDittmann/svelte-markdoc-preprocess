@@ -39,7 +39,7 @@ This library brings the power of [Markdoc](https://markdoc.dev/) right into your
 </div>
 ```
 
-```latex
+```md
 {% callout type="check" %}
 Markdoc is open-source—check out its [source](http://github.com/markdoc/markdoc) to see how it works.
 {% /callout %}
