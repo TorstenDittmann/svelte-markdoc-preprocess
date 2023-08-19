@@ -2,12 +2,12 @@
 
 Install the package:
 
-```bash
+```shell
 npm i -D svelte-markdoc-preprocess
 ```
 
 Add the preprocessor and new extensions to your `svelte.config.js`:
-```js
+```javascript
 import { markdoc } from 'svelte-markdoc-preprocess';
 
 const config = {
@@ -48,7 +48,7 @@ markdoc({
             dirname(fileURLToPath(import.meta.url)),
             './src/lib/Layout.svelte'
         ),
-        some_other_layout:join(
+        some_other_layout: join(
             dirname(fileURLToPath(import.meta.url)),
             './src/lib/SomeOtherLayout.svelte'
         )
@@ -69,7 +69,7 @@ Layout files are basically Svelte components with a slot.
 
 And use them in using the `layout` key in frontmatter. If no layout is defined with frontmatter, the default layout will be used.
 
-```md
+```
 <!-- +page.markdoc -->
 ---
 layout: some_other_layout
@@ -78,17 +78,67 @@ layout: some_other_layout
 # some other content
 ```
 
-## Components
+## Nodes
 
-You can export components from your used layout and use them in your Markdoc files.
+You can use Svelte components in your markdown files, you can define Svelte Component for each node.
+
+Create a Svelte file and export Svelte components with the same name as the node from the module context.
+
 
 ```html
-<!-- ./src/lib/Layout.svelte -->
+<!-- ./src/lib/Nodes.svelte -->
 <script context="module">
-    export { default as Addition } from './Addition.svelte';
+    export { default as Heading } from './Heading.svelte';
 </script>
-
-<slot />
 ```
 
-You can use the components from a layout file like this `{% addition a=4 b=6 %}`.
+```js
+// svelte.config.js
+markdoc({
+    nodes: join(dirname(fileURLToPath(import.meta.url)), './src/lib/Nodes.svelte'),
+})
+```
+
+```html
+<!-- ./src/lib/Heading.svelte -->
+<script>
+    export let level;
+</script>
+
+<svelte:element this={`h${level}`}><slot /></svelte:element>
+```
+
+You can find a list of available nodes [here](https://markdoc.dev/docs/nodes#built-in-nodes).
+
+## Tags
+
+You can use Svelte components for tags, the same way you do for nodes.
+
+Create a Svelte file and export Svelte components with the same name as the node from the module context.
+
+
+```html
+<!-- ./src/lib/Tags.svelte -->
+<script context="module">
+    export { default as Multiply } from './Multiply.svelte';
+</script>
+```
+
+```js
+// svelte.config.js
+markdoc({
+    tags: join(dirname(fileURLToPath(import.meta.url)), './src/lib/Tags.svelte'),
+})
+```
+
+```html
+<!-- ./src/lib/Multiply.svelte -->
+<script lang="ts">
+    export let a;
+    export let b;
+</script>
+
+{a} * {b} = {a * b}
+```
+
+Now you can use them in your markdown files like this `{{ multiply a=2 b=3 }}`.

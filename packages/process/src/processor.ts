@@ -3,10 +3,16 @@ import { transformer } from './transformer';
 import type { PreprocessorGroup } from 'svelte/compiler';
 
 const processor = (
-    { extensions = ['.markdoc'], layouts = null, nodes = {} }: Config = {
+    {
+        extensions = ['.markdoc'],
+        layouts = null,
+        nodes = null,
+        tags = null,
+    }: Config = {
         extensions: ['.markdoc'],
         layouts: null,
-        nodes: {},
+        nodes: null,
+        tags: null,
     },
 ): PreprocessorGroup => {
     return {
@@ -23,8 +29,9 @@ const processor = (
              */
             const code = transformer({
                 content,
-                nodes,
                 layouts,
+                nodes_file: nodes,
+                tags_file: tags,
             });
 
             return {

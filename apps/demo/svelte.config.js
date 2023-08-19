@@ -4,6 +4,9 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { markdoc } from 'svelte-markdoc-preprocess';
 
+const layout = join(dirname(fileURLToPath(import.meta.url)), './src/lib/Layout.svelte');
+const nodes = join(dirname(fileURLToPath(import.meta.url)), './src/lib/Nodes.svelte');
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
     // Consult https://kit.svelte.dev/docs/integrations#preprocessors
@@ -11,8 +14,10 @@ const config = {
     preprocess: [
         vitePreprocess(),
         markdoc({
+            tags: layout,
+            nodes,
             layouts: {
-                default: join(dirname(fileURLToPath(import.meta.url)), './src/lib/Layout.svelte'),
+                default: layout,
                 alternative: join(
                     dirname(fileURLToPath(import.meta.url)),
                     './src/lib/LayoutAlternative.svelte',

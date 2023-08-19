@@ -1,8 +1,10 @@
-import { Node } from '@markdoc/markdoc';
+import { SvelteComponent } from 'svelte';
+import { NodeType } from '@markdoc/markdoc';
 
 export type Config = {
     extensions: string[];
-    nodes: Record<string, Node>;
+    nodes: string | null;
+    tags: string | null;
     layouts: {
         default: string;
         [key: string]: string;

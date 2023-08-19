@@ -1,0 +1,215 @@
+import { Schema } from '@markdoc/markdoc';
+
+export const document: Schema = {
+    render: 'article',
+    children: [
+        'heading',
+        'paragraph',
+        'image',
+        'table',
+        'tag',
+        'fence',
+        'blockquote',
+        'comment',
+        'list',
+        'hr',
+    ],
+    attributes: {
+        frontmatter: {},
+    },
+};
+
+export const heading: Schema = {
+    children: ['inline'],
+    attributes: {
+        level: { type: Number, required: true },
+    },
+};
+
+export const paragraph: Schema = {
+    render: 'p',
+    children: ['inline'],
+};
+
+export const image: Schema = {
+    render: 'img',
+    attributes: {
+        src: { type: String, required: true },
+        alt: { type: String },
+        title: { type: String },
+    },
+};
+
+export const fence: Schema = {
+    render: 'pre',
+    attributes: {
+        content: { type: String, required: true },
+        language: { type: String },
+        process: { type: Boolean, default: true },
+    },
+};
+
+export const blockquote: Schema = {
+    render: 'blockquote',
+    children: [
+        'heading',
+        'paragraph',
+        'image',
+        'table',
+        'tag',
+        'fence',
+        'blockquote',
+        'list',
+        'hr',
+    ],
+};
+
+export const item: Schema = {
+    render: 'li',
+    children: [
+        'inline',
+        'heading',
+        'paragraph',
+        'image',
+        'table',
+        'tag',
+        'fence',
+        'blockquote',
+        'list',
+        'hr',
+    ],
+};
+
+export const list: Schema = {
+    children: ['item'],
+    attributes: {
+        ordered: { type: Boolean, required: true },
+        start: { type: Number },
+        marker: { type: String },
+    },
+};
+
+export const hr: Schema = {
+    render: 'hr',
+};
+
+export const table: Schema = {
+    render: 'table',
+};
+
+export const td: Schema = {
+    render: 'td',
+    children: [
+        'inline',
+        'heading',
+        'paragraph',
+        'image',
+        'table',
+        'tag',
+        'fence',
+        'blockquote',
+        'list',
+        'hr',
+    ],
+    attributes: {
+        colspan: { type: Number },
+        rowspan: { type: Number },
+        align: { type: String },
+    },
+};
+
+export const th: Schema = {
+    render: 'th',
+    attributes: {
+        width: { type: Number },
+        align: { type: String },
+    },
+};
+
+export const tr: Schema = {
+    render: 'tr',
+    children: ['th', 'td'],
+};
+
+export const tbody: Schema = {
+    render: 'tbody',
+    children: ['tr', 'tag'],
+};
+
+export const thead: Schema = {
+    render: 'thead',
+    children: ['tr'],
+};
+
+export const strong: Schema = {
+    render: 'strong',
+    children: ['em', 's', 'link', 'code', 'text', 'tag'],
+    attributes: {
+        marker: { type: String },
+    },
+};
+
+export const em: Schema = {
+    render: 'em',
+    children: ['strong', 's', 'link', 'code', 'text', 'tag'],
+    attributes: {
+        marker: { type: String },
+    },
+};
+
+export const s: Schema = {
+    render: 's',
+    children: ['strong', 'em', 'link', 'code', 'text', 'tag'],
+};
+
+export const inline: Schema = {
+    children: [
+        'strong',
+        'em',
+        's',
+        'code',
+        'text',
+        'tag',
+        'link',
+        'image',
+        'hardbreak',
+        'softbreak',
+        'comment',
+    ],
+};
+
+export const link: Schema = {
+    render: 'a',
+    children: ['strong', 'em', 's', 'code', 'text', 'tag'],
+    attributes: {
+        href: { type: String, required: true },
+        title: { type: String },
+    },
+};
+
+export const code: Schema = {
+    render: 'code',
+    attributes: {
+        content: { type: String, required: true },
+    },
+};
+
+export const text: Schema = {
+    attributes: {
+        content: { type: String, required: true },
+    },
+};
+
+export const hardbreak: Schema = {
+    render: 'br',
+};
+
+export const comment = {
+    attributes: {
+        content: { type: String, required: true },
+    },
+};
+
+export const softbreak: Schema = {};
+export const error = {};
+export const node = {};
