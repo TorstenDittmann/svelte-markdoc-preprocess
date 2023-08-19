@@ -1,0 +1,20 @@
+## Visual Studio Code `experimental`
+
+The preprocessor automatically generates a schema file at `.svelte-kit/markdoc_schema.js` which can be used with the official [Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=Stripe.markdoc-language-support).
+
+In the `markdoc.config.json` [configuration file](https://github.com/markdoc/language-server#configuration-quickstart) point to the schema file:
+
+```json
+[
+  {
+    "id": "my-site",
+    "path": "docs/content",
+    "schema": {
+      "path": ".svelte-kit/markdoc-schema.js",
+      "type": "esm",
+      "property": "default",
+      "watch": true
+    }
+  }
+]
+```

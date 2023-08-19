@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "lib": ["ES2020"],
+        "lib": ["ES2021"],
         "strict": true,
         "strictNullChecks": true,
         "module": "commonjs",

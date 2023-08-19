@@ -1,11 +1,12 @@
 This library brings the power of [Markdoc](https://markdoc.dev/) right into your [Svelte](https://svelte.dev) applications! 
 
 ## Features
-- **Markdoc**: Use the full power of Markdoc in your Svelte applications.
-- **Components**: Access your Svelte components directly as Markdoc tags. No individual imports or configurations required.
-- **Markdown**: Use Svelte components for nodes.
-- **Layouts**: Add a default and also named layouts.
-- **Typescript**: Supports Typescript out of the box.
+- **Markdoc** Use the full power of Markdoc in your Svelte applications.
+- **Components** Access your Svelte components directly as Markdoc tags. 
+- **Markdown** Use Svelte components for nodes.
+- **Layouts** Add a default and also named layouts.
+- **Typescript** Supports Typescript out of the box.
+- **IDE** Syntax highlighting and autocompletion in Visual Studio Code.
 
 ---
 

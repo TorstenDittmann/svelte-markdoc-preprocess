@@ -1,0 +1,12 @@
+[
+    {
+        "id": "my-site",
+        "path": "apps/demo",
+        "schema": {
+            "path": "apps/demo/.svelte-kit/markdoc-schema.js",
+            "type": "esm",
+            "property": "default",
+            "watch": true
+        }
+    }
+]

@@ -8,11 +8,13 @@ const processor = (
         layouts = null,
         nodes = null,
         tags = null,
+        generateSchema = true,
     }: Config = {
         extensions: ['.markdoc'],
         layouts: null,
         nodes: null,
         tags: null,
+        generateSchema: true,
     },
 ): PreprocessorGroup => {
     return {
@@ -30,6 +32,7 @@ const processor = (
             const code = transformer({
                 content,
                 layouts,
+                generate_schema: generateSchema,
                 nodes_file: nodes,
                 tags_file: tags,
             });

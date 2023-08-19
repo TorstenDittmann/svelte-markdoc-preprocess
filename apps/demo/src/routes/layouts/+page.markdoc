@@ -1,0 +1,40 @@
+## Layouts
+
+You can define layouts in the `markdoc` options.
+
+```js
+// svelte.config.js
+markdoc({
+    layouts: {
+        default: join(
+            dirname(fileURLToPath(import.meta.url)),
+            './src/lib/Layout.svelte'
+        ),
+        some_other_layout: join(
+            dirname(fileURLToPath(import.meta.url)),
+            './src/lib/SomeOtherLayout.svelte'
+        )
+    }
+})
+```
+
+Layout files are basically Svelte components with a slot.
+
+```html
+<!-- ./src/lib/Layout.svelte -->
+<nav>
+    ...
+</nav>
+<slot />
+```
+
+And use them in using the `layout` key in frontmatter. If no layout is defined with frontmatter, the default layout will be used.
+
+```
+<!-- +page.markdoc -->
+---
+layout: some_other_layout
+---
+
+# some other content
+```

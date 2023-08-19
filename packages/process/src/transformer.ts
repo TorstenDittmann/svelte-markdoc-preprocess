@@ -7,7 +7,7 @@ import {
     NodeType,
     Tag,
 } from '@markdoc/markdoc';
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { load as loadYaml } from 'js-yaml';
 import { parse as svelteParse, walk } from 'svelte/compiler';
 import { dirname, join } from 'path';
@@ -26,11 +26,13 @@ export function transformer({
     nodes_file,
     tags_file,
     layouts,
+    generate_schema,
 }: {
     content: string;
     nodes_file: Config['nodes'];
     tags_file: Config['tags'];
     layouts: Config['layouts'];
+    generate_schema: Config['generateSchema'];
 }): string {
     /**
      * create ast for markdoc
@@ -82,16 +84,22 @@ export function transformer({
         dependencies += `import INTERNAL__LAYOUT from '${selected_layout}';`;
     }
 
-    /**
-     * transform the ast with svelte components
-     */
-    const nast = transform(ast, {
+    if (generate_schema) {
+        create_schema(tags);
+    }
+
+    const configuration = {
         tags,
         nodes,
         variables: {
             frontmatter,
         },
-    });
+    };
+
+    /**
+     * transform the ast with svelte components
+     */
+    const nast = transform(ast, configuration);
 
     /**
      * render to html
@@ -324,4 +332,41 @@ function each_exported_var(filepath: string): Array<[string, string]> {
         },
     });
     return tup;
+}
+
+function create_schema(tags: Record<string, Schema>): void {
+    // TODO: this part is really ugly, but it works.
+    const raw = JSON.stringify(tags, (key, value) => {
+        if (key === 'type') {
+            switch (true) {
+                case value === Number:
+                    return '%%NUMBER%%';
+                case value === String:
+                    return '%%STRING%%';
+                case value === Boolean:
+                    return '%%BOOLEAN%%';
+            }
+        }
+        return value;
+    });
+    const object = raw
+        .replaceAll('"%%NUMBER%%"', 'Number')
+        .replaceAll('"%%STRING%%"', 'String')
+        .replaceAll('"%%BOOLEAN%%"', 'Boolean');
+    const content = `export default { tags: ${object} };`;
+
+    const target_directory = join(process.cwd(), '.svelte-kit');
+    const target_file = join(target_directory, 'markdoc_schema.js');
+    if (existsSync(target_directory)) {
+        try {
+            if (existsSync(target_file)) {
+                if (content === readFileSync(target_file, 'utf8')) {
+                    return;
+                }
+            }
+            writeFileSync(target_file, `export default { tags: ${object} };`);
+        } catch (err) {
+            console.error(err);
+        }
+    }
 }

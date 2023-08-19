@@ -1,0 +1,38 @@
+## Install
+
+Install the package:
+
+```sh
+npm i -D svelte-markdoc-preprocess
+```
+
+Add the preprocessor and new extensions to your `svelte.config.js`:
+
+```javascript
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import { markdoc } from 'svelte-markdoc-preprocess';
+
+const config = {
+    preprocess: [
+        vitePreprocess(),
+        markdoc({
+            layouts: {
+                default: join(
+                    dirname(fileURLToPath(import.meta.url)),
+                    './src/lib/Layout.svelte'
+                )
+            }
+        })
+    ],
+    extensions: ['.markdoc', '.svelte'],
+};
+```
+
+```md
+<!-- +page.markdoc -->
+
+# I am a heading
+
+I am a paragraph with **bold** words. But you can also use Svelte Components:
+```
