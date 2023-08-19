@@ -2,7 +2,7 @@
 
 Install the package:
 
-```shell
+```sh
 npm i -D svelte-markdoc-preprocess
 ```
 
@@ -133,12 +133,12 @@ markdoc({
 
 ```html
 <!-- ./src/lib/Multiply.svelte -->
-<script lang="ts">
+<script>
     export let a;
     export let b;
 </script>
 
-{a} * {b} = {a * b}
+<p>{a} * {b} = {a * b}</p>
 ```
 
 Now you can use them in your markdown files like this `{{ multiply a=2 b=3 }}`.
