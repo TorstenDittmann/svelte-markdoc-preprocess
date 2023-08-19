@@ -34,7 +34,7 @@ This library brings the power of [Markdoc](https://markdoc.dev/) right into your
     export let type = 'info';
 </script>
 
-<div class="callout {type}">
+<div class={`callout ${type}`}>
     <slot />
 </div>
 ```
