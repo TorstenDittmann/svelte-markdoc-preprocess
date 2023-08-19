@@ -22,7 +22,7 @@ This library brings the power of [Markdoc](https://markdoc.dev/) right into your
     export let level;
 </script>
 
-<svelte:element this={`h${level}`} class={`heading-${level}`}><slot /></svelte:element>
+<svelte:element this={`h${level}`}><slot /></svelte:element>
 ```
 
 `### Lorem Ipsum` -> `<h3 class="heading-3">Lorem Ipsum</h3>`
