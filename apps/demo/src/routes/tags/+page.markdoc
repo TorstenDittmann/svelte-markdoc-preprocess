@@ -28,4 +28,9 @@ markdoc({
 <p>{a} * {b} = {a * b}</p>
 ```
 
-Now you can use them in your markdown files like this `{% multiply a=2 b=3 /%}`.
+```html
+<!-- ./src/routes/+page.markdoc -->
+# I am in a markdoc file
+
+{% multiply a=2 b=3 /%}
+```

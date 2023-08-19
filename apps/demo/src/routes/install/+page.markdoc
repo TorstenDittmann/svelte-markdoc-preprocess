@@ -16,14 +16,7 @@ import { markdoc } from 'svelte-markdoc-preprocess';
 const config = {
     preprocess: [
         vitePreprocess(),
-        markdoc({
-            layouts: {
-                default: join(
-                    dirname(fileURLToPath(import.meta.url)),
-                    './src/lib/Layout.svelte'
-                )
-            }
-        })
+        markdoc()
     ],
     extensions: ['.markdoc', '.svelte'],
 };
