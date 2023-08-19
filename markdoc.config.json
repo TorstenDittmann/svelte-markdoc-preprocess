@@ -3,7 +3,7 @@
         "id": "my-site",
         "path": "apps/demo",
         "schema": {
-            "path": "apps/demo/.svelte-kit/markdoc-schema.js",
+            "path": "apps/demo/.svelte-kit/markdoc_schema.js",
             "type": "esm",
             "property": "default",
             "watch": true

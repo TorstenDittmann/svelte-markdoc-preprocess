@@ -10,7 +10,7 @@ In the `markdoc.config.json` [configuration file](https://github.com/markdoc/lan
     "id": "my-site",
     "path": "docs/content",
     "schema": {
-      "path": ".svelte-kit/markdoc-schema.js",
+      "path": ".svelte-kit/markdoc_schema.js",
       "type": "esm",
       "property": "default",
       "watch": true
