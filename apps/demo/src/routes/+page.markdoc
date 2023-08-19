@@ -5,9 +5,41 @@ This library brings the power of [Markdoc](https://markdoc.dev/) right into your
 - **Components**: Access your Svelte components directly as Markdoc tags. No individual imports or configurations required.
 - **Markdown**: Use Svelte components for nodes.
 - **Layouts**: Add a default and also named layouts.
-- **Flexibility**: Configure Markdoc to your needs.
 - **Typescript**: Supports Typescript out of the box.
 
-## Experimental
+---
 
-This is totally experimental for now, please don't use it *yet*. Unless you're a brave one.
+## Markdoc for Svelte
+
+[Markdoc](https://markdoc.dev/) support for your Svelte application. From personal blogs to massive documentation sites, Markdoc is a content authoring system that grows with you.
+
+## Nodes
+
+```html
+<!-- Heading.svelte -->
+<script>
+    export let level;
+</script>
+
+<svelte:element this={`h${level}`} class={`heading-${level}`}><slot /></svelte:element>
+```
+
+`### Lorem Ipsum` -> `<h3 class="heading-3">Lorem Ipsum</h3>`
+
+## Tags
+
+```html
+<script>
+    export let type = 'info';
+</script>
+
+<div class="callout {type}">
+    <slot />
+</div>
+```
+
+```latex
+{% callout type="check" %}
+Markdoc is open-source—check out its [source](http://github.com/markdoc/markdoc) to see how it works.
+{% /callout %}
+```
