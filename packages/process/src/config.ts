@@ -14,6 +14,10 @@ export type Config = {
      */
     tags: string | null;
     /**
+     * Absoulute path to the folder for partials.
+     */
+    partials: string | null;
+    /**
      * Generate schema files under `./svelte-kit/markdoc-schema.json` to be used with the official [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=Stripe.markdoc-language-support).
      */
     generateSchema: boolean;

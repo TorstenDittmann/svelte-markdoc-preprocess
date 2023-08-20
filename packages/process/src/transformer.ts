@@ -8,7 +8,13 @@ import {
     Tag,
     ConfigType,
 } from '@markdoc/markdoc';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import {
+    existsSync,
+    lstatSync,
+    readFileSync,
+    readdirSync,
+    writeFileSync,
+} from 'fs';
 import { load as loadYaml } from 'js-yaml';
 import { parse as svelteParse, walk } from 'svelte/compiler';
 import { dirname, join } from 'path';
@@ -23,6 +29,7 @@ import {
     getNameOfDeclaration,
     isVariableStatement,
 } from 'typescript';
+import { get_all_files } from './helpers';
 
 type Var = {
     name: string;
@@ -33,6 +40,7 @@ export function transformer({
     content,
     nodes_file,
     tags_file,
+    partials_dir,
     layouts,
     generate_schema,
     config,
@@ -40,6 +48,7 @@ export function transformer({
     content: string;
     nodes_file: Config['nodes'];
     tags_file: Config['tags'];
+    partials_dir: Config['partials'];
     layouts: Config['layouts'];
     generate_schema: Config['generateSchema'];
     config: Config['config'];
@@ -72,6 +81,7 @@ export function transformer({
     const has_tags = Object.keys(tags).length > 0;
     const nodes = prepare_nodes(nodes_file);
     const has_nodes = Object.keys(nodes).length > 0;
+    const partials = prepare_partials(partials_dir);
 
     /**
      * add import for tags
@@ -107,12 +117,15 @@ export function transformer({
             ...config?.nodes,
             ...nodes,
         },
+        partials: {
+            ...config?.partials,
+            ...partials,
+        },
         variables: {
-            frontmatter,
             ...config?.variables,
+            frontmatter,
         },
         functions: config?.functions,
-        partials: config?.partials,
         validation: config?.validation,
     };
 
@@ -348,6 +361,24 @@ function prepare_tags(tags_file: Config['tags']): Record<string, Schema> {
     return tags;
 }
 
+function prepare_partials(
+    folder: Config['partials'],
+): Record<string, ReturnType<typeof markdocParse>> {
+    if (!folder) {
+        return {};
+    }
+
+    return get_all_files(folder).reduce<ReturnType<typeof prepare_partials>>(
+        (carry, file) => {
+            carry[file] = markdocParse(
+                readFileSync(join(folder, file), 'utf8'),
+            );
+            return carry;
+        },
+        {},
+    );
+}
+
 function each_exported_var(filepath: string): Array<[string, string]> {
     const data = readFileSync(filepath, 'utf8');
     const ast = svelteParse(data);
@@ -399,7 +430,7 @@ function create_schema(tags: Record<string, Schema>): void {
                     return;
                 }
             }
-            writeFileSync(target_file, `export default { tags: ${object} };`);
+            writeFileSync(target_file, content);
         } catch (err) {
             console.error(err);
         }

@@ -8,6 +8,7 @@ const processor = (
         layouts = null,
         nodes = null,
         tags = null,
+        partials = null,
         config = null,
         generateSchema = true,
     }: Config = {
@@ -15,6 +16,7 @@ const processor = (
         layouts: null,
         nodes: null,
         tags: null,
+        partials: null,
         config: null,
         generateSchema: true,
     },
@@ -38,6 +40,7 @@ const processor = (
                 generate_schema: generateSchema,
                 nodes_file: nodes,
                 tags_file: tags,
+                partials_dir: partials,
             });
 
             return {

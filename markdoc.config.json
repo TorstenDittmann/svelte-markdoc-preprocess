@@ -1,6 +1,6 @@
 [
     {
-        "id": "my-site",
+        "id": "demo-site",
         "path": "apps/demo",
         "schema": {
             "path": "apps/demo/.svelte-kit/markdoc_schema.js",
