@@ -11,10 +11,17 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { load as loadYaml } from 'js-yaml';
 import { parse as svelteParse, walk } from 'svelte/compiler';
 import { dirname, join } from 'path';
-import { parseSync as swcParse } from '@swc/core';
-import type { BindingIdentifier } from '@swc/core';
 import type { Config } from './config';
 import * as default_schema from './default_schema';
+import {
+    ScriptTarget,
+    SyntaxKind,
+    VariableDeclaration,
+    createSourceFile,
+    getJSDocType,
+    getNameOfDeclaration,
+    isVariableStatement,
+} from 'typescript';
 
 type Var = {
     name: string;
@@ -151,27 +158,37 @@ export function get_component_vars(
      * parse the script with swc
      */
     const script = match[1];
-    const result = swcParse(script, {
-        syntax: 'typescript',
-    });
+    const source = createSourceFile(target, script, ScriptTarget.Latest, true);
 
     /**
      * find and return all exported variables
      */
-    return result.body.reduce<Record<string, SchemaAttribute>>((prev, node) => {
-        if (node.type === 'ExportDeclaration') {
-            if (node.declaration.type === 'VariableDeclaration') {
-                node.declaration.declarations.forEach((decl) => {
-                    if (decl.id.type === 'Identifier') {
-                        prev[decl.id.value] = {
-                            type: ts_to_type(decl.id),
-                        };
+    return source.statements.reduce<Record<string, SchemaAttribute>>(
+        (prev, node) => {
+            if (isVariableStatement(node)) {
+                const is_export_keyword = node.modifiers?.some(
+                    (v) => v.kind === SyntaxKind.ExportKeyword,
+                );
+                if (is_export_keyword) {
+                    const declaration = node.declarationList.declarations.find(
+                        (d) => d.name.kind === SyntaxKind.Identifier,
+                    );
+                    const name =
+                        getNameOfDeclaration(declaration)?.getText(source);
+                    if (!declaration || !name) {
+                        return prev;
                     }
-                });
+                    const type = ts_to_type(declaration);
+                    prev[name] = {
+                        type,
+                    };
+                }
             }
-        }
-        return prev;
-    }, {});
+
+            return prev;
+        },
+        {},
+    );
 }
 
 const uc_map: Record<string, string> = {
@@ -198,19 +215,23 @@ export function sanitize_for_svelte(content: string): string {
  * @param node typescript node
  * @returns
  */
-export function ts_to_type(node: BindingIdentifier): Var['type'] {
-    if (node?.typeAnnotation?.typeAnnotation.type === 'TsKeywordType') {
-        switch (node.typeAnnotation.typeAnnotation.kind) {
-            case 'string':
+export function ts_to_type(declaration: VariableDeclaration): Var['type'] {
+    const kind = declaration.type?.kind
+        ? declaration.type.kind
+        : getJSDocType(declaration.parent.parent)?.kind;
+    if (kind) {
+        switch (kind) {
+            case SyntaxKind.StringKeyword:
                 return String;
-            case 'number':
+            case SyntaxKind.NumberKeyword:
                 return Number;
-            case 'boolean':
+            case SyntaxKind.BooleanKeyword:
                 return Boolean;
             default:
                 throw new Error('Can only handly primitive types.');
         }
     }
+
     return String;
 }
 
