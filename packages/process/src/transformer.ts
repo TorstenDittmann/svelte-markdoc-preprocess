@@ -337,10 +337,10 @@ function prepare_tags(tags_file: Config['tags']): Record<string, Schema> {
 
 function each_exported_var(filepath: string): Array<[string, string]> {
     const data = readFileSync(filepath, 'utf8');
-    const t = svelteParse(data);
+    const ast = svelteParse(data);
     const tup: Array<[string, string]> = [];
     //@ts-ignore weird types here from svelte
-    walk(t, {
+    walk(ast, {
         enter(node, parent) {
             if (node.type === 'ExportSpecifier') {
                 if (
@@ -352,6 +352,7 @@ function each_exported_var(filepath: string): Array<[string, string]> {
             }
         },
     });
+
     return tup;
 }
 

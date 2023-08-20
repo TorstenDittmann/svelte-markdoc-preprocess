@@ -15,8 +15,9 @@
 
     export let content: string;
     export let language: string;
+    export let process: boolean;
 
-    const result = hljs.highlight(content, { language: language ?? 'sh' });
+    const result = process ? hljs.highlight(content, { language: language ?? 'sh' }) : { value: content };
 </script>
 
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
