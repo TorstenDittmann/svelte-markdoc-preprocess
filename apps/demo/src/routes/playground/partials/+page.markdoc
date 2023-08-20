@@ -1,0 +1,7 @@
+{% partial file="test.md" /%}
+
+{% partial file="nested/file.md" /%}
+
+{% partial
+   file="variable.md"
+   variables={name: "I am passed to a variable."} /%}
