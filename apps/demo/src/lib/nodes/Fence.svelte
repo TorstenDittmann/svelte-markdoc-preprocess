@@ -6,8 +6,10 @@
     import shell from 'highlight.js/lib/languages/shell';
     import markdown from 'highlight.js/lib/languages/markdown';
     import json from 'highlight.js/lib/languages/json';
+    import typescript from 'highlight.js/lib/languages/typescript';
 
     hljs.registerLanguage('javascript', javascript);
+    hljs.registerLanguage('typescript', typescript);
     hljs.registerLanguage('html', xml);
     hljs.registerLanguage('sh', shell);
     hljs.registerLanguage('md', markdown);

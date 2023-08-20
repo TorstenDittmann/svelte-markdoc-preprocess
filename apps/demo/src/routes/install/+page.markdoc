@@ -27,3 +27,42 @@ const config = {
 
 I am a paragraph with **bold** words. But you can also use Svelte Components:
 ```
+
+## Config
+
+Following options are available:
+
+### `extensions`
+Extensions to be processed.)
+- Type: `string[]`
+- Default: `[".markdoc"]`
+
+### `layouts`
+Layouts to be used for pages.
+- Type: `string`
+- Default: `null`
+
+### `nodes`
+Absoulute path to the .svelte file exporting components for nodes.
+- Type: `string`
+- Default: `null`
+
+### `tags`
+Absoulute path to the .svelte file exporting components for tags.
+- Type: `string`
+- Default: `null`
+
+### `partials`
+Absoulute path to the folder for partials.
+- Type: `string`
+- Default: `null`
+
+### `generateSchema`
+Generate schema files under `./svelte-kit/markdoc-schema.json` to be used with the official [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=Stripe.markdoc-language-support).
+- Type: `boolean`
+- Default: `true`
+
+### `config`
+Configuration for the markdoc compiler.
+- Type: `object`
+- Default: `null`
