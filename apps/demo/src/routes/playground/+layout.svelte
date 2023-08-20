@@ -1,6 +1,7 @@
 <nav>
-    <a href="/playground/components">components</a> |
+    <a href="/playground/tags">tags</a> |
     <a href="/playground/partials">partials</a> |
+    <a href="/playground/layout">layout</a> |
     <a href="/playground/markdown">markdown</a>
 </nav>
 
