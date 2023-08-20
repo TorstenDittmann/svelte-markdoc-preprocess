@@ -1,6 +1,14 @@
 <script>
-    import { dev } from "$app/environment";
+    import { dev } from '$app/environment';
 </script>
+
+<svelte:head>
+    <title>svelte-markdoc-preprocess</title>
+    <meta
+        name="description"
+        content="A Svelte preprocessor that brings the power of Markdoc right into your Svelte applications!"
+    />
+</svelte:head>
 
 <header>
     <nav>
@@ -12,10 +20,12 @@
         <a href="/layouts">layouts</a> |
         <a href="/partials">partials</a> |
         <a href="/advanced">advanced</a> |
-        <a target="_blank" href="https://github.com/TorstenDittmann/svelte-markdoc-preprocess">github</a>
-		{#if dev}
-			| <a href="/playground">playground</a>
-		{/if}
+        {#if dev}
+            <a href="/playground">playground</a> |
+        {/if}
+        <a target="_blank" href="https://github.com/TorstenDittmann/svelte-markdoc-preprocess">
+            github
+        </a>
     </nav>
 </header>
 
