@@ -10,9 +10,7 @@ import {
 } from '@markdoc/markdoc';
 import {
     existsSync,
-    lstatSync,
     readFileSync,
-    readdirSync,
     writeFileSync,
 } from 'fs';
 import { load as loadYaml } from 'js-yaml';
@@ -163,12 +161,6 @@ const script_tags_regular_expression = new RegExp(
     's',
 );
 
-/**
- * Extracts all exported variables from a svelte component.
- *
- * @param path relative path of the component
- * @param layout absoulte path of the layout
- */
 export function get_component_vars(
     path: string,
     layout: string,
@@ -222,12 +214,7 @@ const uc_map: Record<string, string> = {
     '}': '&rcub;',
 };
 const uc_regular_expression = new RegExp(Object.keys(uc_map).join('|'), 'gi');
-/**
- * Replaces all the special characters that might intefer with the svelte compiler.
- *
- * @param content string to sanitize
- * @returns
- */
+
 export function sanitize_for_svelte(content: string): string {
     return content.replace(
         uc_regular_expression,
@@ -235,12 +222,6 @@ export function sanitize_for_svelte(content: string): string {
     );
 }
 
-/**
- * Converts a typescript type to a type constructor for Markdoc.
- *
- * @param node typescript node
- * @returns
- */
 export function ts_to_type(declaration: VariableDeclaration): Var['type'] {
     const kind = declaration.type?.kind
         ? declaration.type.kind
