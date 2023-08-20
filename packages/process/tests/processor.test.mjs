@@ -19,7 +19,6 @@ test('preprocessor', async (context) => {
             undefined,
         );
     });
-
     await context.test('handles extension files', async () => {
         assert.deepEqual(
             await preprocess.markup({
@@ -31,7 +30,6 @@ test('preprocessor', async (context) => {
             },
         );
     });
-
     await context.test('respects config extensions', async () => {
         const preprocess = markdoc({
             extensions: ['.test'],
@@ -53,7 +51,6 @@ test('preprocessor', async (context) => {
             },
         );
     });
-
     await context.test('uses tags', async () => {
         const module_path = absoulute(import.meta.url, './tags/module.svelte');
         const script = `<script>import * as INTERNAL__TAGS from '${module_path}';</script>`;
@@ -88,7 +85,6 @@ test('preprocessor', async (context) => {
             },
         );
     });
-
     await context.test('uses nodes', async () => {
         const module_path = absoulute(import.meta.url, './nodes/module.svelte');
         const script = `<script>import * as INTERNAL__NODES from '${module_path}';</script>`;

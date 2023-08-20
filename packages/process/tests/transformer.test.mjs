@@ -4,7 +4,7 @@ import { sanitize_for_svelte } from '../dist/transformer.js';
 
 test('sanitize for svelte', async (context) => {
     await Promise.all(
-        ['{', '}'].map(async (char) =>
+        ['{', '}', '{svelte_var}'].map(async (char) =>
             context.test(`takes care of ${char}`, () => {
                 const sanitized = sanitize_for_svelte(char);
                 assert.ok(!sanitized.includes(char));
