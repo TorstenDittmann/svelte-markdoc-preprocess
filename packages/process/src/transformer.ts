@@ -181,7 +181,7 @@ export function get_component_vars(
     }
 
     /**
-     * parse the script with swc
+     * create an ast using typescript
      */
     const script = match[1];
     const source = createSourceFile(target, script, ScriptTarget.Latest, true);
