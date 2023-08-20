@@ -1,3 +1,5 @@
+import { ConfigType } from '@markdoc/markdoc';
+
 export type Config = {
     /**
      * Extensions to be processed.
@@ -22,4 +24,8 @@ export type Config = {
         default: string;
         [key: string]: string;
     } | null;
+    /**
+     * Configuration for the markdoc compiler.
+     */
+    config: ConfigType | null;
 };

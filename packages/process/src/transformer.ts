@@ -6,6 +6,7 @@ import {
     renderers,
     NodeType,
     Tag,
+    ConfigType,
 } from '@markdoc/markdoc';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { load as loadYaml } from 'js-yaml';
@@ -34,12 +35,14 @@ export function transformer({
     tags_file,
     layouts,
     generate_schema,
+    config,
 }: {
     content: string;
     nodes_file: Config['nodes'];
     tags_file: Config['tags'];
     layouts: Config['layouts'];
     generate_schema: Config['generateSchema'];
+    config: Config['config'];
 }): string {
     /**
      * create ast for markdoc
@@ -95,12 +98,22 @@ export function transformer({
         create_schema(tags);
     }
 
-    const configuration = {
-        tags,
-        nodes,
+    const configuration: ConfigType = {
+        tags: {
+            ...config?.tags,
+            ...tags,
+        },
+        nodes: {
+            ...config?.nodes,
+            ...nodes,
+        },
         variables: {
             frontmatter,
+            ...config?.variables,
         },
+        functions: config?.functions,
+        partials: config?.partials,
+        validation: config?.validation,
     };
 
     /**

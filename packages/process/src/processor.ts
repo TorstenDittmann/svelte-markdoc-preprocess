@@ -8,12 +8,14 @@ const processor = (
         layouts = null,
         nodes = null,
         tags = null,
+        config = null,
         generateSchema = true,
     }: Config = {
         extensions: ['.markdoc'],
         layouts: null,
         nodes: null,
         tags: null,
+        config: null,
         generateSchema: true,
     },
 ): PreprocessorGroup => {
@@ -30,6 +32,7 @@ const processor = (
              * Add svelte components to be used with markdoc tags
              */
             const code = transformer({
+                config,
                 content,
                 layouts,
                 generate_schema: generateSchema,
