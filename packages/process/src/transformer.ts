@@ -9,16 +9,6 @@ import {
     ConfigType,
 } from '@markdoc/markdoc';
 import {
-    existsSync,
-    readFileSync,
-    writeFileSync,
-} from 'fs';
-import { load as loadYaml } from 'js-yaml';
-import { parse as svelteParse, walk } from 'svelte/compiler';
-import { dirname, join } from 'path';
-import type { Config } from './config';
-import * as default_schema from './default_schema';
-import {
     ScriptTarget,
     SyntaxKind,
     VariableDeclaration,
@@ -27,7 +17,12 @@ import {
     getNameOfDeclaration,
     isVariableStatement,
 } from 'typescript';
-import { get_all_files } from './helpers';
+import { dirname, join } from 'path';
+import { load as loadYaml } from 'js-yaml';
+import { parse as svelteParse, walk } from 'svelte/compiler';
+import { get_all_files, path_exists, read_file, write_to_file } from './utils';
+import * as default_schema from './default_schema';
+import type { Config } from './config';
 
 type Var = {
     name: string;
@@ -166,7 +161,7 @@ export function get_component_vars(
     layout: string,
 ): Record<string, SchemaAttribute> {
     const target = join(dirname(layout), path);
-    const data = readFileSync(target, 'utf8');
+    const data = read_file(target);
     const match = data.match(script_tags_regular_expression);
     if (!match) {
         return {};
@@ -351,9 +346,7 @@ function prepare_partials(
 
     return get_all_files(folder).reduce<ReturnType<typeof prepare_partials>>(
         (carry, file) => {
-            carry[file] = markdocParse(
-                readFileSync(join(folder, file), 'utf8'),
-            );
+            carry[file] = markdocParse(read_file(folder, file));
             return carry;
         },
         {},
@@ -361,7 +354,7 @@ function prepare_partials(
 }
 
 function each_exported_var(filepath: string): Array<[string, string]> {
-    const data = readFileSync(filepath, 'utf8');
+    const data = read_file(filepath);
     const ast = svelteParse(data);
     const tup: Array<[string, string]> = [];
     //@ts-ignore weird types here from svelte
@@ -404,14 +397,14 @@ function create_schema(tags: Record<string, Schema>): void {
 
     const target_directory = join(process.cwd(), '.svelte-kit');
     const target_file = join(target_directory, 'markdoc_schema.js');
-    if (existsSync(target_directory)) {
+    if (path_exists(target_directory)) {
         try {
-            if (existsSync(target_file)) {
-                if (content === readFileSync(target_file, 'utf8')) {
+            if (path_exists(target_file)) {
+                if (content === read_file(target_file)) {
                     return;
                 }
             }
-            writeFileSync(target_file, content);
+            write_to_file(target_file, content);
         } catch (err) {
             console.error(err);
         }

@@ -132,7 +132,6 @@ test('preprocessor', async (context) => {
             },
         );
     });
-
     await context.test('uses nodes and tags', async () => {
         const nodes_module_path = absoulute(
             import.meta.url,
@@ -204,6 +203,110 @@ test('preprocessor', async (context) => {
         assert.deepEqual(
             await preprocess.markup({
                 content: '{% unknown %}',
+                filename: 'test.markdoc',
+            }),
+            {
+                code: `${script}<article></article>`,
+            },
+        );
+    });
+    await context.test('uses partials', async () => {
+        const partials_module_path = absoulute(import.meta.url, './partials');
+        const preprocess = markdoc({
+            partials: partials_module_path,
+        });
+        assert.deepEqual(
+            await preprocess.markup({
+                content: '{% partial file="test.md" /%}',
+                filename: 'test.markdoc',
+            }),
+            {
+                code: `<article><h1>I am a partial</h1></article>`,
+            },
+        );
+        assert.deepEqual(
+            await preprocess.markup({
+                content: `{% partial file="variables.md" variables={lorem: "Lorem", ipsum: "Ipsum"}  /%}`,
+                filename: 'test.markdoc',
+            }),
+            {
+                code: `<article><h1>Lorem Ipsum</h1></article>`,
+            },
+        );
+        assert.deepEqual(
+            await preprocess.markup({
+                content: `{% partial file="nested/file.md" /%}`,
+                filename: 'test.markdoc',
+            }),
+            {
+                code: `<article><h1>I am nested</h1></article>`,
+            },
+        );
+        assert.deepEqual(
+            await preprocess.markup({
+                content: `{% partial file="unknown.md" /%}`,
+                filename: 'test.markdoc',
+            }),
+            {
+                code: `<article></article>`,
+            },
+        );
+    });
+    await context.test('uses partials with nodes and tags', async () => {
+        const partials_module_path = absoulute(import.meta.url, './partials');
+        const nodes_module_path = absoulute(
+            import.meta.url,
+            './nodes/module.svelte',
+        );
+        const tags_module_path = absoulute(
+            import.meta.url,
+            './tags/module.svelte',
+        );
+        const script = `<script>import * as INTERNAL__TAGS from '${tags_module_path}';import * as INTERNAL__NODES from '${nodes_module_path}';</script>`;
+        const preprocess = markdoc({
+            partials: partials_module_path,
+            nodes: nodes_module_path,
+            tags: tags_module_path,
+        });
+        assert.deepEqual(
+            await preprocess.markup({
+                content: '{% partial file="test.md" /%}',
+                filename: 'test.markdoc',
+            }),
+            {
+                code: `${script}<article><INTERNAL__NODES.Heading level="1">I am a partial</INTERNAL__NODES.Heading></article>`,
+            },
+        );
+        assert.deepEqual(
+            await preprocess.markup({
+                content: `{% partial file="variables.md" variables={lorem: "Lorem", ipsum: "Ipsum"}  /%}`,
+                filename: 'test.markdoc',
+            }),
+            {
+                code: `${script}<article><INTERNAL__NODES.Heading level="1">Lorem Ipsum</INTERNAL__NODES.Heading></article>`,
+            },
+        );
+        assert.deepEqual(
+            await preprocess.markup({
+                content: `{% partial file="tags.md" /%}`,
+                filename: 'test.markdoc',
+            }),
+            {
+                code: `${script}<article><INTERNAL__TAGS.Hello></INTERNAL__TAGS.Hello><INTERNAL__TAGS.Slot><p>slot content</p></INTERNAL__TAGS.Slot></article>`,
+            },
+        );
+        assert.deepEqual(
+            await preprocess.markup({
+                content: `{% partial file="nested/file.md" /%}`,
+                filename: 'test.markdoc',
+            }),
+            {
+                code: `${script}<article><INTERNAL__NODES.Heading level="1">I am nested</INTERNAL__NODES.Heading></article>`,
+            },
+        );
+        assert.deepEqual(
+            await preprocess.markup({
+                content: `{% partial file="unknown.md" /%}`,
                 filename: 'test.markdoc',
             }),
             {
