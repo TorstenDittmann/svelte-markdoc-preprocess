@@ -1,6 +1,11 @@
-{% mytest %}
-I am slot content.
-{% /mytest %}
+{% addition a=4 b=4 /%}
 
-{% addition a=4 b=6 /%}
 {% multiply a=3 b=8 /%}
+
+{% partial file="test.md" /%}
+
+{% partial file="nested/file.md" /%}
+
+{% partial
+   file="variable.md"
+   variables={name: "I am passed to a variable."} /%}

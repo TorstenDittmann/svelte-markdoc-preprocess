@@ -10,6 +10,7 @@
         <a href="/nodes">nodes</a> |
         <a href="/tags">tags</a> |
         <a href="/layouts">layouts</a> |
+        <a href="/partials">partials</a> |
         <a href="/advanced">advanced</a> |
         <a target="_blank" href="https://github.com/TorstenDittmann/svelte-markdoc-preprocess">github</a>
 		{#if dev}
