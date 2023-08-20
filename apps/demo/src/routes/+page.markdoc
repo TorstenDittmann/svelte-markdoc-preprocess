@@ -14,6 +14,16 @@ This library brings the power of [Markdoc](https://markdoc.dev/) right into your
 
 [Markdoc](https://markdoc.dev/) support for your Svelte application. From personal blogs to massive documentation sites, Markdoc is a content authoring system that grows with you.
 
+```
+---
+title: What is Markdoc?
+---
+
+# {% $markdoc.frontmatter.title %} {% #overview %}
+
+Markdoc is a Markdown-based toolchain for creating custom documentation sites.
+```
+
 ## Nodes
 
 ```html
