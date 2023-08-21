@@ -2,25 +2,25 @@ import { Config } from './config';
 import { transformer } from './transformer';
 import type { PreprocessorGroup } from 'svelte/compiler';
 
-const processor = (
-    {
-        extensions = ['.markdoc'],
-        layouts = null,
-        nodes = null,
-        tags = null,
-        partials = null,
-        config = null,
-        generateSchema = true,
-    }: Config = {
-        extensions: ['.markdoc'],
-        layouts: null,
-        nodes: null,
-        tags: null,
-        partials: null,
-        config: null,
-        generateSchema: true,
-    },
-): PreprocessorGroup => {
+const default_config: Config = {
+    extensions: ['.markdoc', '.mdoc', '.markdown', '.md'],
+    generateSchema: true,
+    layouts: null,
+    nodes: null,
+    tags: null,
+    partials: null,
+    config: null,
+};
+
+const processor = ({
+    extensions = default_config.extensions,
+    generateSchema = default_config.generateSchema,
+    layouts = default_config.layouts,
+    nodes = default_config.nodes,
+    tags = default_config.tags,
+    partials = default_config.partials,
+    config = default_config.config,
+}: Config = default_config): PreprocessorGroup => {
     return {
         name: 'markdoc',
         async markup({ content, filename }) {
