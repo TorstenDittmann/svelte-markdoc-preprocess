@@ -1,6 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { sanitize_for_svelte, create_module_context } from '../dist/transformer.js';
+import {
+    sanitize_for_svelte,
+    create_module_context,
+} from '../dist/transformer.js';
 
 test('sanitize for svelte', async (context) => {
     await Promise.all(
@@ -20,8 +23,11 @@ test('create module context', async (context) => {
         const context = create_module_context({
             string: 'text',
             number: 123,
-            boolean: true
+            boolean: true,
         });
-        assert.equal(context, '<script context="module">export const frontmatter = {"string":"text","number":123,"boolean":true};</script>');
-    })
+        assert.equal(
+            context,
+            '<script context="module">export const frontmatter = {"string":"text","number":123,"boolean":true};</script>',
+        );
+    });
 });

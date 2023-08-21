@@ -159,7 +159,9 @@ export function transformer({
     return transformed;
 }
 
-export function create_module_context(frontmatter: Record<string, string>): string {
+export function create_module_context(
+    frontmatter: Record<string, string>,
+): string {
     return (
         `<script context="module">` +
         `export const frontmatter = ${JSON.stringify(frontmatter)};` +
