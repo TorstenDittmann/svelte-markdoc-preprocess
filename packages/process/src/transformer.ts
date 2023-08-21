@@ -133,6 +133,14 @@ export function transformer({
     const code = sanitize_for_svelte(renderers.html(nast));
 
     let transformed = '';
+
+    /**
+     * add module context if frontmatter is usef
+     */
+    if (Object.keys(frontmatter).length > 0) {
+        transformed += create_module_context(frontmatter);
+    }
+
     /**
      * add all dependencies to the document
      */
@@ -149,6 +157,14 @@ export function transformer({
     }
 
     return transformed;
+}
+
+export function create_module_context(frontmatter: Record<string, string>): string {
+    return (
+        `<script context="module">` +
+        `export const frontmatter = ${JSON.stringify(frontmatter)};` +
+        `</script>`
+    );
 }
 
 const script_tags_regular_expression = new RegExp(

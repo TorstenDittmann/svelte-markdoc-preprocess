@@ -51,6 +51,19 @@ test('preprocessor', async (context) => {
             },
         );
     });
+    await context.test('exports frontmatter', async () => {
+        const preprocess = markdoc();
+        const content = `---\nlorem: ipsum\n---\n# Hello World`;
+        assert.deepEqual(
+            await preprocess.markup({
+                content,
+                filename: 'test.markdoc',
+            }),
+            {
+                code: '<script context="module">export const frontmatter = {"lorem":"ipsum"};</script><article><h1>Hello World</h1></article>',
+            },
+        );
+    });
     await context.test('uses tags', async () => {
         const module_path = absoulute(import.meta.url, './tags/module.svelte');
         const script = `<script>import * as INTERNAL__TAGS from '${module_path}';</script>`;
