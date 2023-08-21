@@ -10,6 +10,20 @@ test('preprocessor', async (context) => {
         assert.ok(preprocess.name === 'markdoc');
         assert.ok('markup' in preprocess);
     });
+    await context.test('respects default config', async () => {
+        const preprocess = markdoc({
+            generateSchema: false,
+        });
+        assert.deepEqual(
+            await preprocess.markup({
+                content: '# Hello World',
+                filename: 'test.markdoc',
+            }),
+            {
+                code: '<article><h1>Hello World</h1></article>',
+            },
+        );
+    });
     await context.test('ignores non-extension files', async () => {
         assert.equal(
             await preprocess.markup({
@@ -20,14 +34,19 @@ test('preprocessor', async (context) => {
         );
     });
     await context.test('handles extension files', async () => {
-        assert.deepEqual(
-            await preprocess.markup({
-                content: '# Hello World',
-                filename: 'test.markdoc',
+        await Promise.all(
+            ['markdoc', 'mdoc', 'markdown', 'md'].map((extension) => {
+                return preprocess
+                    .markup({
+                        content: '# Hello World',
+                        filename: 'test.' + extension,
+                    })
+                    .then((result) => {
+                        return assert.deepEqual(result, {
+                            code: '<article><h1>Hello World</h1></article>',
+                        });
+                    });
             }),
-            {
-                code: '<article><h1>Hello World</h1></article>',
-            },
         );
     });
     await context.test('respects config extensions', async () => {
