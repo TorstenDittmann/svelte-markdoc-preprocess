@@ -212,6 +212,7 @@ export function get_component_vars(
                     const type = ts_to_type(declaration);
                     prev[name] = {
                         type,
+                        required: !declaration.initializer,
                     };
                 }
             }
