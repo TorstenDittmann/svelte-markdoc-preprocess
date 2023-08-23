@@ -74,7 +74,7 @@ export function render_html(node: RenderableTreeNodes): string {
 function is_void_element(name: string): boolean {
     return [
         'area',
-        +'base',
+        'base',
         'br',
         'col',
         'embed',
