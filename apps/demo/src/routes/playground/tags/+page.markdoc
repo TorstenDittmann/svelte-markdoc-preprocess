@@ -1,3 +1,5 @@
 {% addition a=4 b=4 /%}
 
 {% multiply a=3 b=8 /%}
+
+{% types string="lorem ipsum" number=123 boolean=true /%}

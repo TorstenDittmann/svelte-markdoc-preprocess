@@ -3,7 +3,6 @@ import {
     SchemaAttribute,
     parse as markdocParse,
     transform,
-    renderers,
     NodeType,
     Tag,
     ConfigType,
@@ -20,6 +19,7 @@ import {
 import { dirname, join } from 'path';
 import { load as loadYaml } from 'js-yaml';
 import { parse as svelteParse, walk } from 'svelte/compiler';
+import { render_html } from './renderer';
 import { get_all_files, path_exists, read_file, write_to_file } from './utils';
 import * as default_schema from './default_schema';
 import type { Config } from './config';
@@ -130,7 +130,7 @@ export function transformer({
     /**
      * render to html
      */
-    const code = sanitize_for_svelte(renderers.html(nast));
+    const code = render_html(nast);
 
     let transformed = '';
 
