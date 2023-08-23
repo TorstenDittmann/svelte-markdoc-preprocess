@@ -129,7 +129,7 @@ test('preprocessor', async (context) => {
                 filename: 'test.markdoc',
             }),
             {
-                code: `${script}<article><INTERNAL__NODES.Heading level="1">Hello World</INTERNAL__NODES.Heading></article>`,
+                code: `${script}<article><INTERNAL__NODES.Heading level={1}>Hello World</INTERNAL__NODES.Heading></article>`,
             },
         );
         assert.deepEqual(
@@ -138,7 +138,7 @@ test('preprocessor', async (context) => {
                 filename: 'test.markdoc',
             }),
             {
-                code: `${script}<article><INTERNAL__NODES.Heading level="2">Hello World</INTERNAL__NODES.Heading></article>`,
+                code: `${script}<article><INTERNAL__NODES.Heading level={2}>Hello World</INTERNAL__NODES.Heading></article>`,
             },
         );
         assert.deepEqual(
@@ -147,7 +147,7 @@ test('preprocessor', async (context) => {
                 filename: 'test.markdoc',
             }),
             {
-                code: `${script}<article><INTERNAL__NODES.Heading id="my-id" level="1">Hello World</INTERNAL__NODES.Heading></article>`,
+                code: `${script}<article><INTERNAL__NODES.Heading id="my-id" level={1}>Hello World</INTERNAL__NODES.Heading></article>`,
             },
         );
         assert.deepEqual(
@@ -156,7 +156,7 @@ test('preprocessor', async (context) => {
                 filename: 'test.markdoc',
             }),
             {
-                code: `${script}<article><INTERNAL__NODES.Heading class="my-class" level="1">Hello World</INTERNAL__NODES.Heading></article>`,
+                code: `${script}<article><INTERNAL__NODES.Heading class="my-class" level={1}>Hello World</INTERNAL__NODES.Heading></article>`,
             },
         );
     });
@@ -180,7 +180,7 @@ test('preprocessor', async (context) => {
                 filename: 'test.markdoc',
             }),
             {
-                code: `${script}<article><INTERNAL__NODES.Heading level="1">Hello World</INTERNAL__NODES.Heading></article>`,
+                code: `${script}<article><INTERNAL__NODES.Heading level={1}>Hello World</INTERNAL__NODES.Heading></article>`,
             },
         );
         assert.deepEqual(
@@ -189,7 +189,7 @@ test('preprocessor', async (context) => {
                 filename: 'test.markdoc',
             }),
             {
-                code: `${script}<article><INTERNAL__NODES.Heading level="2">Hello World</INTERNAL__NODES.Heading></article>`,
+                code: `${script}<article><INTERNAL__NODES.Heading level={2}>Hello World</INTERNAL__NODES.Heading></article>`,
             },
         );
         assert.deepEqual(
@@ -198,7 +198,7 @@ test('preprocessor', async (context) => {
                 filename: 'test.markdoc',
             }),
             {
-                code: `${script}<article><INTERNAL__NODES.Heading id="my-id" level="1">Hello World</INTERNAL__NODES.Heading></article>`,
+                code: `${script}<article><INTERNAL__NODES.Heading id="my-id" level={1}>Hello World</INTERNAL__NODES.Heading></article>`,
             },
         );
         assert.deepEqual(
@@ -207,7 +207,7 @@ test('preprocessor', async (context) => {
                 filename: 'test.markdoc',
             }),
             {
-                code: `${script}<article><INTERNAL__NODES.Heading class="my-class" level="1">Hello World</INTERNAL__NODES.Heading></article>`,
+                code: `${script}<article><INTERNAL__NODES.Heading class="my-class" level={1}>Hello World</INTERNAL__NODES.Heading></article>`,
             },
         );
         assert.deepEqual(
@@ -302,7 +302,7 @@ test('preprocessor', async (context) => {
                 filename: 'test.markdoc',
             }),
             {
-                code: `${script}<article><INTERNAL__NODES.Heading level="1">I am a partial</INTERNAL__NODES.Heading></article>`,
+                code: `${script}<article><INTERNAL__NODES.Heading level={1}>I am a partial</INTERNAL__NODES.Heading></article>`,
             },
         );
         assert.deepEqual(
@@ -311,7 +311,7 @@ test('preprocessor', async (context) => {
                 filename: 'test.markdoc',
             }),
             {
-                code: `${script}<article><INTERNAL__NODES.Heading level="1">Lorem Ipsum</INTERNAL__NODES.Heading></article>`,
+                code: `${script}<article><INTERNAL__NODES.Heading level={1}>Lorem Ipsum</INTERNAL__NODES.Heading></article>`,
             },
         );
         assert.deepEqual(
@@ -329,7 +329,7 @@ test('preprocessor', async (context) => {
                 filename: 'test.markdoc',
             }),
             {
-                code: `${script}<article><INTERNAL__NODES.Heading level="1">I am nested</INTERNAL__NODES.Heading></article>`,
+                code: `${script}<article><INTERNAL__NODES.Heading level={1}>I am nested</INTERNAL__NODES.Heading></article>`,
             },
         );
         assert.deepEqual(
