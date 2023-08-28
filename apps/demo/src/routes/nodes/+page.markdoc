@@ -13,6 +13,9 @@ Create a Svelte file and export Svelte components with the same name as the node
 
 ```js
 // svelte.config.js
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
 markdoc({
     nodes: join(dirname(fileURLToPath(import.meta.url)), './src/lib/Nodes.svelte'),
 })

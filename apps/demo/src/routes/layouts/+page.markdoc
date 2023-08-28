@@ -4,6 +4,9 @@ You can define layouts in the `markdoc` options.
 
 ```js
 // svelte.config.js
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
 markdoc({
     layouts: {
         default: join(
