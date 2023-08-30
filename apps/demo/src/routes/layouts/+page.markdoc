@@ -16,6 +16,36 @@ markdoc({
         default: join(
             dirname(fileURLToPath(import.meta.url)),
             './src/lib/Layout.svelte'
+        )
+    }
+})
+```
+
+Layout files are basically Svelte components with a slot. The `default` slot is used for all files.
+
+```html
+<!-- ./src/lib/Layout.svelte -->
+<nav>
+    ...
+</nav>
+
+<slot />
+```
+
+### Named
+
+If you want to use a named layout for a specific file, you can specify it in the frontmatter.
+
+```js
+// svelte.config.js
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+markdoc({
+    layouts: {
+        default: join(
+            dirname(fileURLToPath(import.meta.url)),
+            './src/lib/Layout.svelte'
         ),
         some_other_layout: join(
             dirname(fileURLToPath(import.meta.url)),
@@ -24,18 +54,6 @@ markdoc({
     }
 })
 ```
-
-Layout files are basically Svelte components with a slot.
-
-```html
-<!-- ./src/lib/Layout.svelte -->
-<nav>
-    ...
-</nav>
-<slot />
-```
-
-And use them in using the `layout` key in frontmatter. If no layout is defined with frontmatter, the default layout will be used.
 
 ```
 <!-- +page.markdoc -->
