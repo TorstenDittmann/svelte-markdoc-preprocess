@@ -342,4 +342,43 @@ test('preprocessor', async (context) => {
             },
         );
     });
+    await context.test('uses layout', async () => {
+        const layout_default = absoulute(
+            import.meta.url,
+            './layouts/default.svelte',
+        );
+        const layout_named = absoulute(
+            import.meta.url,
+            './layouts/named.svelte',
+        );
+        const preprocess = markdoc({
+            extensions: ['.markdoc'],
+            layouts: {
+                default: layout_default,
+                named: layout_named,
+            },
+        });
+        assert.deepEqual(
+            await preprocess.markup({
+                content: '# Hello World',
+                filename: 'test.markdoc',
+            }),
+            {
+                code: `<script>import INTERNAL__LAYOUT from '${layout_default}';</script><INTERNAL__LAYOUT><article><h1>Hello World</h1></article></INTERNAL__LAYOUT>`,
+            },
+        );
+        assert.deepEqual(
+            await preprocess.markup({
+                content: `---
+layout: named
+---
+
+# Hello World`,
+                filename: 'test.markdoc',
+            }),
+            {
+                code: `<script context="module">export const frontmatter = {"layout":"named"};</script><script>import INTERNAL__LAYOUT from '${layout_named}';</script><INTERNAL__LAYOUT {...frontmatter}><article><h1>Hello World</h1></article></INTERNAL__LAYOUT>`,
+            },
+        );
+    });
 });

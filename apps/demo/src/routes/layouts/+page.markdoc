@@ -1,3 +1,7 @@
+---
+title: Layouts
+---
+
 ## Layouts
 
 You can define layouts in the `markdoc` options.
@@ -40,4 +44,29 @@ layout: some_other_layout
 ---
 
 # some other content
+```
+
+### Props
+
+Layouts will be passed the frontmatter as props from the Markdoc file.
+
+```html
+<!-- ./src/lib/Layout.svelte -->
+<script>
+    export let title;
+    export let description;
+</script>
+
+<svelte:head>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+</svelte:head>
+```
+
+```
+<!-- +page.markdoc -->
+---
+title: Lorem ipsum
+description: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+---
 ```

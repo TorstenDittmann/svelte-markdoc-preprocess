@@ -57,6 +57,7 @@ export function transformer({
     const frontmatter = (
         ast.attributes.frontmatter ? loadYaml(ast.attributes.frontmatter) : {}
     ) as Record<string, string>;
+    const has_frontmatter = Object.keys(frontmatter).length > 0;
 
     /**
      * get layout from frontmatter, use default or no at all
@@ -151,7 +152,10 @@ export function transformer({
      * wrap the document in the layout
      */
     if (has_layout) {
-        transformed += `<INTERNAL__LAYOUT>${code}</INTERNAL__LAYOUT>`;
+        transformed += `<INTERNAL__LAYOUT`;
+        transformed += has_frontmatter ? ' {...frontmatter}>' : '>';
+        transformed += code;
+        transformed += `</INTERNAL__LAYOUT>`;
     } else {
         transformed += code;
     }
