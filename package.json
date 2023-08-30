@@ -14,7 +14,7 @@
         "@turbo/gen": "^1.9.7",
         "prettier": "^2.8.0",
         "svelte": "^4.0.5",
-        "turbo": "latest",
+        "turbo": "^1.10.13",
         "typescript": "^5.1.6"
     },
     "name": "repo",
