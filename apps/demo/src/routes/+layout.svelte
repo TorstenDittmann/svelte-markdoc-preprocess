@@ -2,14 +2,6 @@
     import { dev } from '$app/environment';
 </script>
 
-<svelte:head>
-    <title>svelte-markdoc-preprocess</title>
-    <meta
-        name="description"
-        content="A Svelte preprocessor that brings the power of Markdoc right into your Svelte applications!"
-    />
-</svelte:head>
-
 <header>
     <nav>
         <h1>svelte-markdoc-preprocess</h1>

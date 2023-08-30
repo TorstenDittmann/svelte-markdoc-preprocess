@@ -1,3 +1,7 @@
+---
+title: Nodes
+---
+
 ## Nodes
 
 You can use Svelte components in your markdown files, you can define Svelte Component for each node.

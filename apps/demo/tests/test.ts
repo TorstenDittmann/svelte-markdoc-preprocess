@@ -28,6 +28,6 @@ test('partials work', async ({ page }) => {
 test('named layouts work', async ({ page }) => {
     await page.goto('http://localhost:4173/playground/layout');
 
-    expect(await page.content()).toContain('I am on an alternate layout');
+    expect(await page.content()).toContain('I am on an alternative layout');
     expect(await page.content()).toContain('And it works!');
 });

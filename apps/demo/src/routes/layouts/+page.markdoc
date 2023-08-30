@@ -1,6 +1,40 @@
+---
+title: Layouts
+---
+
 ## Layouts
 
 You can define layouts in the `markdoc` options.
+
+```js
+// svelte.config.js
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+markdoc({
+    layouts: {
+        default: join(
+            dirname(fileURLToPath(import.meta.url)),
+            './src/lib/Layout.svelte'
+        )
+    }
+})
+```
+
+Layout files are basically Svelte components with a slot. The `default` slot is used for all files.
+
+```html
+<!-- ./src/lib/Layout.svelte -->
+<nav>
+    ...
+</nav>
+
+<slot />
+```
+
+### Named
+
+If you want to use a named layout for a specific file, you can specify it in the frontmatter.
 
 ```js
 // svelte.config.js
@@ -21,18 +55,6 @@ markdoc({
 })
 ```
 
-Layout files are basically Svelte components with a slot.
-
-```html
-<!-- ./src/lib/Layout.svelte -->
-<nav>
-    ...
-</nav>
-<slot />
-```
-
-And use them in using the `layout` key in frontmatter. If no layout is defined with frontmatter, the default layout will be used.
-
 ```
 <!-- +page.markdoc -->
 ---
@@ -40,4 +62,29 @@ layout: some_other_layout
 ---
 
 # some other content
+```
+
+### Props
+
+Layouts will be passed the frontmatter as props from the Markdoc file.
+
+```html
+<!-- ./src/lib/Layout.svelte -->
+<script>
+    export let title;
+    export let description;
+</script>
+
+<svelte:head>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+</svelte:head>
+```
+
+```
+<!-- +page.markdoc -->
+---
+title: Lorem ipsum
+description: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+---
 ```

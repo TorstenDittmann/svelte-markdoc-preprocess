@@ -1,3 +1,7 @@
+---
+title: Partials
+---
+
 ## Partials
 
 You pass a directory to the configuration and it will automatically load all files to be used as [partials](https://markdoc.dev/docs/partials).

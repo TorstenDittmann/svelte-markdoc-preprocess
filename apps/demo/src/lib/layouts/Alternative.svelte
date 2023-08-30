@@ -1,2 +1,6 @@
-<h1>I am on an alternate layout</h1>
+<script lang="ts">
+    export let layout: string;
+</script>
+
+<h1>I am on an {layout} layout</h1>
 <slot />
