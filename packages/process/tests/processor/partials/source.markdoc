@@ -1,0 +1,7 @@
+{% partial file="test.md" /%}
+
+{% partial file="variables.md" variables={lorem: "Lorem", ipsum: "Ipsum"}  /%}
+
+{% partial file="nested/file.md" /%}
+
+{% partial file="unknown.md" /%}

@@ -1,0 +1,1 @@
+<article><h1>I am a partial</h1><h1>Lorem Ipsum</h1><h1>I am nested</h1></article>

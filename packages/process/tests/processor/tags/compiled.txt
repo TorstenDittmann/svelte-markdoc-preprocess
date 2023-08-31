@@ -1,0 +1,1 @@
+<script>import * as INTERNAL__TAGS from '__PATH__/tags/module.svelte';</script><article><INTERNAL__TAGS.Hello></INTERNAL__TAGS.Hello><p><INTERNAL__TAGS.Slot>slot content</INTERNAL__TAGS.Slot></p></article>
