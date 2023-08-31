@@ -1,0 +1,1 @@
+<script>import INTERNAL__LAYOUT from '__PATH__/layouts/default.svelte';</script><INTERNAL__LAYOUT><article><h1>Hello World</h1></article></INTERNAL__LAYOUT>
