@@ -1,4 +1,4 @@
-<div id="main-content" class="p-strip is-deep">
+<div id="main-content" class="p-strip is-shallow">
     <div class="l-main">
         <div class="u-fixed-width">
             <h1>svelte-markdoc-preprocess</h1>
