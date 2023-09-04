@@ -12,9 +12,11 @@ export function get_all_files(path: string): string[] {
     const files = [];
 
     for (const file of readdirSync(path)) {
-        const fullPath = join(path, file);
+        const fullPath = path + posix_sep + file;
         if (lstatSync(fullPath).isDirectory()) {
-            get_all_files(fullPath).forEach((x) => files.push(join(file, x)));
+            get_all_files(fullPath).forEach((x) =>
+                files.push(file + posix_sep + x),
+            );
         } else {
             files.push(file);
         }
