@@ -16,11 +16,17 @@ import {
     getNameOfDeclaration,
     isVariableStatement,
 } from 'typescript';
-import { dirname, join } from 'path';
+import { dirname, join, relative } from 'path';
 import { load as loadYaml } from 'js-yaml';
 import { parse as svelteParse, walk } from 'svelte/compiler';
 import { render_html } from './renderer';
-import { get_all_files, path_exists, read_file, write_to_file } from './utils';
+import {
+    get_all_files,
+    path_exists,
+    read_file,
+    relative_posix_path,
+    write_to_file,
+} from './utils';
 import * as default_schema from './default_schema';
 import type { Config } from './config';
 
@@ -31,6 +37,7 @@ type Var = {
 
 export function transformer({
     content,
+    filename,
     nodes_file,
     tags_file,
     partials_dir,
@@ -39,6 +46,7 @@ export function transformer({
     config,
 }: {
     content: string;
+    filename: string;
     nodes_file: Config['nodes'];
     tags_file: Config['tags'];
     partials_dir: Config['partials'];
@@ -66,7 +74,6 @@ export function transformer({
         ? layouts[frontmatter?.layout ?? 'default'] ?? undefined
         : undefined;
     const has_layout = selected_layout !== undefined;
-
     /**
      * add used svelte components to the script tag
      */
@@ -80,22 +87,31 @@ export function transformer({
     /**
      * add import for tags
      */
-    if (has_tags) {
-        dependencies += `import * as INTERNAL__TAGS from '${tags_file}';`;
+    if (tags_file && has_tags) {
+        dependencies += `import * as INTERNAL__TAGS from '${relative_posix_path(
+            filename,
+            tags_file,
+        )}';`;
     }
 
     /**
      * add import for nodes
      */
-    if (has_nodes) {
-        dependencies += `import * as INTERNAL__NODES from '${nodes_file}';`;
+    if (nodes_file && has_nodes) {
+        dependencies += `import * as INTERNAL__NODES from '${relative_posix_path(
+            filename,
+            nodes_file,
+        )}';`;
     }
 
     /**
      * add import for layout
      */
-    if (has_layout) {
-        dependencies += `import INTERNAL__LAYOUT from '${selected_layout}';`;
+    if (selected_layout && has_layout) {
+        dependencies += `import INTERNAL__LAYOUT from '${relative_posix_path(
+            filename,
+            selected_layout,
+        )}';`;
     }
 
     if (generate_schema) {
