@@ -10,7 +10,19 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run lint
+    - run: npm run check
+
+  test:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -27,5 +39,3 @@ jobs:
     - run: npm run build
     - run: npx playwright install
     - run: npm test
-    - run: npm run lint
-    - run: npm run check
