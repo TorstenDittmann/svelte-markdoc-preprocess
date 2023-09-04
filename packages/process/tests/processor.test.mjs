@@ -60,15 +60,17 @@ test('preprocessor', async (context) => {
         );
     });
 
-    const stream = fg.globStream(absoulute(import.meta.url, './processor/**'), {
+    const files = fg.globSync('tests/processor/**', {
         onlyDirectories: true,
     });
 
-    for await (const entry of stream) {
-        await context.test('tests ' + basename(entry), async () => {
+    assert(files.length > 0, 'no test files found');
+
+    await Promise.all(files.map(async (entry) => {
+        return context.test('tests ' + basename(entry), async () => {
             const before = await read_file(join(entry, 'source.markdoc'));
             const after = await read_file(join(entry, 'compiled.txt'));
-            const preprocess = await import(join(entry, 'config.mjs')).then(
+            const preprocess = await import('../' + join(entry, 'config.mjs')).then(
                 (m) => m.default,
             );
             const markup = await preprocess.markup({
@@ -77,5 +79,5 @@ test('preprocessor', async (context) => {
             });
             assert.equal(markup.code, after);
         });
-    }
+    }));
 });
