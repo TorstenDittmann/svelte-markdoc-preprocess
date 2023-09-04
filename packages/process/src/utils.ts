@@ -10,7 +10,6 @@ import { sep as posix_sep } from 'path/posix';
 
 export function get_all_files(path: string): string[] {
     const files = [];
-
     for (const file of readdirSync(path)) {
         const fullPath = path + posix_sep + file;
         if (lstatSync(fullPath).isDirectory()) {
