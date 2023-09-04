@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { basename, dirname, join } from 'node:path';
 import { markdoc } from '../dist/module.js';
-import { absoulute, read_file } from './utils.mjs';
+import { absoulute, read_file, relative_posix_path } from './utils.mjs';
 import { fileURLToPath } from 'node:url';
 
 test('preprocessor', async (context) => {
@@ -63,7 +63,7 @@ test('preprocessor', async (context) => {
     const stream = fg.globStream(absoulute(import.meta.url, './processor/**'), {
         onlyDirectories: true,
     });
-    const current_dir = dirname(fileURLToPath(import.meta.url));
+
     for await (const entry of stream) {
         await context.test('tests ' + basename(entry), async () => {
             const before = await read_file(join(entry, 'source.markdoc'));
@@ -75,10 +75,7 @@ test('preprocessor', async (context) => {
                 content: before,
                 filename: 'test.markdoc',
             });
-            assert.equal(
-                markup.code,
-                after.replaceAll('__PATH__', current_dir),
-            );
+            assert.equal(markup.code, after);
         });
     }
 });

@@ -5,7 +5,8 @@ import {
     readdirSync,
     writeFileSync,
 } from 'fs';
-import { join } from 'path';
+import { dirname, join, relative, sep } from 'path';
+import { sep as posix_sep } from 'path/posix';
 
 export function get_all_files(path: string): string[] {
     const files = [];
@@ -28,4 +29,8 @@ export function write_to_file(file: string, content: string): void {
 
 export function path_exists(path: string): boolean {
     return existsSync(path);
+}
+
+export function relative_posix_path(from: string, to: string): string {
+    return relative(dirname(from), to).split(sep).join(posix_sep);
 }

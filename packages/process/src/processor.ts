@@ -27,13 +27,17 @@ const processor = ({
             /**
              * Only use on specific extensions
              */
-            if (!extensions.find((extension) => filename?.endsWith(extension)))
+            if (
+                !filename ||
+                !extensions.find((extension) => filename?.endsWith(extension))
+            )
                 return;
 
             /**
              * Add svelte components to be used with markdoc tags
              */
             const code = transformer({
+                filename,
                 config,
                 content,
                 layouts,
