@@ -13,6 +13,7 @@ jobs:
   code-quality:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
@@ -22,7 +23,7 @@ jobs:
     - run: npm run lint
     - run: npm run check
 
-  test:
+  tests:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
