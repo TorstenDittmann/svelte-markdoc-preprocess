@@ -17,7 +17,6 @@
         "turbo": "^1.10.13",
         "typescript": "^5.1.6"
     },
-    "name": "repo",
     "packageManager": "npm@8.17.0",
     "workspaces": [
         "apps/*",
