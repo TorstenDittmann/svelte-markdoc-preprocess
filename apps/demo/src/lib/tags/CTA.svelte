@@ -5,7 +5,8 @@
             <slot />
             <ul class="p-inline-list u-no-margin--bottom">
                 <li class="p-inline-list__item">
-                    <a href="/documentation" class="p-button--positive u-no-margin--bottom">Get started</a
+                    <a href="/documentation" class="p-button--positive u-no-margin--bottom"
+                        >Get started</a
                     >
                 </li>
                 <li class="p-inline-list__item">

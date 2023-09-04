@@ -16,7 +16,7 @@ import {
     getNameOfDeclaration,
     isVariableStatement,
 } from 'typescript';
-import { dirname, join, relative } from 'path';
+import { dirname, join } from 'path';
 import { load as loadYaml } from 'js-yaml';
 import { parse as svelteParse, walk } from 'svelte/compiler';
 import { render_html } from './renderer';

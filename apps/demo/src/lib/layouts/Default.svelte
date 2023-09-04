@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let title: string|null = null;
+    export let title: string | null = null;
 </script>
 
 <svelte:head>
