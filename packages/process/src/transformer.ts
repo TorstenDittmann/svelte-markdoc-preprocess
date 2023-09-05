@@ -29,6 +29,7 @@ import {
 } from './utils';
 import * as default_schema from './default_schema';
 import type { Config } from './config';
+import { LAYOUT_IMPORT, NODES_IMPORT, TAGS_IMPORT } from './constants';
 
 type Var = {
     name: string;
@@ -80,7 +81,7 @@ export function transformer({
     let dependencies = '';
     const tags = prepare_tags(tags_file);
     const has_tags = Object.keys(tags).length > 0;
-    const nodes = prepare_nodes(nodes_file);
+    const nodes = prepare_nodes(nodes_file, dependencies);
     const has_nodes = Object.keys(nodes).length > 0;
     const partials = prepare_partials(partials_dir);
 
@@ -88,7 +89,7 @@ export function transformer({
      * add import for tags
      */
     if (tags_file && has_tags) {
-        dependencies += `import * as INTERNAL__TAGS from '${relative_posix_path(
+        dependencies += `import * as ${TAGS_IMPORT} from '${relative_posix_path(
             filename,
             tags_file,
         )}';`;
@@ -98,7 +99,7 @@ export function transformer({
      * add import for nodes
      */
     if (nodes_file && has_nodes) {
-        dependencies += `import * as INTERNAL__NODES from '${relative_posix_path(
+        dependencies += `import * as ${NODES_IMPORT} from '${relative_posix_path(
             filename,
             nodes_file,
         )}';`;
@@ -108,7 +109,7 @@ export function transformer({
      * add import for layout
      */
     if (selected_layout && has_layout) {
-        dependencies += `import INTERNAL__LAYOUT from '${relative_posix_path(
+        dependencies += `import ${LAYOUT_IMPORT} from '${relative_posix_path(
             filename,
             selected_layout,
         )}';`;
@@ -168,10 +169,10 @@ export function transformer({
      * wrap the document in the layout
      */
     if (has_layout) {
-        transformed += `<INTERNAL__LAYOUT`;
+        transformed += `<${LAYOUT_IMPORT}`;
         transformed += has_frontmatter ? ' {...frontmatter}>' : '>';
         transformed += code;
-        transformed += `</INTERNAL__LAYOUT>`;
+        transformed += `</${LAYOUT_IMPORT}>`;
     } else {
         transformed += code;
     }
@@ -339,15 +340,22 @@ function get_node_defaults(node_type: NodeType): Partial<Schema> {
 
 function prepare_nodes(
     nodes_file: Config['nodes'],
+    dependencies: string,
 ): Partial<Record<NodeType, Schema>> {
     const nodes: Record<string, Schema> = {};
     if (nodes_file) {
         for (const [name] of each_exported_var(nodes_file)) {
+            const type = name.toLowerCase() as NodeType;
+            if (type === 'image') {
+            }
             nodes[name.toLowerCase()] = {
-                ...get_node_defaults(name.toLowerCase() as NodeType),
+                ...get_node_defaults(type),
                 transform(node, config) {
+                    if (type === 'image') {
+                        node.attributes.src;
+                    }
                     return new Tag(
-                        `INTERNAL__NODES.${name}`,
+                        `${NODES_IMPORT}.${name}`,
                         node.transformAttributes(config),
                         node.transformChildren(config),
                     );
@@ -368,7 +376,7 @@ function prepare_tags(tags_file: Config['tags']): Record<string, Schema> {
              */
             const attributes = get_component_vars(String(value), tags_file);
             tags[name.toLowerCase()] = {
-                render: 'INTERNAL__TAGS.' + name,
+                render: `${TAGS_IMPORT}.${name}`,
                 attributes,
             };
         }
