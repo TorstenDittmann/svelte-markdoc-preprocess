@@ -1,6 +1,7 @@
 import { RenderableTreeNodes, Tag } from '@markdoc/markdoc';
 import { sanitize_for_svelte } from './transformer';
 import { escape } from 'html-escaper';
+import { IMPORT_PREFIX } from './constants';
 
 export function render_html(node: RenderableTreeNodes): string {
     /**
@@ -91,7 +92,7 @@ function is_void_element(name: string): boolean {
 }
 
 function is_svelte_component(node: RenderableTreeNodes): boolean {
-    return Tag.isTag(node) && node.name.startsWith('INTERNAL__');
+    return Tag.isTag(node) && node.name.startsWith(IMPORT_PREFIX);
 }
 
 function generate_svelte_attribute_value(value: unknown): string {
