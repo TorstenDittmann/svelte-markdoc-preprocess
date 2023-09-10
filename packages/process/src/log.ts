@@ -6,12 +6,14 @@ createLogger({
     timestampEnabled: false,
 });
 
+const NAMESPACE = '[svelte-markdoc-preprocess]:';
+
 export function log_validation_error(
     validate_error: ValidateError,
     filename: string,
 ) {
     const { error } = validate_error;
-    const prefix = `[svelte-markdoc-preprocess] ${filename}:${validate_error.lines.join(
+    const prefix = `${NAMESPACE} ${filename}:${validate_error.lines.join(
         ':',
     )} (${error.id}) `;
 
@@ -28,11 +30,11 @@ export function log_validation_error(
 }
 
 export function log_error(message: string) {
-    Logger.error(`[svelte-markdoc-preprocess]: ${message}`);
+    Logger.error(`${NAMESPACE} ${message}`);
 }
 export function log_warning(message: string) {
-    Logger.warn(`[svelte-markdoc-preprocess]: ${message}`);
+    Logger.warn(`${NAMESPACE} ${message}`);
 }
 export function log_info(message: string) {
-    Logger.info(`[svelte-markdoc-preprocess]: ${message}`);
+    Logger.info(`${NAMESPACE} ${message}`);
 }

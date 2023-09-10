@@ -22,7 +22,7 @@ const processor = ({
     config = default_config.config,
 }: Config = default_config): PreprocessorGroup => {
     return {
-        name: 'markdoc',
+        name: 'svelte-markdoc-preprocess',
         async markup({ content, filename }) {
             /**
              * Only use on specific extensions

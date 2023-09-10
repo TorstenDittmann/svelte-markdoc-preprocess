@@ -77,6 +77,7 @@ export function transformer({
         ? layouts[frontmatter?.layout ?? 'default'] ?? undefined
         : undefined;
     const has_layout = selected_layout !== undefined;
+
     /**
      * add used svelte components to the script tag
      */
@@ -117,10 +118,16 @@ export function transformer({
         )}';`;
     }
 
+    /**
+     * generate schema for markdoc extension
+     */
     if (generate_schema) {
         create_schema(tags);
     }
 
+    /**
+     * create configuration for markdoc
+     */
     const configuration: ConfigType = {
         tags: {
             ...config?.tags,
@@ -142,6 +149,9 @@ export function transformer({
         validation: config?.validation,
     };
 
+    /**
+     * validate markdoc asd and log errors, warnings & co
+     */
     const errors = validate(ast, configuration);
     for (const error of errors) {
         log_validation_error(error, filename);
@@ -160,7 +170,7 @@ export function transformer({
     let transformed = '';
 
     /**
-     * add module context if frontmatter is usef
+     * add module context if frontmatter is used
      */
     if (Object.keys(frontmatter).length > 0) {
         transformed += create_module_context(frontmatter);
@@ -172,8 +182,9 @@ export function transformer({
     if (dependencies) {
         transformed += `<script>${dependencies}</script>`;
     }
+
     /**
-     * wrap the document in the layout
+     * wrap the content in the layout
      */
     if (has_layout) {
         transformed += `<${LAYOUT_IMPORT}`;
