@@ -6,6 +6,7 @@ import {
     NodeType,
     Tag,
     ConfigType,
+    validate,
 } from '@markdoc/markdoc';
 import {
     ScriptTarget,
@@ -30,6 +31,7 @@ import {
 import * as default_schema from './default_schema';
 import type { Config } from './config';
 import { LAYOUT_IMPORT, NODES_IMPORT, TAGS_IMPORT } from './constants';
+import { log_error, log_validation_error } from './log';
 
 type Var = {
     name: string;
@@ -139,6 +141,11 @@ export function transformer({
         functions: config?.functions,
         validation: config?.validation,
     };
+
+    const errors = validate(ast, configuration);
+    for (const error of errors) {
+        log_validation_error(error, filename);
+    }
 
     /**
      * transform the ast with svelte components
@@ -453,7 +460,11 @@ function create_schema(tags: Record<string, Schema>): void {
             }
             write_to_file(target_file, content);
         } catch (err) {
-            console.error(err);
+            if (err instanceof Error) {
+                log_error(err.message);
+            } else {
+                console.error(err);
+            }
         }
     }
 }
