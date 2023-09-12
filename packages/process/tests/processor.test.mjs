@@ -1,16 +1,15 @@
 import fg from 'fast-glob';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { basename, dirname, join } from 'node:path';
+import { basename, join } from 'node:path';
 import { markdoc } from '../dist/module.js';
-import { absoulute, read_file, relative_posix_path } from './utils.mjs';
-import { fileURLToPath } from 'node:url';
+import { read_file } from './utils.mjs';
 
 test('preprocessor', async (context) => {
     const preprocess = markdoc();
 
     await context.test('should return a preprocessor', async () => {
-        assert.ok(preprocess.name === 'markdoc');
+        assert.ok(preprocess.name === 'svelte-markdoc-preprocess');
         assert.ok('markup' in preprocess);
     });
     await context.test('ignores non-extension files', async () => {
