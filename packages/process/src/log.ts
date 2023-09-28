@@ -1,5 +1,6 @@
 import { createLogger, Logger } from 'lovely-logs';
 import type { ValidateError } from '@markdoc/markdoc';
+import { th } from './default_schema';
 
 createLogger({
     platform: 'console',
@@ -25,7 +26,8 @@ export function log_validation_error(
             return Logger.warn(prefix, error.message);
         case 'error':
         case 'critical':
-            return Logger.error(prefix, error.message);
+            Logger.error(prefix, error.message);
+            throw new Error(error.message);
     }
 }
 
