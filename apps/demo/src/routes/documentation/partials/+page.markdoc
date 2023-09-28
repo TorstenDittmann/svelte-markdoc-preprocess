@@ -23,9 +23,11 @@ markdoc({
 
 Here's an example of including the `header.md` file as a partial.
 
+`{% partial file="header.md" /%}`
+
 ```md
 <!-- ./src/routes/+page.markdoc -->
-{% partial file="header.md" /%}
+{ % partial file="header.md" /% }
 ```
 
 ### Passing variables
@@ -34,12 +36,12 @@ Partials are like any other tags, so you can pass variables as attributes to the
 
 ```md
 <!-- ./src/routes/+page.markdoc -->
-{% partial file="header.md" variables={name: "My header name"} /%}
+{ % partial file="header.md" variables={name: "My header name"} /% }
 ```
 
 and access the variables as you would in a regular Markdoc document:
 
 ```md
 <!-- ./src/lib/partials/header.md -->
-# {% $name %}
+# { % $name % }
 ```
