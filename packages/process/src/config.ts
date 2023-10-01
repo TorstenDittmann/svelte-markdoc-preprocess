@@ -33,6 +33,10 @@ export type Config = {
      */
     validationThreshold: ValidateError['error']['level'] | null;
     /**
+     * Whether to allow comments in the source files.
+     */
+    allowComments: boolean;
+    /**
      * Configuration for the markdoc compiler.
      */
     config: ConfigType | null;

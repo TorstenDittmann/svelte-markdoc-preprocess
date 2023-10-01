@@ -76,3 +76,11 @@ Layouts to be used for pages.
 **Default**: `error`
 
 The threshold for validation errors to stop the build.
+
+#### allowComments
+
+**Type**: `boolean`
+
+**Default**: `false`
+
+Allow comments in the markdown files.
