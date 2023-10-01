@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-    <title>svelte-markdoc-preprocess{title ? ` | ${title}` : ''}</title>
+    <title>{title ? `${title} | ` : ''}svelte-markdoc-preprocess</title>
     <meta
         name="description"
         content="A Svelte preprocessor that brings the power of Markdoc right into your Svelte applications!"

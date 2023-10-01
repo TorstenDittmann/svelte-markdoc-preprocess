@@ -10,6 +10,11 @@
             is_selected: $page.url.pathname === '/documentation',
         },
         {
+            path: '/documentation/configuration',
+            name: 'Configuration',
+            is_selected: $page.url.pathname === '/documentation/configuration',
+        },
+        {
             path: '/documentation/nodes',
             name: 'Nodes',
             is_selected: $page.url.pathname === '/documentation/nodes',
