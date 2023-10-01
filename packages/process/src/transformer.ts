@@ -7,6 +7,7 @@ import {
     Tag,
     ConfigType,
     validate,
+    Tokenizer
 } from '@markdoc/markdoc';
 import {
     ScriptTarget,
@@ -48,6 +49,7 @@ export function transformer({
     generate_schema,
     config,
     validation_threshold,
+    allow_comments
 }: {
     content: string;
     filename: string;
@@ -58,11 +60,19 @@ export function transformer({
     generate_schema: Config['generateSchema'];
     config: Config['config'];
     validation_threshold: Config['validationThreshold'];
+    allow_comments: Config['allowComments'];
 }): string {
+    /**
+     * create tokenizer
+     */
+    const tokenizer = new Tokenizer({
+        allowComments: allow_comments
+    });
+    const tokens = tokenizer.tokenize(content);
     /**
      * create ast for markdoc
      */
-    const ast = markdocParse(content);
+    const ast = markdocParse(tokens);
 
     /**
      * load frontmatter
