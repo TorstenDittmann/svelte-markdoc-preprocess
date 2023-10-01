@@ -12,7 +12,7 @@
   </p>
 </p>
 
-![Contributors](https://img.shields.io/github/contributors/torstendittmann/svelte-markdoc-preprocess?color=dark-green) ![Issues](https://img.shields.io/github/issues/torstendittmann/svelte-markdoc-preprocess) ![License](https://img.shields.io/github/license/torstendittmann/svelte-markdoc-preprocess) 
+![Downloads](https://img.shields.io/npm/dw/svelte-markdoc-preprocess?color=dark-green)![Contributors](https://img.shields.io/github/contributors/torstendittmann/svelte-markdoc-preprocess?color=dark-green) ![Issues](https://img.shields.io/github/issues/torstendittmann/svelte-markdoc-preprocess) ![License](https://img.shields.io/github/license/torstendittmann/svelte-markdoc-preprocess) 
 
 ## Table Of Contents
 
