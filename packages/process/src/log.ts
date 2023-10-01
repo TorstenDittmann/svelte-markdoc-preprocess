@@ -27,7 +27,6 @@ export function log_validation_error(
         case 'error':
         case 'critical':
             Logger.error(prefix, error.message);
-            throw new Error(error.message);
     }
 }
 

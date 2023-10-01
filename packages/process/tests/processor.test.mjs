@@ -68,16 +68,24 @@ test('preprocessor', async (context) => {
     await Promise.all(
         files.map(async (entry) => {
             return context.test('tests ' + basename(entry), async () => {
-                const before = await read_file(join(entry, 'source.markdoc'));
-                const after = await read_file(join(entry, 'compiled.txt'));
-                const preprocess = await import(
-                    '../' + join(entry, 'config.mjs')
-                ).then((m) => m.default);
-                const markup = await preprocess.markup({
-                    content: before,
-                    filename: 'test.markdoc',
-                });
-                assert.equal(markup.code, after);
+                const before = read_file(join(entry, 'source.markdoc'));
+                const after = read_file(join(entry, 'compiled.txt'));
+                const config = await import('../' + join(entry, 'config.mjs'));
+                const preprocess = config.default;
+                const exception = config.exception ?? false;
+                try {
+                    const markup = await preprocess.markup({
+                        content: before,
+                        filename: 'test.markdoc',
+                    });
+                    assert.equal(markup.code, after);
+                } catch (error) {
+                    if (exception) {
+                        assert.equal(error.message, exception);
+                    } else {
+                        throw error;
+                    }
+                }
             });
         }),
     );
