@@ -75,17 +75,3 @@ Contributions are what make the open source community such an amazing place to b
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
-## License
-
-Distributed under the MIT License. See [LICENSE](https://github.com/torstendittmann/svelte-markdoc-preprocess/blob/main/LICENSE.md) for more information.
-
-## Authors
-
-* **Torsten Dittmann** - *Lead Engineer @appwrite* - [Torsten Dittmann](https://github.com/TorstenDittmann) - **
-
-## Acknowledgements
-
-* [ShaanCoding](https://github.com/ShaanCoding/)
-* [Othneil Drew](https://github.com/othneildrew/Best-README-Template)
-* [ImgShields](https://shields.io/)
