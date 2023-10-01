@@ -1,4 +1,4 @@
-import { ConfigType } from '@markdoc/markdoc';
+import { ConfigType, ValidateError } from '@markdoc/markdoc';
 
 export type Config = {
     /**
@@ -28,6 +28,10 @@ export type Config = {
         default: string;
         [key: string]: string;
     } | null;
+    /**
+     * The threshold for validation errors to stop the build.
+     */
+    validationThreshold: ValidateError['error']['level'] | null;
     /**
      * Configuration for the markdoc compiler.
      */

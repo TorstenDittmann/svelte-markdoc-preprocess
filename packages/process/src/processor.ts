@@ -10,6 +10,7 @@ const default_config: Config = {
     tags: null,
     partials: null,
     config: null,
+    validationThreshold: 'error',
 };
 
 const processor = ({
@@ -20,6 +21,7 @@ const processor = ({
     tags = default_config.tags,
     partials = default_config.partials,
     config = default_config.config,
+    validationThreshold = default_config.validationThreshold,
 }: Config = default_config): PreprocessorGroup => {
     return {
         name: 'svelte-markdoc-preprocess',
@@ -45,6 +47,7 @@ const processor = ({
                 nodes_file: nodes,
                 tags_file: tags,
                 partials_dir: partials,
+                validation_threshold: validationThreshold,
             });
 
             return {

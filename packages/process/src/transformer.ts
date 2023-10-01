@@ -47,6 +47,7 @@ export function transformer({
     layouts,
     generate_schema,
     config,
+    validation_threshold,
 }: {
     content: string;
     filename: string;
@@ -56,6 +57,7 @@ export function transformer({
     layouts: Config['layouts'];
     generate_schema: Config['generateSchema'];
     config: Config['config'];
+    validation_threshold: Config['validationThreshold'];
 }): string {
     /**
      * create ast for markdoc
@@ -84,7 +86,7 @@ export function transformer({
     let dependencies = '';
     const tags = prepare_tags(tags_file);
     const has_tags = Object.keys(tags).length > 0;
-    const nodes = prepare_nodes(nodes_file, dependencies);
+    const nodes = prepare_nodes(nodes_file);
     const has_nodes = Object.keys(nodes).length > 0;
     const partials = prepare_partials(partials_dir);
 
@@ -152,9 +154,21 @@ export function transformer({
     /**
      * validate markdoc asd and log errors, warnings & co
      */
+    const thresholds = new Map<Config['validationThreshold'], number>([
+        ['debug', 0],
+        ['info', 1],
+        ['warning', 2],
+        ['error', 3],
+        ['critical', 4],
+    ]);
+    const threshold = thresholds.get(validation_threshold);
     const errors = validate(ast, configuration);
     for (const error of errors) {
         log_validation_error(error, filename);
+        const level = thresholds.get(error.error.level);
+        if (threshold && level && level >= threshold) {
+            throw new Error(error.error.message);
+        }
     }
 
     /**
@@ -358,7 +372,6 @@ function get_node_defaults(node_type: NodeType): Partial<Schema> {
 
 function prepare_nodes(
     nodes_file: Config['nodes'],
-    dependencies: string,
 ): Partial<Record<NodeType, Schema>> {
     const nodes: Record<string, Schema> = {};
     if (nodes_file) {
