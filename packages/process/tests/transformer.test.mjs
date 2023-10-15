@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import {
     sanitize_for_svelte,
     create_module_context,
+    get_component_vars,
 } from '../dist/transformer.js';
+import { absoulute } from './utils.mjs';
 
 test('sanitize for svelte', async (context) => {
     await Promise.all(
@@ -29,5 +31,45 @@ test('create module context', async (context) => {
             context,
             '<script context="module">export const frontmatter = {"string":"text","number":123,"boolean":true};</script>',
         );
+    });
+});
+
+test('get component vars', async (context) => {
+    const layout = absoulute(import.meta.url, './tags/module.svelte');
+    await context.test('typescript', () => {
+        const path = './typescript.svelte';
+        const vars = get_component_vars(path, layout);
+        assert.ok(vars.number.type === Number);
+        assert.ok(vars.number.required === true);
+        assert.ok(vars.string.type === String);
+        assert.ok(vars.string.required === true);
+        assert.ok(vars.boolean.type === Boolean);
+        assert.ok(vars.boolean.required === true);
+    });
+    await context.test('jsdoc', () => {
+        const path = './jsdoc.svelte';
+        const vars = get_component_vars(path, layout);
+        assert.ok(vars.number.type === Number);
+        assert.ok(vars.number.required === true);
+        assert.ok(vars.string.type === String);
+        assert.ok(vars.string.required === true);
+        assert.ok(vars.boolean.type === Boolean);
+        assert.ok(vars.boolean.required === true);
+    });
+    await context.test('infer', () => {
+        const path = './infer.svelte';
+        const vars = get_component_vars(path, layout);
+        assert.ok(vars.number.type === Number);
+        assert.ok(vars.number.required === false);
+        assert.ok(vars.string.type === String);
+        assert.ok(vars.string.required === false);
+        assert.ok(vars.boolean.type === Boolean);
+        assert.ok(vars.boolean.required === false);
+    });
+    await context.test('fallback', () => {
+        const path = './fallback.svelte';
+        const vars = get_component_vars(path, layout);
+        assert.ok(vars.fallback.type === String);
+        assert.ok(vars.fallback.required === true);
     });
 });

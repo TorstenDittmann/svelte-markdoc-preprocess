@@ -7,7 +7,7 @@ import {
     Tag,
     ConfigType,
     validate,
-    Tokenizer
+    Tokenizer,
 } from '@markdoc/markdoc';
 import {
     ScriptTarget,
@@ -49,7 +49,7 @@ export function transformer({
     generate_schema,
     config,
     validation_threshold,
-    allow_comments
+    allow_comments,
 }: {
     content: string;
     filename: string;
@@ -66,7 +66,7 @@ export function transformer({
      * create tokenizer
      */
     const tokenizer = new Tokenizer({
-        allowComments: allow_comments
+        allowComments: allow_comments,
     });
     const tokens = tokenizer.tokenize(content);
     /**
@@ -310,6 +310,21 @@ export function ts_to_type(declaration: VariableDeclaration): Var['type'] {
             case SyntaxKind.NumberKeyword:
                 return Number;
             case SyntaxKind.BooleanKeyword:
+                return Boolean;
+            default:
+                throw new Error('Can only handly primitive types.');
+        }
+    }
+    const initializer = declaration?.initializer;
+    if (initializer) {
+        switch (initializer.kind) {
+            case SyntaxKind.StringLiteral:
+                return String;
+            case SyntaxKind.NumericLiteral:
+            case SyntaxKind.BigIntLiteral:
+                return Number;
+            case SyntaxKind.TrueKeyword:
+            case SyntaxKind.FalseKeyword:
                 return Boolean;
             default:
                 throw new Error('Can only handly primitive types.');
