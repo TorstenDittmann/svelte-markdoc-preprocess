@@ -42,6 +42,6 @@
         "@types/node": "^20.4.5",
         "fast-glob": "^3.3.1",
         "prettier": "*",
-        "publint": "^0.2.4"
+        "publint": "^0.2.5"
     }
 }
