@@ -10,7 +10,7 @@
         "publish-packages": "npm run build && npm publish --workspaces --workspace \"packages\""
     },
     "devDependencies": {
-        "@sveltejs/kit": "^1.27.0",
+        "@sveltejs/kit": "^1.27.1",
         "@turbo/gen": "^1.9.7",
         "prettier": "^3.0.3",
         "svelte": "^4.0.5",
