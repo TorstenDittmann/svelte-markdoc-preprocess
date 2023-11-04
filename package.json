@@ -11,7 +11,7 @@
     },
     "devDependencies": {
         "@sveltejs/kit": "^1.27.1",
-        "@turbo/gen": "^1.9.7",
+        "@turbo/gen": "^1.10.16",
         "prettier": "^3.0.3",
         "svelte": "^4.0.5",
         "turbo": "^1.10.16",
