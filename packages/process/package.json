@@ -37,7 +37,7 @@
     },
     "homepage": "https://svelte-markdoc-preprocess.pages.dev",
     "devDependencies": {
-        "@types/html-escaper": "^3.0.0",
+        "@types/html-escaper": "^3.0.1",
         "@types/js-yaml": "^4.0.8",
         "@types/node": "^20.8.10",
         "fast-glob": "^3.3.1",
