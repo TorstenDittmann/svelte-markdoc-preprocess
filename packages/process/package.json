@@ -24,7 +24,7 @@
     "author": "Torsten Dittmann",
     "license": "MIT",
     "dependencies": {
-        "@markdoc/markdoc": "^0.3.3",
+        "@markdoc/markdoc": "^0.3.4",
         "html-escaper": "^3.0.3",
         "js-yaml": "^4.1.0",
         "lovely-logs": "^1.2.2",
@@ -37,11 +37,11 @@
     },
     "homepage": "https://svelte-markdoc-preprocess.pages.dev",
     "devDependencies": {
-        "@types/html-escaper": "^3.0.0",
-        "@types/js-yaml": "^4.0.5",
-        "@types/node": "^20.4.5",
-        "fast-glob": "^3.3.1",
+        "@types/html-escaper": "^3.0.2",
+        "@types/js-yaml": "^4.0.8",
+        "@types/node": "^20.8.10",
+        "fast-glob": "^3.3.2",
         "prettier": "*",
-        "publint": "^0.2.4"
+        "publint": "^0.2.5"
     }
 }

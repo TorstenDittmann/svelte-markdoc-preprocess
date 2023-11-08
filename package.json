@@ -11,10 +11,10 @@
     },
     "devDependencies": {
         "@sveltejs/kit": "^1.27.3",
-        "@turbo/gen": "^1.9.7",
+        "@turbo/gen": "^1.10.16",
         "prettier": "^3.0.3",
         "svelte": "^4.0.5",
-        "turbo": "^1.10.13",
+        "turbo": "^1.10.16",
         "typescript": "^5.1.6"
     },
     "packageManager": "npm@8.17.0",
