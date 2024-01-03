@@ -43,6 +43,6 @@ export function is_external_url(url: string): boolean {
     return url.startsWith('http://') || url.startsWith('https://');
 }
 
-export function is_relative_path(url: string): boolean {
-    return url.startsWith('./') || url.startsWith('../');
+export function is_relative_path(path: string): boolean {
+    return path.startsWith('./') || path.startsWith('../');
 }

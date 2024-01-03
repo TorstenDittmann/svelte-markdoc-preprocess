@@ -52,11 +52,10 @@ export function render_html(
                 /**
                  * Allow importing relative images and import them via vite.
                  */
-                const hash = createHash('sha1').digest('hex');
-                const import_name = `${IMAGE_PREFIX}${hash}`;
-                dependencies.set(import_name, String(value));
+                const unique_name = `${IMAGE_PREFIX}${dependencies.size}`;
+                dependencies.set(unique_name, String(value));
                 output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
-                    import_name,
+                    unique_name,
                     'import',
                 )}`;
             } else {
