@@ -2,7 +2,11 @@ import { RenderableTreeNodes, Tag } from '@markdoc/markdoc';
 import { sanitize_for_svelte } from './transformer';
 import { escape } from 'html-escaper';
 import { IMAGE_PREFIX, IMPORT_PREFIX } from './constants';
-import { is_relative_path, parse_query_params_from_string } from './utils';
+import {
+    is_relative_path,
+    parse_query_params_from_string,
+    replace_query_params_from_string,
+} from './utils';
 import { Config } from './config';
 
 export function render_html(
@@ -56,16 +60,21 @@ export function render_html(
                  * Allow importing relative images and import them via vite.
                  */
                 const unique_name = `${IMAGE_PREFIX}${dependencies.size}`;
+                const params = parse_query_params_from_string(String(value));
                 const use_enhanced_img_tag =
                     enhanced_images?.mode === 'automatic' ||
                     (enhanced_images?.mode === 'manually' &&
-                        parse_query_params_from_string(String(value)).has(
-                            'enhanced',
-                        ));
+                        params.has('enhanced'));
                 if (use_enhanced_img_tag) {
                     output = output.replace('<img', '<img:enhanced');
+                    params.set('enhanced', 'true');
+                    dependencies.set(
+                        unique_name,
+                        replace_query_params_from_string(String(value), params),
+                    );
+                } else {
+                    dependencies.set(unique_name, String(value));
                 }
-                dependencies.set(unique_name, String(value));
                 output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
                     unique_name,
                     'import',

@@ -58,3 +58,15 @@ export function parse_query_params_from_string(
 
     return new URLSearchParams(string);
 }
+
+export function replace_query_params_from_string(
+    string: string,
+    params: URLSearchParams,
+): string {
+    const index = string.indexOf('?');
+    if (index !== -1) {
+        string = string.slice(0, index);
+    }
+
+    return string + '?' + params.toString();
+}
