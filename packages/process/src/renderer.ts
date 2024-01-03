@@ -66,7 +66,10 @@ export function render_html(
                     output = output.replace('<img', '<img:enhanced');
                 }
                 dependencies.set(unique_name, String(value));
-                output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(unique_name, 'import')}`;
+                output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
+                    unique_name,
+                    'import',
+                )}`;
             } else {
                 output += ` ${key.toLowerCase()}="${sanitize_for_svelte(
                     escape(String(value)),
