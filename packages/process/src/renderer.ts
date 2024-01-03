@@ -37,7 +37,7 @@ export function render_html(
         return '';
     }
 
-    const { name, attributes, children = [] } = node;
+    let { name, attributes, children = [] } = node;
 
     if (!name) {
         return render_html(children, dependencies, enhanced_images);
@@ -66,7 +66,8 @@ export function render_html(
                     (enhanced_images?.mode === 'manually' &&
                         params.has('enhanced'));
                 if (use_enhanced_img_tag) {
-                    output = output.replace('<img', '<img:enhanced');
+                    output = output.replace('<img', '<enhanced:img');
+                    name = 'enhanced:img';
                     params.set('enhanced', 'true');
                     dependencies.set(
                         unique_name,
