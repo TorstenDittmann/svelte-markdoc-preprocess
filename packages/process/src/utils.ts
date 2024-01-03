@@ -46,3 +46,15 @@ export function is_external_url(url: string): boolean {
 export function is_relative_path(path: string): boolean {
     return path.startsWith('./') || path.startsWith('../');
 }
+
+export function parse_query_params_from_string(
+    string: string,
+): URLSearchParams {
+    const index = string.indexOf('?');
+    if (index === -1) {
+        return new URLSearchParams();
+    }
+    string = string.slice(index);
+
+    return new URLSearchParams(string);
+}

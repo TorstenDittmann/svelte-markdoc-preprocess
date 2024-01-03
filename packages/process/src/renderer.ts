@@ -2,12 +2,13 @@ import { RenderableTreeNodes, Tag } from '@markdoc/markdoc';
 import { sanitize_for_svelte } from './transformer';
 import { escape } from 'html-escaper';
 import { IMAGE_PREFIX, IMPORT_PREFIX } from './constants';
-import { createHash } from 'crypto';
-import { is_relative_path } from './utils';
+import { is_relative_path, parse_query_params_from_string } from './utils';
+import { Config } from './config';
 
 export function render_html(
     node: RenderableTreeNodes,
     dependencies: Map<string, string>,
+    enhanced_images: Config['enhancedImages'],
 ): string {
     /**
      * if the node is a string or number, it's a text node.
@@ -20,7 +21,9 @@ export function render_html(
      * if the node is an array, render its items.
      */
     if (Array.isArray(node)) {
-        return node.map((item) => render_html(item, dependencies)).join('');
+        return node
+            .map((item) => render_html(item, dependencies, enhanced_images))
+            .join('');
     }
 
     /**
@@ -33,7 +36,7 @@ export function render_html(
     const { name, attributes, children = [] } = node;
 
     if (!name) {
-        return render_html(children, dependencies);
+        return render_html(children, dependencies, enhanced_images);
     }
 
     const is_svelte = is_svelte_component(node);
@@ -53,11 +56,17 @@ export function render_html(
                  * Allow importing relative images and import them via vite.
                  */
                 const unique_name = `${IMAGE_PREFIX}${dependencies.size}`;
+                const use_enhanced_img_tag =
+                    enhanced_images?.mode === 'automatic' ||
+                    (enhanced_images?.mode === 'manually' &&
+                        parse_query_params_from_string(String(value)).has(
+                            'enhance',
+                        ));
+                if (use_enhanced_img_tag) {
+                    output = output.replace('<img', '<img:enhanced');
+                }
                 dependencies.set(unique_name, String(value));
-                output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
-                    unique_name,
-                    'import',
-                )}`;
+                output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(unique_name, 'import')}`;
             } else {
                 output += ` ${key.toLowerCase()}="${sanitize_for_svelte(
                     escape(String(value)),
@@ -78,7 +87,7 @@ export function render_html(
      * render the children if present.
      */
     if (children.length) {
-        output += render_html(children, dependencies);
+        output += render_html(children, dependencies, enhanced_images);
     }
 
     /**

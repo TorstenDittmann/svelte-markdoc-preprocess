@@ -1,0 +1,1 @@
+<script>import IMAGE__0 from './image.jpeg';import IMAGE__1 from '../images/image.jpeg';</script><article><h1>relative</h1><p><img:enhanced src={IMAGE__0} alt=""> <img:enhanced src={IMAGE__1} alt=""></p><h1>others</h1><p><img src="image.jpeg" alt=""> <img src="/image.jpeg" alt=""> <img src="https://github.com/logo.jpeg" alt=""></p></article>
