@@ -3,7 +3,7 @@ import { sanitize_for_svelte } from './transformer';
 import { escape } from 'html-escaper';
 import { IMAGE_PREFIX, IMPORT_PREFIX } from './constants';
 import { createHash } from 'crypto';
-import { is_relative_url } from './utils';
+import { is_relative_path } from './utils';
 
 export function render_html(
     node: RenderableTreeNodes,
@@ -48,7 +48,7 @@ export function render_html(
                 value,
             )}`;
         } else {
-            if (name === 'img' && key === 'src' && is_relative_url(value)) {
+            if (name === 'img' && key === 'src' && is_relative_path(value)) {
                 /**
                  * Allow importing relative images and import them via vite.
                  */
