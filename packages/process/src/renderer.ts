@@ -60,7 +60,7 @@ export function render_html(
                     enhanced_images?.mode === 'automatic' ||
                     (enhanced_images?.mode === 'manually' &&
                         parse_query_params_from_string(String(value)).has(
-                            'enhance',
+                            'enhanced',
                         ));
                 if (use_enhanced_img_tag) {
                     output = output.replace('<img', '<img:enhanced');
