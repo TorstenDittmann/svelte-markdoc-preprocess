@@ -1,9 +1,14 @@
 import { RenderableTreeNodes, Tag } from '@markdoc/markdoc';
 import { sanitize_for_svelte } from './transformer';
 import { escape } from 'html-escaper';
-import { IMPORT_PREFIX } from './constants';
+import { IMAGE_PREFIX, IMPORT_PREFIX } from './constants';
+import { createHash } from 'crypto';
+import { is_external_url } from './utils';
 
-export function render_html(node: RenderableTreeNodes): string {
+export function render_html(
+    node: RenderableTreeNodes,
+    dependencies: Map<string, string>,
+): string {
     /**
      * if the node is a string or number, it's a text node.
      */
@@ -15,7 +20,7 @@ export function render_html(node: RenderableTreeNodes): string {
      * if the node is an array, render its items.
      */
     if (Array.isArray(node)) {
-        return node.map(render_html).join('');
+        return node.map((item) => render_html(item, dependencies)).join('');
     }
 
     /**
@@ -28,7 +33,7 @@ export function render_html(node: RenderableTreeNodes): string {
     const { name, attributes, children = [] } = node;
 
     if (!name) {
-        return render_html(children);
+        return render_html(children, dependencies);
     }
 
     const is_svelte = is_svelte_component(node);
@@ -43,9 +48,24 @@ export function render_html(node: RenderableTreeNodes): string {
                 value,
             )}`;
         } else {
-            output += ` ${key.toLowerCase()}="${sanitize_for_svelte(
-                escape(String(value)),
-            )}"`;
+            if (
+                name === 'img' &&
+                key === 'src' &&
+                !is_external_url(value) &&
+                !value.startsWith('/')
+            ) {
+                const hash = createHash('sha1').digest('hex');
+                const import_name = `${IMAGE_PREFIX}${hash}`;
+                dependencies.set(import_name, String(value));
+                output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
+                    import_name,
+                    'import',
+                )}`;
+            } else {
+                output += ` ${key.toLowerCase()}="${sanitize_for_svelte(
+                    escape(String(value)),
+                )}"`;
+            }
         }
     }
     output += '>';
@@ -61,7 +81,7 @@ export function render_html(node: RenderableTreeNodes): string {
      * render the children if present.
      */
     if (children.length) {
-        output += render_html(children);
+        output += render_html(children, dependencies);
     }
 
     /**
@@ -95,10 +115,14 @@ function is_svelte_component(node: RenderableTreeNodes): boolean {
     return Tag.isTag(node) && node.name.startsWith(IMPORT_PREFIX);
 }
 
-function generate_svelte_attribute_value(value: unknown): string {
-    switch (typeof value) {
+function generate_svelte_attribute_value(
+    value: unknown,
+    type?: string,
+): string {
+    switch (type ?? typeof value) {
         case 'string':
             return `"${sanitize_for_svelte(escape(String(value)))}"`;
+        case 'import':
         case 'number':
         case 'boolean':
             return `{${String(value)}}`;

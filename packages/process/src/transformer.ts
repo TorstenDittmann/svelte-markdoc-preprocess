@@ -93,7 +93,7 @@ export function transformer({
     /**
      * add used svelte components to the script tag
      */
-    let dependencies = '';
+    let dependencies = new Map<string, string>();
     const tags = prepare_tags(tags_file);
     const has_tags = Object.keys(tags).length > 0;
     const nodes = prepare_nodes(nodes_file);
@@ -104,30 +104,30 @@ export function transformer({
      * add import for tags
      */
     if (tags_file && has_tags) {
-        dependencies += `import * as ${TAGS_IMPORT} from '${relative_posix_path(
-            filename,
-            tags_file,
-        )}';`;
+        dependencies.set(
+            `* as ${TAGS_IMPORT}`,
+            relative_posix_path(filename, tags_file),
+        );
     }
 
     /**
      * add import for nodes
      */
     if (nodes_file && has_nodes) {
-        dependencies += `import * as ${NODES_IMPORT} from '${relative_posix_path(
-            filename,
-            nodes_file,
-        )}';`;
+        dependencies.set(
+            `* as ${NODES_IMPORT}`,
+            relative_posix_path(filename, nodes_file),
+        );
     }
 
     /**
      * add import for layout
      */
     if (selected_layout && has_layout) {
-        dependencies += `import ${LAYOUT_IMPORT} from '${relative_posix_path(
-            filename,
-            selected_layout,
-        )}';`;
+        dependencies.set(
+            LAYOUT_IMPORT,
+            relative_posix_path(filename, selected_layout),
+        );
     }
 
     /**
@@ -189,7 +189,7 @@ export function transformer({
     /**
      * render to html
      */
-    const code = render_html(nast);
+    const code = render_html(nast, dependencies);
 
     let transformed = '';
 
@@ -203,8 +203,12 @@ export function transformer({
     /**
      * add all dependencies to the document
      */
-    if (dependencies) {
-        transformed += `<script>${dependencies}</script>`;
+    if (dependencies.size > 0) {
+        transformed += `<script>`;
+        for (const [name, path] of dependencies) {
+            transformed += `import ${name} from '${path}';`;
+        }
+        transformed += `</script>`;
     }
 
     /**
