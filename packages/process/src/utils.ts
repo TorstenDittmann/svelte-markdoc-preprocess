@@ -42,3 +42,7 @@ export function relative_posix_path(from: string, to: string): string {
 export function is_external_url(url: string): boolean {
     return url.startsWith('http://') || url.startsWith('https://');
 }
+
+export function is_relative_url(url: string): boolean {
+    return url.startsWith('./') || url.startsWith('../');
+}
