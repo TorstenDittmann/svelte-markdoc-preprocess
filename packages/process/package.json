@@ -25,7 +25,6 @@
     "license": "MIT",
     "dependencies": {
         "@markdoc/markdoc": "^0.4.0",
-        "@sveltejs/enhanced-img": "^0.1.0",
         "html-escaper": "^3.0.3",
         "js-yaml": "^4.1.0",
         "lovely-logs": "^1.2.0",
