@@ -43,8 +43,12 @@ export function is_external_url(url: string): boolean {
     return url.startsWith('http://') || url.startsWith('https://');
 }
 
+export function is_absolute_path(url: string): boolean {
+    return url.startsWith('/');
+}
+
 export function is_relative_path(path: string): boolean {
-    return path.startsWith('./') || path.startsWith('../');
+    return !(is_absolute_path(path) || is_external_url(path));
 }
 
 export function parse_query_params_from_string(

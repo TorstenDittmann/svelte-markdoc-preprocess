@@ -484,24 +484,15 @@ function each_exported_var(filepath: string): Array<[string, string]> {
 }
 
 function create_schema(tags: Record<string, Schema>): void {
-    // TODO: this part is really ugly, but it works.
-    const raw = JSON.stringify(tags, (key, value) => {
-        if (key === 'type') {
-            switch (true) {
-                case value === Number:
-                    return '%%NUMBER%%';
-                case value === String:
-                    return '%%STRING%%';
-                case value === Boolean:
-                    return '%%BOOLEAN%%';
-            }
-        }
-        return value;
-    });
-    const object = raw
-        .replaceAll('"%%NUMBER%%"', 'Number')
-        .replaceAll('"%%STRING%%"', 'String')
-        .replaceAll('"%%BOOLEAN%%"', 'Boolean');
+    // Create schema from the record
+    // use regex to get the type from the ouput of interface `toString` method`
+    // and then remove the double quotes from the json
+    const object = JSON.stringify(tags, (key, value) =>
+        key === 'type' && [Number, String, Boolean].includes(value)
+            ? (value + '').match(/.*([A-Z].*)\(\).*/)?.pop() ?? value
+            : value,
+    ).replaceAll(/"(Number|String|Boolean)"/g, '$1');
+
     const content = `export default { tags: ${object} };`;
 
     const target_directory = join(process.cwd(), '.svelte-kit');
