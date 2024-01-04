@@ -44,7 +44,11 @@ export function is_external_url(url: string): boolean {
 }
 
 export function is_relative_path(path: string): boolean {
-    return path.startsWith('./') || path.startsWith('../');
+    return (
+        path.startsWith('./') ||
+        path.startsWith('../') ||
+        path.startsWith('$lib')
+    );
 }
 
 export function parse_query_params_from_string(
