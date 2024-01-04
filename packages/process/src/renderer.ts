@@ -50,20 +50,23 @@ export function render_html(
      */
     let output = `<${name}`;
     for (const [key, value] of Object.entries(attributes ?? {})) {
-        const is_imported_image = key === 'src' && is_relative_path(value);
+        const is_src_key = key === 'src';
+        const is_imported_image = is_src_key && is_relative_path(value);
         if (is_svelte) {
             switch (name.toLowerCase()) {
                 case `${NODES_IMPORT}.image`.toLowerCase():
-                    if (is_imported_image) {
-                        const unique_name = `${IMAGE_PREFIX}${dependencies.size}`;
-                        dependencies.set(unique_name, String(value));
-                        output += ` imported={true} ${key.toLowerCase()}=${generate_svelte_attribute_value(
-                            unique_name,
-                            'import',
-                        )}`;
-                        break;
-                    } else {
-                        output += ` imported={false}`;
+                    if (is_src_key) {
+                        if (is_imported_image) {
+                            const unique_name = `${IMAGE_PREFIX}${dependencies.size}`;
+                            dependencies.set(unique_name, String(value));
+                            output += ` imported={true} ${key.toLowerCase()}=${generate_svelte_attribute_value(
+                                unique_name,
+                                'import',
+                            )}`;
+                            break;
+                        } else {
+                            output += ` imported={false}`;
+                        }
                     }
 
                 default:
