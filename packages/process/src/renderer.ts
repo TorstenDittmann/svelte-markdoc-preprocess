@@ -1,7 +1,7 @@
 import { RenderableTreeNodes, Tag } from '@markdoc/markdoc';
 import { sanitize_for_svelte } from './transformer';
 import { escape } from 'html-escaper';
-import { IMAGE_PREFIX, IMPORT_PREFIX } from './constants';
+import { IMAGE_PREFIX, IMPORT_PREFIX, NODES_IMPORT } from './constants';
 import {
     is_relative_path,
     parse_query_params_from_string,
@@ -50,40 +50,66 @@ export function render_html(
      */
     let output = `<${name}`;
     for (const [key, value] of Object.entries(attributes ?? {})) {
+        const is_imported_image = key === 'src' && is_relative_path(value);
         if (is_svelte) {
-            output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
-                value,
-            )}`;
+            switch (name.toLowerCase()) {
+                case `${NODES_IMPORT}.image`.toLowerCase():
+                    if (is_imported_image) {
+                        const unique_name = `${IMAGE_PREFIX}${dependencies.size}`;
+                        dependencies.set(unique_name, String(value));
+                        output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
+                            unique_name,
+                            'import',
+                        )}`;
+                        break;
+                    }
+
+                default:
+                    output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
+                        value,
+                    )}`;
+                    break;
+            }
         } else {
-            if (name === 'img' && key === 'src' && is_relative_path(value)) {
-                /**
-                 * Allow importing relative images and import them via vite.
-                 */
-                const unique_name = `${IMAGE_PREFIX}${dependencies.size}`;
-                const params = parse_query_params_from_string(String(value));
-                const use_enhanced_img_tag =
-                    enhanced_images?.mode === 'automatic' ||
-                    (enhanced_images?.mode === 'manually' &&
-                        params.has('enhanced'));
-                if (use_enhanced_img_tag) {
-                    output = output.replace('<img', '<enhanced:img');
-                    name = 'enhanced:img';
-                    params.set('enhanced', 'true');
-                    dependencies.set(
-                        unique_name,
-                        replace_query_params_from_string(String(value), params),
-                    );
-                } else {
-                    dependencies.set(unique_name, String(value));
-                }
-                output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
-                    unique_name,
-                    'import',
-                )}`;
-            } else {
-                output += ` ${key.toLowerCase()}="${sanitize_for_svelte(
-                    escape(String(value)),
-                )}"`;
+            switch (name.toLowerCase()) {
+                case 'img':
+                    if (is_imported_image) {
+                        /**
+                         * Allow importing relative images and import them via vite.
+                         */
+                        const unique_name = `${IMAGE_PREFIX}${dependencies.size}`;
+                        const params = parse_query_params_from_string(
+                            String(value),
+                        );
+                        const use_enhanced_img_tag =
+                            enhanced_images?.mode === 'automatic' ||
+                            (enhanced_images?.mode === 'manually' &&
+                                params.has('enhanced'));
+                        if (use_enhanced_img_tag) {
+                            output = output.replace('<img', '<enhanced:img');
+                            name = 'enhanced:img';
+                            params.set('enhanced', 'true');
+                            dependencies.set(
+                                unique_name,
+                                replace_query_params_from_string(
+                                    String(value),
+                                    params,
+                                ),
+                            );
+                        } else {
+                            dependencies.set(unique_name, String(value));
+                        }
+                        output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
+                            unique_name,
+                            'import',
+                        )}`;
+                        break;
+                    }
+                default:
+                    output += ` ${key.toLowerCase()}="${sanitize_for_svelte(
+                        escape(String(value)),
+                    )}"`;
+                    break;
             }
         }
     }
