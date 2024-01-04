@@ -21,7 +21,8 @@ Code fences
 ```
 
 ![Images](./image.jpeg?blur=10)
-![Images]($lib/assets/image.jpeg)
+![Images]($lib/assets/image.jpeg?grayscale)
+![Images](assets/image.jpeg?flip)
 ![Images](/favicon.png)
 
 ## Why create Markdoc instead of using an alternative?
