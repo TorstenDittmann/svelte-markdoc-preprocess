@@ -57,7 +57,7 @@ export function render_html(
                     if (is_imported_image) {
                         const unique_name = `${IMAGE_PREFIX}${dependencies.size}`;
                         dependencies.set(unique_name, String(value));
-                        output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
+                        output += ` enhanced ${key.toLowerCase()}=${generate_svelte_attribute_value(
                             unique_name,
                             'import',
                         )}`;
@@ -65,7 +65,7 @@ export function render_html(
                     }
 
                 default:
-                    output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
+                    output += ` enhanced={false} ${key.toLowerCase()}=${generate_svelte_attribute_value(
                         value,
                     )}`;
                     break;
