@@ -22,6 +22,9 @@ const config = {
                 default: absoulute('./src/lib/layouts/Default.svelte'),
                 alternative: absoulute('./src/lib/layouts/Alternative.svelte'),
             },
+            enhancedImages: {
+                mode: 'automatic',
+            },
         }),
     ],
     extensions: ['.markdoc', '.svelte'],

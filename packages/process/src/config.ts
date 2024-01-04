@@ -40,4 +40,13 @@ export type Config = {
      * Configuration for the markdoc compiler.
      */
     config: ConfigType | null;
+    /**
+     * Adds support for @sveltejs/enhanced-img
+     */
+    enhancedImages: {
+        /**
+         * The mode for enhanced images. 'automatic' will enhance all relative images, 'manually' will only enhance images with the `enhance` query parameter.
+         */
+        mode: 'automatic' | 'manually';
+    } | null;
 };

@@ -38,3 +38,35 @@ export function path_exists(path: string): boolean {
 export function relative_posix_path(from: string, to: string): string {
     return relative(dirname(from), to).split(sep).join(posix_sep);
 }
+
+export function is_external_url(url: string): boolean {
+    return url.startsWith('http://') || url.startsWith('https://');
+}
+
+export function is_relative_path(path: string): boolean {
+    return path.startsWith('./') || path.startsWith('../');
+}
+
+export function parse_query_params_from_string(
+    string: string,
+): URLSearchParams {
+    const index = string.indexOf('?');
+    if (index === -1) {
+        return new URLSearchParams();
+    }
+    string = string.slice(index);
+
+    return new URLSearchParams(string);
+}
+
+export function replace_query_params_from_string(
+    string: string,
+    params: URLSearchParams,
+): string {
+    const index = string.indexOf('?');
+    if (index !== -1) {
+        string = string.slice(0, index);
+    }
+
+    return string + '?' + params.toString();
+}

@@ -6,9 +6,10 @@ import {
     get_all_files,
     path_exists,
     write_to_file,
+    replace_query_params_from_string,
 } from '../dist/utils.js';
 
-test('relative_posix_path', async () => {
+test('relative_posix_path', () => {
     assert.equal(
         relative_posix_path('/test/a/b/c', '/test/file.js'),
         '../../file.js',
@@ -66,6 +67,25 @@ test('write_to_file', async (context) => {
         assert.equal(
             read_file('tests/fixtures/write_to_file/file'),
             'overwritten',
+        );
+    });
+});
+
+test('replace_query_params_from_string', async (context) => {
+    await context.test('appending', () => {
+        const params = new URLSearchParams();
+        params.append('enhanced', 'true');
+        assert.equal(
+            replace_query_params_from_string('test', params),
+            'test?enhanced=true',
+        );
+    });
+    await context.test('replacing', () => {
+        const params = new URLSearchParams();
+        params.append('enhanced', 'true');
+        assert.equal(
+            replace_query_params_from_string('test?param1=1&param2=2', params),
+            'test?enhanced=true',
         );
     });
 });
