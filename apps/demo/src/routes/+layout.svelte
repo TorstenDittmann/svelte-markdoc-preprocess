@@ -38,7 +38,6 @@
                 >Close menu</a
             >
         </div>
-
         <nav class="p-navigation__nav" aria-label="Navigation">
             <ul class="p-navigation__items">
                 {#each links as link}
