@@ -1,0 +1,8 @@
+# relative
+![](./image.jpeg)
+![](../images/image.jpeg)
+
+# others
+![](image.jpeg)
+![](/image.jpeg)
+![](https://github.com/logo.jpeg)
