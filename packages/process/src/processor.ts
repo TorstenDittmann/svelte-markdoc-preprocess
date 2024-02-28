@@ -24,7 +24,7 @@ const processor = ({
     config = default_config.config,
     validationThreshold = default_config.validationThreshold,
     allowComments = default_config.allowComments,
-}: Config = default_config): PreprocessorGroup => {
+}: Partial<Config> = default_config): PreprocessorGroup => {
     return {
         name: 'svelte-markdoc-preprocess',
         async markup({ content, filename }) {
