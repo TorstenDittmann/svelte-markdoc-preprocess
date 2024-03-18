@@ -17,7 +17,7 @@
         "@sveltejs/adapter-auto": "^3.0.0",
         "@sveltejs/kit": "^2.0.0",
         "@sveltejs/vite-plugin-svelte": "^3.0.0",
-        "@typescript-eslint/eslint-plugin": "^6.13.1",
+        "@typescript-eslint/eslint-plugin": "^7.2.0",
         "@typescript-eslint/parser": "^6.17.0",
         "eslint": "^8.53.0",
         "eslint-config-prettier": "^9.0.0",
