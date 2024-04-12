@@ -114,7 +114,7 @@ export function transformer({
                 return `${component} as ${TAGS_IMPORT}_${component}`;
             })
             .join(', ');
-        dependencies += `import { ${imports} from '${relative_posix_path(
+        dependencies += `import { ${imports} } from '${relative_posix_path(
             filename,
             tags_file,
         )}';`;
