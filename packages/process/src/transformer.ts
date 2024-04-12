@@ -8,6 +8,7 @@ import {
     ConfigType,
     validate,
     Tokenizer,
+    Node,
 } from '@markdoc/markdoc';
 import {
     ScriptTarget,
@@ -18,7 +19,7 @@ import {
     getNameOfDeclaration,
     isVariableStatement,
 } from 'typescript';
-import { dirname, join } from 'path';
+import { dirname, join, } from 'path';
 import { load as loadYaml } from 'js-yaml';
 import { parse as svelteParse, walk } from 'svelte/compiler';
 import { render_html } from './renderer';
@@ -27,11 +28,12 @@ import {
     path_exists,
     read_file,
     relative_posix_path,
+    to_absolute_posix_path,
     write_to_file,
 } from './utils';
 import * as default_schema from './default_schema';
 import type { Config } from './config';
-import { LAYOUT_IMPORT, NODES_IMPORT, TAGS_IMPORT } from './constants';
+import { LAYOUT_IMPORT, } from './constants';
 import { log_error, log_validation_error } from './log';
 
 type Var = {
@@ -74,6 +76,28 @@ export function transformer({
      */
     const ast = markdocParse(tokens);
 
+    const flatten_node = (node: Node): [NodeType[], string[]] => {
+        const aux_create_state = (node: Node): [NodeType[], string[]] =>
+            node.tag ? [[], [node.tag]] : [[node.type], []];
+
+        return node.children.length
+            ? [
+                  aux_create_state(node),
+                  ...node.children.map((n) => flatten_node(n)),
+              ].reduce(
+                  (acc, node) => [
+                      [...acc[0], ...node[0]],
+                      [...acc[1], ...node[1]],
+                  ],
+                  [[], []],
+              )
+            : aux_create_state(node);
+    };
+
+    const [used_nodes, used_tags] = flatten_node(ast).map((nodes) => [
+        ...new Set(nodes),
+    ]);
+
     /**
      * load frontmatter
      */
@@ -94,9 +118,13 @@ export function transformer({
      * add used svelte components to the script tag
      */
     let dependencies = '';
-    const tags = prepare_tags(tags_file);
+    const tag_comps_with_paths = tags_file ? each_exported_var(tags_file) : [];
+    const tags = prepare_tags(tags_file, tag_comps_with_paths);
     const has_tags = Object.keys(tags).length > 0;
-    const nodes = prepare_nodes(nodes_file);
+    const node_comps_with_paths = nodes_file
+        ? each_exported_var(nodes_file!)
+        : [];
+    const nodes = prepare_nodes(nodes_file, node_comps_with_paths);
     const has_nodes = Object.keys(nodes).length > 0;
     const partials = prepare_partials(partials_dir);
 
@@ -104,20 +132,33 @@ export function transformer({
      * add import for tags
      */
     if (tags_file && has_tags) {
-        dependencies += `import * as ${TAGS_IMPORT} from '${relative_posix_path(
-            filename,
-            tags_file,
-        )}';`;
+        dependencies += tag_comps_with_paths
+            .filter(([comp, _]) => used_tags.includes(comp.toLowerCase()))
+            .map(
+                ([comp, path]) =>
+                    `import ${comp} from '${relative_posix_path(
+                        filename,
+                        to_absolute_posix_path(filename, tags_file, path),
+                    )}';`,
+            )
+            .join('');
     }
 
     /**
      * add import for nodes
      */
+
     if (nodes_file && has_nodes) {
-        dependencies += `import * as ${NODES_IMPORT} from '${relative_posix_path(
-            filename,
-            nodes_file,
-        )}';`;
+        dependencies += node_comps_with_paths
+            .filter(([comp, _]) => used_nodes.includes(comp.toLowerCase()))
+            .map(
+                ([comp, path]) =>
+                    `import ${comp}  from '${relative_posix_path(
+                        filename,
+                        to_absolute_posix_path(filename, nodes_file, path),
+                    )}';`,
+            )
+            .join('');
     }
 
     /**
@@ -129,6 +170,7 @@ export function transformer({
             selected_layout,
         )}';`;
     }
+
 
     /**
      * generate schema for markdoc extension
@@ -397,10 +439,11 @@ function get_node_defaults(node_type: NodeType): Partial<Schema> {
 
 function prepare_nodes(
     nodes_file: Config['nodes'],
+    comps_with_paths: Array<[string, string]>,
 ): Partial<Record<NodeType, Schema>> {
     const nodes: Record<string, Schema> = {};
     if (nodes_file) {
-        for (const [name] of each_exported_var(nodes_file)) {
+        for (const [name] of comps_with_paths) {
             const type = name.toLowerCase() as NodeType;
             if (type === 'image') {
             }
@@ -411,7 +454,7 @@ function prepare_nodes(
                         node.attributes.src;
                     }
                     return new Tag(
-                        `${NODES_IMPORT}.${name}`,
+                        name,
                         node.transformAttributes(config),
                         node.transformChildren(config),
                     );
@@ -423,16 +466,19 @@ function prepare_nodes(
     return nodes;
 }
 
-function prepare_tags(tags_file: Config['tags']): Record<string, Schema> {
+function prepare_tags(
+    tags_file: Config['tags'],
+    comps_with_paths: Array<[string, string]>,
+): Record<string, Schema> {
     const tags: Record<string, Schema> = {};
     if (tags_file) {
-        for (const [name, value] of each_exported_var(tags_file)) {
+        for (const [name, value] of comps_with_paths) {
             /**
              * extract all exported variables from the components
              */
             const attributes = get_component_vars(String(value), tags_file);
             tags[name.toLowerCase()] = {
-                render: `${TAGS_IMPORT}.${name}`,
+                render: name,
                 attributes,
             };
         }
