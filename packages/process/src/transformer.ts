@@ -8,6 +8,7 @@ import {
     ConfigType,
     validate,
     Tokenizer,
+    Node,
 } from '@markdoc/markdoc';
 import {
     ScriptTarget,
@@ -73,6 +74,7 @@ export function transformer({
      * create ast for markdoc
      */
     const ast = markdocParse(tokens);
+    const [used_nodes, used_tags] = get_all_nodes_and_tags(ast);
 
     /**
      * load frontmatter
@@ -103,8 +105,16 @@ export function transformer({
     /**
      * add import for tags
      */
-    if (tags_file && has_tags) {
-        dependencies += `import * as ${TAGS_IMPORT} from '${relative_posix_path(
+    if (tags_file && has_tags && used_tags.size > 0) {
+        const imports = [...used_tags]
+            .filter((tag) => tag in tags)
+            .map((tag) => {
+                const component = tags[tag].component;
+
+                return `${component} as ${TAGS_IMPORT}_${component}`;
+            })
+            .join(', ');
+        dependencies += `import { ${imports} from '${relative_posix_path(
             filename,
             tags_file,
         )}';`;
@@ -113,8 +123,16 @@ export function transformer({
     /**
      * add import for nodes
      */
-    if (nodes_file && has_nodes) {
-        dependencies += `import * as ${NODES_IMPORT} from '${relative_posix_path(
+    if (nodes_file && has_nodes && used_nodes.size > 0) {
+        const imports = [...used_nodes]
+            .filter((node) => node in nodes)
+            .map((node) => {
+                const component = nodes[node]?.component;
+
+                return `${component} as ${NODES_IMPORT}_${component}`;
+            })
+            .join(', ');
+        dependencies += `import { ${imports} } from '${relative_posix_path(
             filename,
             nodes_file,
         )}';`;
@@ -395,23 +413,33 @@ function get_node_defaults(node_type: NodeType): Partial<Schema> {
     }
 }
 
+function get_all_nodes_and_tags(ast: Node): [Set<NodeType>, Set<string>] {
+    const nodes = new Set<NodeType>();
+    const tags = new Set<string>();
+    for (const node of ast.walk()) {
+        if (node.type === 'tag' && node?.tag) {
+            tags.add(node.tag);
+        } else {
+            nodes.add(node.type);
+        }
+    }
+
+    return [nodes, tags];
+}
+
 function prepare_nodes(
     nodes_file: Config['nodes'],
-): Partial<Record<NodeType, Schema>> {
-    const nodes: Record<string, Schema> = {};
+): Partial<Record<NodeType, Schema & { component: string }>> {
+    const nodes: Record<string, Schema & { component: string }> = {};
     if (nodes_file) {
         for (const [name] of each_exported_var(nodes_file)) {
             const type = name.toLowerCase() as NodeType;
-            if (type === 'image') {
-            }
             nodes[name.toLowerCase()] = {
                 ...get_node_defaults(type),
+                component: name,
                 transform(node, config) {
-                    if (type === 'image') {
-                        node.attributes.src;
-                    }
                     return new Tag(
-                        `${NODES_IMPORT}.${name}`,
+                        `${NODES_IMPORT}_${name}`,
                         node.transformAttributes(config),
                         node.transformChildren(config),
                     );
@@ -423,8 +451,10 @@ function prepare_nodes(
     return nodes;
 }
 
-function prepare_tags(tags_file: Config['tags']): Record<string, Schema> {
-    const tags: Record<string, Schema> = {};
+function prepare_tags(
+    tags_file: Config['tags'],
+): Record<string, Schema & { component: string }> {
+    const tags: Record<string, Schema & { component: string }> = {};
     if (tags_file) {
         for (const [name, value] of each_exported_var(tags_file)) {
             /**
@@ -432,7 +462,8 @@ function prepare_tags(tags_file: Config['tags']): Record<string, Schema> {
              */
             const attributes = get_component_vars(String(value), tags_file);
             tags[name.toLowerCase()] = {
-                render: `${TAGS_IMPORT}.${name}`,
+                render: `${TAGS_IMPORT}_${name}`,
+                component: name,
                 attributes,
             };
         }
