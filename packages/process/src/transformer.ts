@@ -46,7 +46,7 @@ let all_nodes_comps_with_paths: [string, string][] | undefined;
 
 let all_partials_with_node_instances: Record<string, Node> | undefined;
 let all_patrials_with_nodes_and_tags:
-    | Map<string, [NodeType[], string[]]>
+    | Map<string, [NodeType[], string[], string[]]>
     | undefined;
 
 function init(
@@ -77,22 +77,66 @@ function init(
         : new Map();
 }
 
-function flatten_node(node: Node): [NodeType[], string[]] {
-    const aux_create_state = (node: Node): [NodeType[], string[]] =>
-        node.tag ? [[], [node.tag]] : [[node.type], []];
+function flatten_node(node: Node): [NodeType[], string[], string[]] {
+    // returns nodes, tags and partials
+    const aux_create_state = (node: Node): [NodeType[], string[], string[]] =>
+        is_partial_node(node)
+            ? [[], [], node.annotations[0].value] // first elem is the partial file's name others are the meta data, like passed-in vars
+            : node.tag
+              ? [[], [node.tag], []]
+              : [[node.type], [], []];
 
     return node.children.length
-        ? [
+        ? combines_nodes_tags_partials([
               aux_create_state(node),
               ...node.children.map((n) => flatten_node(n)),
-          ].reduce(
-              (acc, node) => [
-                  [...acc[0], ...node[0]],
-                  [...acc[1], ...node[1]],
-              ],
-              [[], []],
-          )
+          ])
         : aux_create_state(node);
+}
+
+function combines_nodes_tags_partials(
+    data: [NodeType[], string[], string[]][],
+): [NodeType[], string[], string[]] {
+    return data.reduce<string[][]>(
+        (acc, node) => acc.map((k, i) => k.concat(node[i])),
+        [[], [], []],
+    ) as [NodeType[], string[], string[]];
+}
+
+function is_partial_node(node: Node): boolean {
+    return (
+        node.type == 'tag' && node.tag == 'partial' && !!node.annotations.length
+    );
+}
+
+function flatten_partials(
+    state: string[],
+    partialName: string,
+): [NodeType[], string[], string[]] {
+    if (state.includes(partialName)) {
+        throw new Error(
+            `resolve failed: detected cyclic in these partials in ${[
+                ...state,
+            ]}`,
+        );
+    }
+
+    if (!partialName.length) {
+        return [[], [], []];
+    }
+
+    state = [...state, partialName];
+    const res = all_patrials_with_nodes_and_tags?.get(partialName) ?? [
+        [],
+        [],
+        [],
+    ];
+    const [, , remaining_partials] = res;
+    return remaining_partials.length
+        ? combines_nodes_tags_partials(
+              remaining_partials.map((v) => flatten_partials(state, v)),
+          )
+        : res;
 }
 
 export function transformer({
@@ -132,9 +176,25 @@ export function transformer({
      */
     const ast = markdocParse(tokens);
 
-    const [used_nodes, used_tags] = flatten_node(ast).map((nodes) => [
-        ...new Set(nodes),
+    const [used_cur_nodes, used_cur_tags, used_partials] = flatten_node(
+        ast,
+    ).map((nodes) => [...new Set(nodes)]);
+
+    const [used_partials_nodes, used_partials_tags, empty_partials] =
+        combines_nodes_tags_partials(
+            used_partials.map((p) => flatten_partials([], p)),
+        );
+
+    if (empty_partials.length) {
+        throw new Error('should never happend');
+    }
+
+    const [used_nodes, used_tags] = combines_nodes_tags_partials([
+        [used_cur_nodes as NodeType[], used_cur_tags, []],
+        [used_partials_nodes, used_partials_tags, []],
     ]);
+
+    //
 
     /**
      * load frontmatter
@@ -165,7 +225,7 @@ export function transformer({
     /**
      * add import for tags
      */
-    if (used_tags.length) {
+    if (used_cur_tags.length) {
         dependencies +=
             all_tags_comps_with_paths
                 ?.filter(([comp]) => used_tags.includes(comp.toLowerCase()))
@@ -187,10 +247,12 @@ export function transformer({
      * add import for nodes
      */
 
-    if (used_nodes.length) {
+    if (used_cur_nodes.length) {
         dependencies +=
             all_nodes_comps_with_paths
-                ?.filter(([comp]) => used_nodes.includes(comp.toLowerCase()))
+                ?.filter(([comp]) =>
+                    used_nodes.includes(comp.toLowerCase() as NodeType),
+                )
                 .map(
                     ([comp, path]) =>
                         `import ${comp}  from '${relative_posix_path(
