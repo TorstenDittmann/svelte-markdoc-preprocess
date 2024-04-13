@@ -115,7 +115,7 @@ function flatten_partials(
 ): [NodeType[], string[], string[]] {
     if (state.includes(partialName)) {
         throw new Error(
-            `resolve failed: detected cyclic in these partials in ${[
+            `resolve failed: detected cyclic in these partials in the order ${[
                 ...state,
             ]}`,
         );
@@ -176,13 +176,13 @@ export function transformer({
      */
     const ast = markdocParse(tokens);
 
-    const [used_cur_nodes, used_cur_tags, used_partials] = flatten_node(
+    const [used_cur_nodes, used_cur_tags, used_cur_partials] = flatten_node(
         ast,
     ).map((nodes) => [...new Set(nodes)]);
 
     const [used_partials_nodes, used_partials_tags, empty_partials] =
         combines_nodes_tags_partials(
-            used_partials.map((p) => flatten_partials([], p)),
+            used_cur_partials.map((p) => flatten_partials([], p)),
         );
 
     if (empty_partials.length) {
@@ -217,10 +217,24 @@ export function transformer({
      */
     let dependencies = '';
 
-    const tags = prepare_tags(tags_file, all_tags_comps_with_paths ?? []);
-    const nodes = prepare_nodes(nodes_file, all_nodes_comps_with_paths ?? []);
+    const tags = prepare_tags(
+        tags_file,
+        all_tags_comps_with_paths?.filter(([comp]) =>
+            used_tags.includes(comp.toLowerCase()),
+        ) ?? [],
+    );
+    const nodes = prepare_nodes(
+        nodes_file,
+        all_nodes_comps_with_paths?.filter(
+            ([comp]) => used_nodes?.includes(comp.toLowerCase() as NodeType),
+        ) ?? [],
+    );
 
-    const partials = all_partials_with_node_instances;
+    const partials = Object.fromEntries(
+        Object.entries(all_partials_with_node_instances ?? {}).filter(([k]) =>
+            used_cur_partials.includes(k),
+        ),
+    );
 
     /**
      * add import for tags
