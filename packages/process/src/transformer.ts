@@ -19,7 +19,7 @@ import {
     getNameOfDeclaration,
     isVariableStatement,
 } from 'typescript';
-import { dirname, join, } from 'path';
+import { dirname, join } from 'path';
 import { load as loadYaml } from 'js-yaml';
 import { parse as svelteParse, walk } from 'svelte/compiler';
 import { render_html } from './renderer';
@@ -33,13 +33,67 @@ import {
 } from './utils';
 import * as default_schema from './default_schema';
 import type { Config } from './config';
-import { LAYOUT_IMPORT, } from './constants';
+import { LAYOUT_IMPORT } from './constants';
 import { log_error, log_validation_error } from './log';
 
 type Var = {
     name: string;
     type: StringConstructor | NumberConstructor | BooleanConstructor;
 };
+
+let all_tags_comps_with_paths: [string, string][] | undefined;
+let all_nodes_comps_with_paths: [string, string][] | undefined;
+
+let all_partials_with_node_instances: Record<string, Node> | undefined;
+let all_patrials_with_nodes_and_tags:
+    | Map<string, [NodeType[], string[]]>
+    | undefined;
+
+function init(
+    tags_file: string | null,
+    nodes_file: string | null,
+    partials_dir: string | null,
+) {
+    if (
+        all_nodes_comps_with_paths ||
+        all_tags_comps_with_paths ||
+        all_patrials_with_nodes_and_tags ||
+        all_partials_with_node_instances
+    )
+        return;
+
+    all_tags_comps_with_paths = tags_file ? each_exported_var(tags_file) : [];
+
+    all_nodes_comps_with_paths = nodes_file
+        ? each_exported_var(nodes_file)
+        : [];
+    all_partials_with_node_instances = prepare_partials(partials_dir);
+    all_patrials_with_nodes_and_tags = partials_dir
+        ? new Map(
+              Object.entries(all_partials_with_node_instances).map(
+                  ([string, node]) => [string, flatten_node(node)],
+              ),
+          )
+        : new Map();
+}
+
+function flatten_node(node: Node): [NodeType[], string[]] {
+    const aux_create_state = (node: Node): [NodeType[], string[]] =>
+        node.tag ? [[], [node.tag]] : [[node.type], []];
+
+    return node.children.length
+        ? [
+              aux_create_state(node),
+              ...node.children.map((n) => flatten_node(n)),
+          ].reduce(
+              (acc, node) => [
+                  [...acc[0], ...node[0]],
+                  [...acc[1], ...node[1]],
+              ],
+              [[], []],
+          )
+        : aux_create_state(node);
+}
 
 export function transformer({
     content,
@@ -64,6 +118,8 @@ export function transformer({
     validation_threshold: Config['validationThreshold'];
     allow_comments: Config['allowComments'];
 }): string {
+    init(tags_file, nodes_file, partials_dir);
+
     /**
      * create tokenizer
      */
@@ -75,24 +131,6 @@ export function transformer({
      * create ast for markdoc
      */
     const ast = markdocParse(tokens);
-
-    const flatten_node = (node: Node): [NodeType[], string[]] => {
-        const aux_create_state = (node: Node): [NodeType[], string[]] =>
-            node.tag ? [[], [node.tag]] : [[node.type], []];
-
-        return node.children.length
-            ? [
-                  aux_create_state(node),
-                  ...node.children.map((n) => flatten_node(n)),
-              ].reduce(
-                  (acc, node) => [
-                      [...acc[0], ...node[0]],
-                      [...acc[1], ...node[1]],
-                  ],
-                  [[], []],
-              )
-            : aux_create_state(node);
-    };
 
     const [used_nodes, used_tags] = flatten_node(ast).map((nodes) => [
         ...new Set(nodes),
@@ -118,47 +156,53 @@ export function transformer({
      * add used svelte components to the script tag
      */
     let dependencies = '';
-    const tag_comps_with_paths = tags_file ? each_exported_var(tags_file) : [];
-    const tags = prepare_tags(tags_file, tag_comps_with_paths);
-    const has_tags = Object.keys(tags).length > 0;
-    const node_comps_with_paths = nodes_file
-        ? each_exported_var(nodes_file!)
-        : [];
-    const nodes = prepare_nodes(nodes_file, node_comps_with_paths);
-    const has_nodes = Object.keys(nodes).length > 0;
-    const partials = prepare_partials(partials_dir);
+
+    const tags = prepare_tags(tags_file, all_tags_comps_with_paths ?? []);
+    const nodes = prepare_nodes(nodes_file, all_nodes_comps_with_paths ?? []);
+
+    const partials = all_partials_with_node_instances;
 
     /**
      * add import for tags
      */
-    if (tags_file && has_tags) {
-        dependencies += tag_comps_with_paths
-            .filter(([comp, _]) => used_tags.includes(comp.toLowerCase()))
-            .map(
-                ([comp, path]) =>
-                    `import ${comp} from '${relative_posix_path(
-                        filename,
-                        to_absolute_posix_path(filename, tags_file, path),
-                    )}';`,
-            )
-            .join('');
+    if (used_tags.length) {
+        dependencies +=
+            all_tags_comps_with_paths
+                ?.filter(([comp]) => used_tags.includes(comp.toLowerCase()))
+                .map(
+                    ([comp, path]) =>
+                        `import ${comp} from '${relative_posix_path(
+                            filename,
+                            to_absolute_posix_path(
+                                filename,
+                                tags_file ?? '',
+                                path,
+                            ),
+                        )}';`,
+                )
+                .join('') ?? '';
     }
 
     /**
      * add import for nodes
      */
 
-    if (nodes_file && has_nodes) {
-        dependencies += node_comps_with_paths
-            .filter(([comp, _]) => used_nodes.includes(comp.toLowerCase()))
-            .map(
-                ([comp, path]) =>
-                    `import ${comp}  from '${relative_posix_path(
-                        filename,
-                        to_absolute_posix_path(filename, nodes_file, path),
-                    )}';`,
-            )
-            .join('');
+    if (used_nodes.length) {
+        dependencies +=
+            all_nodes_comps_with_paths
+                ?.filter(([comp]) => used_nodes.includes(comp.toLowerCase()))
+                .map(
+                    ([comp, path]) =>
+                        `import ${comp}  from '${relative_posix_path(
+                            filename,
+                            to_absolute_posix_path(
+                                filename,
+                                nodes_file ?? '',
+                                path,
+                            ),
+                        )}';`,
+                )
+                .join('') ?? '';
     }
 
     /**
@@ -170,7 +214,6 @@ export function transformer({
             selected_layout,
         )}';`;
     }
-
 
     /**
      * generate schema for markdoc extension
