@@ -41,66 +41,109 @@ type Var = {
     type: StringConstructor | NumberConstructor | BooleanConstructor;
 };
 
-let all_tags_comps_with_paths: [string, string][] | undefined;
-let all_nodes_comps_with_paths: [string, string][] | undefined;
+type NodeName = NodeType;
+type TagName = string;
+type PartialName = string;
 
-let all_partials_with_node_instances: Record<string, Node> | undefined;
-let all_patrials_with_nodes_and_tags:
-    | Map<string, [NodeType[], string[], string[]]>
-    | undefined;
+type NodeTagPartialTriplet = [NodeName[], TagName[], PartialName[]];
+type TransformerState = {
+    nodes: Map<NodeName, [path: string, Schema]>;
+    tags: Map<TagName, [path: string, Schema]>;
+    partials: Map<PartialName, [NodeTagPartialTriplet, Node]>;
+    normalized: {
+        nodes: NodeName[];
+        tags: TagName[];
+    };
+};
+
+let transformer_state: TransformerState | undefined;
 
 function init(
     tags_file: string | null,
     nodes_file: string | null,
     partials_dir: string | null,
-) {
-    if (
-        all_nodes_comps_with_paths ||
-        all_tags_comps_with_paths ||
-        all_patrials_with_nodes_and_tags ||
-        all_partials_with_node_instances
-    )
-        return;
+): TransformerState {
+    const node_with_paths = nodes_file ? each_exported_var(nodes_file) : [];
+    const node_with_schemas = [
+        ...Object.entries(prepare_nodes(nodes_file, node_with_paths)),
+    ];
 
-    all_tags_comps_with_paths = tags_file ? each_exported_var(tags_file) : [];
+    const node_state = node_with_paths.map<[NodeName, [path: string, Schema]]>(
+        ([node, path]) => [
+            node as NodeName,
+            [
+                path,
+                node_with_schemas.find(
+                    ([snode]) => snode.toLowerCase() == node.toLowerCase(),
+                )![1],
+            ],
+        ],
+    );
 
-    all_nodes_comps_with_paths = nodes_file
-        ? each_exported_var(nodes_file)
+    const tag_with_paths = tags_file
+        ? each_exported_var(tags_file.toString())
         : [];
-    all_partials_with_node_instances = prepare_partials(partials_dir);
-    all_patrials_with_nodes_and_tags = partials_dir
-        ? new Map(
-              Object.entries(all_partials_with_node_instances).map(
-                  ([string, node]) => [string, flatten_node(node)],
-              ),
-          )
-        : new Map();
+
+    const tag_with_schemas = [
+        ...Object.entries(prepare_tags(tags_file, tag_with_paths)),
+    ];
+
+    const tag_state = tag_with_paths.map<[TagName, [path: string, Schema]]>(
+        ([tag, path]) => [
+            tag,
+            [
+                path,
+                tag_with_schemas.find(
+                    ([stag]) => stag.toLowerCase() == tag.toLowerCase(),
+                )![1],
+            ],
+        ],
+    );
+
+    const partial_schemas = prepare_partials(partials_dir);
+    const partial_state = Object.entries(partial_schemas).map<
+        [PartialName, [NodeTagPartialTriplet, Node]]
+    >(([partial, schema]) => [partial, [flatten_node(schema), schema]]);
+    return {
+        tags: new Map(tag_state),
+        nodes: new Map(node_state),
+        partials: new Map(partial_state),
+        normalized: {
+            nodes: [...node_state.map(([k]) => k)],
+            tags: [...tag_state.map(([k]) => k)],
+        },
+    };
 }
 
-function flatten_node(node: Node): [NodeType[], string[], string[]] {
-    // returns nodes, tags and partials
-    const aux_create_state = (node: Node): [NodeType[], string[], string[]] =>
+function flatten_node(node: Node): NodeTagPartialTriplet {
+    const aux_create_state = (node: Node): NodeTagPartialTriplet =>
         is_partial_node(node)
-            ? [[], [], node.annotations[0].value] // first elem is the partial file's name others are the meta data, like passed-in vars
+            ? [
+                  [],
+                  [],
+                  node.annotations
+                      .filter((a) => a.name == 'file')
+                      .map((node) => node.value),
+              ]
             : node.tag
               ? [[], [node.tag], []]
               : [[node.type], [], []];
 
     return node.children.length
-        ? combines_nodes_tags_partials([
+        ? combine_nodes_tags_partials([
               aux_create_state(node),
-              ...node.children.map((n) => flatten_node(n)),
+              ...node.children.map(flatten_node),
           ])
         : aux_create_state(node);
 }
 
-function combines_nodes_tags_partials(
-    data: [NodeType[], string[], string[]][],
-): [NodeType[], string[], string[]] {
+function combine_nodes_tags_partials(
+    data: NodeTagPartialTriplet[],
+): NodeTagPartialTriplet {
     return data.reduce<string[][]>(
         (acc, node) => acc.map((k, i) => k.concat(node[i])),
         [[], [], []],
-    ) as [NodeType[], string[], string[]];
+    ) as NodeTagPartialTriplet;
 }
 
 function is_partial_node(node: Node): boolean {
@@ -110,31 +153,36 @@ function is_partial_node(node: Node): boolean {
 }
 
 function flatten_partials(
-    state: string[],
-    partialName: string,
-): [NodeType[], string[], string[]] {
-    if (state.includes(partialName)) {
+    travel_state: PartialName[],
+    transformer_state: TransformerState,
+    partial_name: PartialName,
+): NodeTagPartialTriplet {
+    if (travel_state.includes(partial_name)) {
         throw new Error(
-            `resolve failed: detected cyclic in these partials in the order ${[
-                ...state,
+            `resolve deps failed: detected cyclic error in partial in the order ${[
+                ...travel_state,
+                partial_name,
             ]}`,
         );
     }
 
-    if (!partialName.length) {
+    if (!partial_name.length) {
         return [[], [], []];
     }
 
-    state = [...state, partialName];
-    const res = all_patrials_with_nodes_and_tags?.get(partialName) ?? [
+    travel_state = [...travel_state, partial_name];
+    const res = transformer_state.partials.get(partial_name)?.[0] ?? [
         [],
         [],
         [],
     ];
     const [, , remaining_partials] = res;
+
     return remaining_partials.length
-        ? combines_nodes_tags_partials(
-              remaining_partials.map((v) => flatten_partials(state, v)),
+        ? combine_nodes_tags_partials(
+              remaining_partials.map((v) =>
+                  flatten_partials(travel_state, transformer_state, v),
+              ),
           )
         : res;
 }
@@ -162,7 +210,8 @@ export function transformer({
     validation_threshold: Config['validationThreshold'];
     allow_comments: Config['allowComments'];
 }): string {
-    init(tags_file, nodes_file, partials_dir);
+    if (!transformer_state)
+        transformer_state = init(tags_file, nodes_file, partials_dir);
 
     /**
      * create tokenizer
@@ -181,18 +230,43 @@ export function transformer({
     ).map((nodes) => [...new Set(nodes)]);
 
     const [used_partials_nodes, used_partials_tags, empty_partials] =
-        combines_nodes_tags_partials(
-            used_cur_partials.map((p) => flatten_partials([], p)),
+        combine_nodes_tags_partials(
+            used_cur_partials.map((p) =>
+                flatten_partials([], transformer_state!, p),
+            ),
         );
 
     if (empty_partials.length) {
         throw new Error('should never happend');
     }
 
-    const [used_nodes, used_tags] = combines_nodes_tags_partials([
-        [used_cur_nodes as NodeType[], used_cur_tags, []],
+    const [used_nodes, used_tags] = combine_nodes_tags_partials([
+        [used_cur_nodes as NodeName[], used_cur_tags, []],
         [used_partials_nodes, used_partials_tags, []],
     ]);
+
+    const used_normalized_nodes = [
+        ...new Set(
+            used_nodes
+                .map((k) =>
+                    transformer_state!.normalized.nodes.find(
+                        (n) => n.toLowerCase() == k.toLowerCase(),
+                    ),
+                )
+                .filter(Boolean),
+        ),
+    ];
+
+    const used_normalized_tags = [
+        ...new Set(
+            used_tags.map(
+                (k) =>
+                    transformer_state!.normalized.tags.find(
+                        (n) => n.toLowerCase() == k.toLowerCase(),
+                    )!,
+            ),
+        ),
+    ];
 
     //
 
@@ -217,23 +291,19 @@ export function transformer({
      */
     let dependencies = '';
 
-    const tags = prepare_tags(
-        tags_file,
-        all_tags_comps_with_paths?.filter(([comp]) =>
-            used_tags.includes(comp.toLowerCase()),
-        ) ?? [],
-    );
-    const nodes = prepare_nodes(
-        nodes_file,
-        all_nodes_comps_with_paths?.filter(
-            ([comp]) => used_nodes?.includes(comp.toLowerCase() as NodeType),
-        ) ?? [],
-    );
+    const tags = used_normalized_tags.map((name) => [
+        name,
+        transformer_state!.tags.get(name)![0],
+    ]); // tags must be presented
+
+    const nodes = used_normalized_nodes
+        .map((name) => [name, transformer_state!.nodes.get(name!)?.[0]])
+        .filter(([, maybe_schema]) => maybe_schema) as [string, string][]; // node can be fall back to the default
 
     const partials = Object.fromEntries(
-        Object.entries(all_partials_with_node_instances ?? {}).filter(([k]) =>
-            used_cur_partials.includes(k),
-        ),
+        [...transformer_state!.partials.entries()]
+            .filter(([k]) => used_cur_partials.includes(k))
+            .map(([partial, [, node]]) => [partial, node]),
     );
 
     /**
@@ -241,8 +311,7 @@ export function transformer({
      */
     if (used_cur_tags.length) {
         dependencies +=
-            all_tags_comps_with_paths
-                ?.filter(([comp]) => used_tags.includes(comp.toLowerCase()))
+            tags
                 .map(
                     ([comp, path]) =>
                         `import ${comp} from '${relative_posix_path(
@@ -263,10 +332,7 @@ export function transformer({
 
     if (used_cur_nodes.length) {
         dependencies +=
-            all_nodes_comps_with_paths
-                ?.filter(([comp]) =>
-                    used_nodes.includes(comp.toLowerCase() as NodeType),
-                )
+            nodes
                 .map(
                     ([comp, path]) =>
                         `import ${comp}  from '${relative_posix_path(
@@ -295,7 +361,13 @@ export function transformer({
      * generate schema for markdoc extension
      */
     if (generate_schema) {
-        create_schema(tags);
+        create_schema(
+            Object.fromEntries(
+                [...transformer_state.tags.entries()].map(
+                    ([comp, [, schema]]) => [comp, schema],
+                ),
+            ),
+        );
     }
 
     /**
@@ -304,11 +376,20 @@ export function transformer({
     const configuration: ConfigType = {
         tags: {
             ...config?.tags,
-            ...tags,
+            ...Object.fromEntries(
+                [...transformer_state.tags.entries()].map(
+                    ([comp, [, schema]]) => [comp.toLowerCase(), schema],
+                ),
+            ),
         },
+
         nodes: {
             ...config?.nodes,
-            ...nodes,
+            ...Object.fromEntries(
+                [...transformer_state.nodes.entries()].map(
+                    ([comp, [, schema]]) => [comp.toLowerCase(), schema],
+                ),
+            ),
         },
         partials: {
             ...config?.partials,
@@ -564,14 +645,10 @@ function prepare_nodes(
     if (nodes_file) {
         for (const [name] of comps_with_paths) {
             const type = name.toLowerCase() as NodeType;
-            if (type === 'image') {
-            }
+
             nodes[name.toLowerCase()] = {
                 ...get_node_defaults(type),
                 transform(node, config) {
-                    if (type === 'image') {
-                        node.attributes.src;
-                    }
                     return new Tag(
                         name,
                         node.transformAttributes(config),
