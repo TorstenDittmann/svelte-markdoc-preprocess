@@ -8,6 +8,7 @@ import {
     ConfigType,
     validate,
     Tokenizer,
+    Node,
 } from '@markdoc/markdoc';
 import {
     ScriptTarget,
@@ -27,17 +28,162 @@ import {
     path_exists,
     read_file,
     relative_posix_path,
+    to_absolute_posix_path,
     write_to_file,
 } from './utils';
 import * as default_schema from './default_schema';
 import type { Config } from './config';
-import { LAYOUT_IMPORT, NODES_IMPORT, TAGS_IMPORT } from './constants';
+import { LAYOUT_IMPORT } from './constants';
 import { log_error, log_validation_error } from './log';
 
 type Var = {
     name: string;
     type: StringConstructor | NumberConstructor | BooleanConstructor;
 };
+
+type NodeName = NodeType;
+type TagName = string;
+type PartialName = string;
+
+type NodeTagPartialTriplet = [NodeName[], TagName[], PartialName[]];
+type TransformerState = {
+    nodes: Map<NodeName, [path: string, Schema]>;
+    tags: Map<TagName, [path: string, Schema]>;
+    partials: Map<PartialName, [NodeTagPartialTriplet, Node]>;
+    normalized: {
+        nodes: NodeName[];
+        tags: TagName[];
+    };
+};
+
+function init(
+    tags_file: string | null,
+    nodes_file: string | null,
+    partials_dir: string | null,
+): TransformerState {
+    const node_with_paths = nodes_file ? each_exported_var(nodes_file) : [];
+    const node_with_schemas = [
+        ...Object.entries(prepare_nodes(nodes_file, node_with_paths)),
+    ];
+
+    const node_state = node_with_paths.map<[NodeName, [path: string, Schema]]>(
+        ([node, path]) => [
+            node as NodeName,
+            [
+                path,
+                node_with_schemas.find(
+                    ([snode]) => snode.toLowerCase() == node.toLowerCase(),
+                )![1],
+            ],
+        ],
+    );
+
+    const tag_with_paths = tags_file
+        ? each_exported_var(tags_file.toString())
+        : [];
+
+    const tag_with_schemas = [
+        ...Object.entries(prepare_tags(tags_file, tag_with_paths)),
+    ];
+
+    const tag_state = tag_with_paths.map<[TagName, [path: string, Schema]]>(
+        ([tag, path]) => [
+            tag,
+            [
+                path,
+                tag_with_schemas.find(
+                    ([stag]) => stag.toLowerCase() == tag.toLowerCase(),
+                )![1],
+            ],
+        ],
+    );
+
+    const partial_schemas = prepare_partials(partials_dir);
+    const partial_state = Object.entries(partial_schemas).map<
+        [PartialName, [NodeTagPartialTriplet, Node]]
+    >(([partial, schema]) => [partial, [flatten_node(schema), schema]]);
+    return {
+        tags: new Map(tag_state),
+        nodes: new Map(node_state),
+        partials: new Map(partial_state),
+        normalized: {
+            nodes: [...node_state.map(([k]) => k)],
+            tags: [...tag_state.map(([k]) => k)],
+        },
+    };
+}
+
+function flatten_node(node: Node): NodeTagPartialTriplet {
+    const aux_create_state = (node: Node): NodeTagPartialTriplet =>
+        is_partial_node(node)
+            ? [
+                  [],
+                  [],
+                  node.annotations
+                      .filter((a) => a.name == 'file')
+                      .map((node) => node.value),
+              ]
+            : node.tag
+              ? [[], [node.tag], []]
+              : [[node.type], [], []];
+
+    return node.children.length
+        ? combine_nodes_tags_partials([
+              aux_create_state(node),
+              ...node.children.map(flatten_node),
+          ])
+        : aux_create_state(node);
+}
+
+function combine_nodes_tags_partials(
+    data: NodeTagPartialTriplet[],
+): NodeTagPartialTriplet {
+    return data.reduce<string[][]>(
+        (acc, node) => acc.map((k, i) => k.concat(node[i])),
+        [[], [], []],
+    ) as NodeTagPartialTriplet;
+}
+
+function is_partial_node(node: Node): boolean {
+    return (
+        node.type == 'tag' && node.tag == 'partial' && !!node.annotations.length
+    );
+}
+
+function flatten_partials(
+    travel_state: PartialName[],
+    transformer_state: TransformerState,
+    partial_name: PartialName,
+): NodeTagPartialTriplet {
+    if (travel_state.includes(partial_name)) {
+        throw new Error(
+            `resolve deps failed: detected cyclic error in partial in the order ${[
+                ...travel_state,
+                partial_name,
+            ]}`,
+        );
+    }
+
+    if (!partial_name.length) {
+        return [[], [], []];
+    }
+
+    travel_state = [...travel_state, partial_name];
+    const res = transformer_state.partials.get(partial_name)?.[0] ?? [
+        [],
+        [],
+        [],
+    ];
+    const [, , remaining_partials] = res;
+
+    return remaining_partials.length
+        ? combine_nodes_tags_partials(
+              remaining_partials.map((v) =>
+                  flatten_partials(travel_state, transformer_state, v),
+              ),
+          )
+        : res;
+}
 
 export function transformer({
     content,
@@ -62,6 +208,8 @@ export function transformer({
     validation_threshold: Config['validationThreshold'];
     allow_comments: Config['allowComments'];
 }): string {
+    const transformer_state = init(tags_file, nodes_file, partials_dir);
+
     /**
      * create tokenizer
      */
@@ -73,6 +221,52 @@ export function transformer({
      * create ast for markdoc
      */
     const ast = markdocParse(tokens);
+
+    const [used_cur_nodes, used_cur_tags, used_cur_partials] = flatten_node(
+        ast,
+    ).map((nodes) => [...new Set(nodes)]);
+
+    const [used_partials_nodes, used_partials_tags, empty_partials] =
+        combine_nodes_tags_partials(
+            used_cur_partials.map((p) =>
+                flatten_partials([], transformer_state, p),
+            ),
+        );
+
+    if (empty_partials.length) {
+        throw new Error('should never happend');
+    }
+
+    const [used_nodes, used_tags] = combine_nodes_tags_partials([
+        [used_cur_nodes as NodeName[], used_cur_tags, []],
+        [used_partials_nodes, used_partials_tags, []],
+    ]);
+
+    const used_normalized_nodes = [
+        ...new Set(
+            used_nodes
+                .map((k) =>
+                    transformer_state.normalized.nodes.find(
+                        (n) => n.toLowerCase() == k.toLowerCase(),
+                    ),
+                )
+                .filter(Boolean),
+        ),
+    ];
+
+    const used_normalized_tags = [
+        ...new Set(
+            used_tags.map((k) => {
+                const maybe_tag = transformer_state.normalized.tags.find(
+                    (n) => n.toLowerCase() == k.toLowerCase(),
+                );
+                if (!maybe_tag) throw new Error(`Undefined tag: '${k}'`);
+                return maybe_tag!;
+            }),
+        ),
+    ];
+
+    //
 
     /**
      * load frontmatter
@@ -94,30 +288,61 @@ export function transformer({
      * add used svelte components to the script tag
      */
     let dependencies = '';
-    const tags = prepare_tags(tags_file);
-    const has_tags = Object.keys(tags).length > 0;
-    const nodes = prepare_nodes(nodes_file);
-    const has_nodes = Object.keys(nodes).length > 0;
-    const partials = prepare_partials(partials_dir);
+
+    const tags = used_normalized_tags.map((name) => [
+        name,
+        transformer_state.tags.get(name)![0],
+    ]); // tags must be presented
+
+    const nodes = used_normalized_nodes
+        .map((name) => [name, transformer_state.nodes.get(name!)?.[0]])
+        .filter(([, maybe_schema]) => maybe_schema) as [string, string][]; // node can be fall back to the default
+
+    const partials = Object.fromEntries(
+        [...transformer_state.partials.entries()]
+            .filter(([k]) => used_cur_partials.includes(k))
+            .map(([partial, [, node]]) => [partial, node]),
+    );
 
     /**
      * add import for tags
      */
-    if (tags_file && has_tags) {
-        dependencies += `import * as ${TAGS_IMPORT} from '${relative_posix_path(
-            filename,
-            tags_file,
-        )}';`;
+    if (used_cur_tags.length) {
+        dependencies +=
+            tags
+                .map(
+                    ([comp, path]) =>
+                        `import ${comp} from '${relative_posix_path(
+                            filename,
+                            to_absolute_posix_path(
+                                filename,
+                                tags_file ?? '',
+                                path,
+                            ),
+                        )}';`,
+                )
+                .join('') ?? '';
     }
 
     /**
      * add import for nodes
      */
-    if (nodes_file && has_nodes) {
-        dependencies += `import * as ${NODES_IMPORT} from '${relative_posix_path(
-            filename,
-            nodes_file,
-        )}';`;
+
+    if (used_cur_nodes.length) {
+        dependencies +=
+            nodes
+                .map(
+                    ([comp, path]) =>
+                        `import ${comp}  from '${relative_posix_path(
+                            filename,
+                            to_absolute_posix_path(
+                                filename,
+                                nodes_file ?? '',
+                                path,
+                            ),
+                        )}';`,
+                )
+                .join('') ?? '';
     }
 
     /**
@@ -134,7 +359,13 @@ export function transformer({
      * generate schema for markdoc extension
      */
     if (generate_schema) {
-        create_schema(tags);
+        create_schema(
+            Object.fromEntries(
+                [...transformer_state.tags.entries()].map(
+                    ([comp, [, schema]]) => [comp, schema],
+                ),
+            ),
+        );
     }
 
     /**
@@ -143,11 +374,20 @@ export function transformer({
     const configuration: ConfigType = {
         tags: {
             ...config?.tags,
-            ...tags,
+            ...Object.fromEntries(
+                [...transformer_state.tags.entries()].map(
+                    ([comp, [, schema]]) => [comp.toLowerCase(), schema],
+                ),
+            ),
         },
+
         nodes: {
             ...config?.nodes,
-            ...nodes,
+            ...Object.fromEntries(
+                [...transformer_state.nodes.entries()].map(
+                    ([comp, [, schema]]) => [comp.toLowerCase(), schema],
+                ),
+            ),
         },
         partials: {
             ...config?.partials,
@@ -397,21 +637,18 @@ function get_node_defaults(node_type: NodeType): Partial<Schema> {
 
 function prepare_nodes(
     nodes_file: Config['nodes'],
+    comps_with_paths: Array<[string, string]>,
 ): Partial<Record<NodeType, Schema>> {
     const nodes: Record<string, Schema> = {};
     if (nodes_file) {
-        for (const [name] of each_exported_var(nodes_file)) {
+        for (const [name] of comps_with_paths) {
             const type = name.toLowerCase() as NodeType;
-            if (type === 'image') {
-            }
+
             nodes[name.toLowerCase()] = {
                 ...get_node_defaults(type),
                 transform(node, config) {
-                    if (type === 'image') {
-                        node.attributes.src;
-                    }
                     return new Tag(
-                        `${NODES_IMPORT}.${name}`,
+                        name,
                         node.transformAttributes(config),
                         node.transformChildren(config),
                     );
@@ -423,16 +660,19 @@ function prepare_nodes(
     return nodes;
 }
 
-function prepare_tags(tags_file: Config['tags']): Record<string, Schema> {
+function prepare_tags(
+    tags_file: Config['tags'],
+    comps_with_paths: Array<[string, string]>,
+): Record<string, Schema> {
     const tags: Record<string, Schema> = {};
     if (tags_file) {
-        for (const [name, value] of each_exported_var(tags_file)) {
+        for (const [name, value] of comps_with_paths) {
             /**
              * extract all exported variables from the components
              */
             const attributes = get_component_vars(String(value), tags_file);
             tags[name.toLowerCase()] = {
-                render: `${TAGS_IMPORT}.${name}`,
+                render: name,
                 attributes,
             };
         }

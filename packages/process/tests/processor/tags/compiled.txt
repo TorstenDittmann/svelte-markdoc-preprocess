@@ -1,1 +1,1 @@
-<script>import * as INTERNAL__TAGS from 'tests/tags/module.svelte';</script><article><INTERNAL__TAGS.Hello></INTERNAL__TAGS.Hello><p><INTERNAL__TAGS.Slot>slot content</INTERNAL__TAGS.Slot></p></article>
+<script>import Hello from 'tests/tags/hello.svelte';import Slot from 'tests/tags/slot.svelte';</script><article><Hello></Hello><p><Slot>slot content</Slot></p></article>

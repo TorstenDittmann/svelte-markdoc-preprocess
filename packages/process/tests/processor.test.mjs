@@ -78,7 +78,8 @@ test('preprocessor', async (context) => {
                         content: before,
                         filename: 'test.markdoc',
                     });
-                    assert.equal(markup.code, after);
+                    // Somehow when reading the compiled file, it adds a line line char to the output
+                    assert.equal(markup.code, after.trim());
                 } catch (error) {
                     if (exception) {
                         assert.equal(error.message, exception);
