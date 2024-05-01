@@ -56,8 +56,6 @@ type TransformerState = {
     };
 };
 
-let transformer_state: TransformerState | undefined;
-
 function init(
     tags_file: string | null,
     nodes_file: string | null,
@@ -210,8 +208,7 @@ export function transformer({
     validation_threshold: Config['validationThreshold'];
     allow_comments: Config['allowComments'];
 }): string {
-    if (!transformer_state)
-        transformer_state = init(tags_file, nodes_file, partials_dir);
+    const transformer_state = init(tags_file, nodes_file, partials_dir);
 
     /**
      * create tokenizer
@@ -232,7 +229,7 @@ export function transformer({
     const [used_partials_nodes, used_partials_tags, empty_partials] =
         combine_nodes_tags_partials(
             used_cur_partials.map((p) =>
-                flatten_partials([], transformer_state!, p),
+                flatten_partials([], transformer_state, p),
             ),
         );
 
@@ -249,7 +246,7 @@ export function transformer({
         ...new Set(
             used_nodes
                 .map((k) =>
-                    transformer_state!.normalized.nodes.find(
+                    transformer_state.normalized.nodes.find(
                         (n) => n.toLowerCase() == k.toLowerCase(),
                     ),
                 )
@@ -259,12 +256,13 @@ export function transformer({
 
     const used_normalized_tags = [
         ...new Set(
-            used_tags.map(
-                (k) =>
-                    transformer_state!.normalized.tags.find(
-                        (n) => n.toLowerCase() == k.toLowerCase(),
-                    )!,
-            ),
+            used_tags.map((k) => {
+                const maybe_tag = transformer_state.normalized.tags.find(
+                    (n) => n.toLowerCase() == k.toLowerCase(),
+                );
+                if (!maybe_tag) throw new Error(`Undefined tag: '${k}'`);
+                return maybe_tag!;
+            }),
         ),
     ];
 
@@ -293,15 +291,15 @@ export function transformer({
 
     const tags = used_normalized_tags.map((name) => [
         name,
-        transformer_state!.tags.get(name)![0],
+        transformer_state.tags.get(name)![0],
     ]); // tags must be presented
 
     const nodes = used_normalized_nodes
-        .map((name) => [name, transformer_state!.nodes.get(name!)?.[0]])
+        .map((name) => [name, transformer_state.nodes.get(name!)?.[0]])
         .filter(([, maybe_schema]) => maybe_schema) as [string, string][]; // node can be fall back to the default
 
     const partials = Object.fromEntries(
-        [...transformer_state!.partials.entries()]
+        [...transformer_state.partials.entries()]
             .filter(([k]) => used_cur_partials.includes(k))
             .map(([partial, [, node]]) => [partial, node]),
     );

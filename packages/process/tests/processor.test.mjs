@@ -78,7 +78,7 @@ test('preprocessor', async (context) => {
                         content: before,
                         filename: 'test.markdoc',
                     });
-                    assert.equal(markup.code, after);
+                    assert.equal(markup.code, after.trim());
                 } catch (error) {
                     if (exception) {
                         assert.equal(error.message, exception);
