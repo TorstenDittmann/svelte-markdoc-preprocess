@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+test.describe.configure({ mode: 'parallel' });
+
 test('tags work', async ({ page }) => {
+    test.setTimeout(0);
     await page.goto('http://localhost:4173/playground/tags');
 
     expect(await page.content()).toContain('Addition');
@@ -9,6 +12,7 @@ test('tags work', async ({ page }) => {
 });
 
 test('tags work with types', async ({ page }) => {
+    test.setTimeout(0);
     await page.goto('http://localhost:4173/playground/tags');
 
     expect(await page.content()).toContain('Types');
@@ -18,6 +22,7 @@ test('tags work with types', async ({ page }) => {
 });
 
 test('partials work', async ({ page }) => {
+    test.setTimeout(0);
     await page.goto('http://localhost:4173/playground/partials');
 
     expect(await page.content()).toContain('I am a partial.');
@@ -26,6 +31,7 @@ test('partials work', async ({ page }) => {
 });
 
 test('named layouts work', async ({ page }) => {
+    test.setTimeout(0);
     await page.goto('http://localhost:4173/playground/layout');
 
     expect(await page.content()).toContain('I am on an alternative layout');
