@@ -1,1 +1,1 @@
-<script>import Heading  from 'tests/nodes/mock.svelte';</script><article><Heading level="1">Heading 1</Heading><Heading level="2">Heading 2</Heading><Heading id="my-id" level="1">With ID </Heading><Heading class="my-class" level="1">With Class</Heading></article>
+<script>import Heading  from 'tests/nodes/mock.svelte';</script><article><Heading level={1}>Heading 1</Heading><Heading level={2}>Heading 2</Heading><Heading id="my-id" level={1}>With ID </Heading><Heading class="my-class" level={1}>With Class</Heading></article>

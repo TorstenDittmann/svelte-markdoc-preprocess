@@ -92,7 +92,7 @@ function is_void_element(name: string): boolean {
 }
 
 function is_svelte_component(node: RenderableTreeNodes): boolean {
-    return Tag.isTag(node) && node.name.startsWith(IMPORT_PREFIX);
+    return Tag.isTag(node);
 }
 
 function generate_svelte_attribute_value(value: unknown): string {
