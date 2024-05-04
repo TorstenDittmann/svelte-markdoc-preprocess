@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-cloudflare';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
@@ -34,6 +34,9 @@ const config = {
         // If your environment is not supported or you settled on a specific environment, switch out the adapter.
         // See https://kit.svelte.dev/docs/adapters for more information about adapters.
         adapter: adapter(),
+        alias: {
+            assets: 'src/lib/assets',
+        },
     },
 };
 
