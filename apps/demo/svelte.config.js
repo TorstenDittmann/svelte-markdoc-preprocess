@@ -1,9 +1,13 @@
 import adapter from '@sveltejs/adapter-auto';
-import { vitePreprocess } from '@sveltejs/kit/vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { markdoc } from 'svelte-markdoc-preprocess';
 
+/**
+ * @param {string} file
+ * @returns {string}
+ */
 function absoulute(file) {
     return join(dirname(fileURLToPath(import.meta.url)), file);
 }
