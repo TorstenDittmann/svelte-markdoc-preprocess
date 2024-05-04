@@ -56,13 +56,11 @@ export function render_html(
                         if (is_imported_image) {
                             const unique_name = `${IMAGE_PREFIX}${dependencies.size}`;
                             dependencies.set(unique_name, String(value));
-                            output += ` imported={true} ${key.toLowerCase()}=${generate_svelte_attribute_value(
+                            output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
                                 unique_name,
                                 'import',
                             )}`;
                             break;
-                        } else {
-                            output += ` imported={false}`;
                         }
                     }
 
