@@ -12,7 +12,6 @@ import { Config } from './config';
 export function render_html(
     node: RenderableTreeNodes,
     dependencies: Map<string, string>,
-    enhanced_images: Config['enhancedImages'],
 ): string {
     /**
      * if the node is a string or number, it's a text node.
@@ -25,9 +24,7 @@ export function render_html(
      * if the node is an array, render its items.
      */
     if (Array.isArray(node)) {
-        return node
-            .map((item) => render_html(item, dependencies, enhanced_images))
-            .join('');
+        return node.map((item) => render_html(item, dependencies)).join('');
     }
 
     /**
@@ -37,10 +34,10 @@ export function render_html(
         return '';
     }
 
-    let { name, attributes, children = [] } = node;
+    const { name, attributes, children = [] } = node;
 
     if (!name) {
-        return render_html(children, dependencies, enhanced_images);
+        return render_html(children, dependencies);
     }
 
     const is_svelte = is_svelte_component(node);
@@ -83,27 +80,7 @@ export function render_html(
                          * Allow importing relative images and import them via vite.
                          */
                         const unique_name = `${IMAGE_PREFIX}${dependencies.size}`;
-                        const params = parse_query_params_from_string(
-                            String(value),
-                        );
-                        const use_enhanced_img_tag =
-                            enhanced_images?.mode === 'automatic' ||
-                            (enhanced_images?.mode === 'manually' &&
-                                params.has('enhanced'));
-                        if (use_enhanced_img_tag) {
-                            output = output.replace('<img', '<enhanced:img');
-                            name = 'enhanced:img';
-                            params.set('enhanced', 'true');
-                            dependencies.set(
-                                unique_name,
-                                replace_query_params_from_string(
-                                    String(value),
-                                    params,
-                                ),
-                            );
-                        } else {
-                            dependencies.set(unique_name, String(value));
-                        }
+                        dependencies.set(unique_name, String(value));
                         output += ` ${key.toLowerCase()}=${generate_svelte_attribute_value(
                             unique_name,
                             'import',
@@ -131,7 +108,7 @@ export function render_html(
      * render the children if present.
      */
     if (children.length) {
-        output += render_html(children, dependencies, enhanced_images);
+        output += render_html(children, dependencies);
     }
 
     /**

@@ -50,7 +50,6 @@ export function transformer({
     config,
     validation_threshold,
     allow_comments,
-    enhanced_images,
 }: {
     content: string;
     filename: string;
@@ -62,7 +61,6 @@ export function transformer({
     config: Config['config'];
     validation_threshold: Config['validationThreshold'];
     allow_comments: Config['allowComments'];
-    enhanced_images: Config['enhancedImages'];
 }): string {
     /**
      * create tokenizer
@@ -191,7 +189,7 @@ export function transformer({
     /**
      * render to html
      */
-    const code = render_html(nast, dependencies, enhanced_images);
+    const code = render_html(nast, dependencies);
 
     let transformed = '';
 
