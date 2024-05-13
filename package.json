@@ -13,7 +13,7 @@
         "@turbo/gen": "^1.10.16",
         "@typescript-eslint/parser": "^7.0.0",
         "prettier": "^3.1.1",
-        "svelte": "^4.0.5",
+        "svelte": "^4.2.16",
         "turbo": "^1.11.2",
         "typescript": "^5.1.6"
     },
