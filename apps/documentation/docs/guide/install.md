@@ -8,7 +8,7 @@ npm i -D svelte-markdoc-preprocess
 
 Add the preprocessor and new extensions to your `svelte.config.js`:
 
-```javascript
+```javascript title="svelte.config.js"
 import { markdoc } from 'svelte-markdoc-preprocess';
 
 const config = {
