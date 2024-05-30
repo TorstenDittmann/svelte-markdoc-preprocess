@@ -12,10 +12,7 @@ Add the preprocessor and new extensions to your `svelte.config.js`:
 import { markdoc } from 'svelte-markdoc-preprocess';
 
 const config = {
-    preprocess: [
-        vitePreprocess(),
-        markdoc()
-    ],
+    preprocess: [vitePreprocess(), markdoc()],
     extensions: ['.markdoc', '.svelte'],
 };
 ```

@@ -2,9 +2,7 @@ import { RenderableTreeNodes, Tag } from '@markdoc/markdoc';
 import { sanitize_for_svelte } from './transformer';
 import { escape } from 'html-escaper';
 import { IMAGE_PREFIX, IMPORT_PREFIX, NODES_IMPORT } from './constants';
-import {
-    is_relative_path
-} from './utils';
+import { is_relative_path } from './utils';
 
 export function render_html(
     node: RenderableTreeNodes,

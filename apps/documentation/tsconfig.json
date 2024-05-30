@@ -1,9 +1,9 @@
 {
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "esModuleInterop": true
-  },
-  "mdx": {
-    "checkMdx": true
-  }
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "esModuleInterop": true
+    },
+    "mdx": {
+        "checkMdx": true
+    }
 }

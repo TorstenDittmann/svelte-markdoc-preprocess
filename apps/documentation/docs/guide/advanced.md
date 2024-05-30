@@ -19,7 +19,7 @@ date: 2021-01-01
 ```js title="+page.server.js"
 export function load() {
     const modules = import.meta.glob('./blog/*.markdoc', {
-        eager: true
+        eager: true,
     });
 
     const posts = Object.entries(modules).map(([filepath, module]) => {
@@ -28,16 +28,15 @@ export function load() {
             filepath,
             title: frontmatter.title,
             description: frontmatter.description,
-            date: frontmatter.date
+            date: frontmatter.date,
         };
     });
 
     return {
-        posts
+        posts,
     };
 }
 ```
-
 
 ## Visual Studio Code `experimental`
 
@@ -47,16 +46,16 @@ In the `markdoc.config.json` [configuration file](https://github.com/markdoc/lan
 
 ```json
 [
-  {
-    "id": "my-site",
-    "path": "docs/content",
-    "schema": {
-      "path": ".svelte-kit/markdoc_schema.js",
-      "type": "esm",
-      "property": "default",
-      "watch": true
+    {
+        "id": "my-site",
+        "path": "docs/content",
+        "schema": {
+            "path": ".svelte-kit/markdoc_schema.js",
+            "type": "esm",
+            "property": "default",
+            "watch": true
+        }
     }
-  }
 ]
 ```
 
@@ -67,21 +66,21 @@ You can configure the underlying Markdoc compiler by passing a [configuration ob
 ```js title="svelte.config.js"
 markdoc({
     config: {
-      variables: {
-        name: 'Dr. Mark',
-        frontmatter: {
-          title: 'Configuration options'
-        }
-      },
-      functions: {
-        includes: {
-          transform(parameters, config) {
-            const [array, value] = Object.values(parameters);
+        variables: {
+            name: 'Dr. Mark',
+            frontmatter: {
+                title: 'Configuration options',
+            },
+        },
+        functions: {
+            includes: {
+                transform(parameters, config) {
+                    const [array, value] = Object.values(parameters);
 
-            return Array.isArray(array) ? array.includes(value) : false;
-          }
-        }
-      }
-    }
-})
+                    return Array.isArray(array) ? array.includes(value) : false;
+                },
+            },
+        },
+    },
+});
 ```

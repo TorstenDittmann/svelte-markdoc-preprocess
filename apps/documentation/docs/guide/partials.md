@@ -7,8 +7,11 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 markdoc({
-    partials: join(dirname(fileURLToPath(import.meta.url)), './src/lib/partials'),
-})
+    partials: join(
+        dirname(fileURLToPath(import.meta.url)),
+        './src/lib/partials',
+    ),
+});
 ```
 
 ```md title="./src/lib/partials/header.md"

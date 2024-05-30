@@ -9,9 +9,9 @@ const config = {
     preprocess: [
         vitePreprocess(),
         markdoc({
-          // configuration here
-        })
-    ]
+            // configuration here
+        }),
+    ],
 };
 ```
 

@@ -1,7 +1,7 @@
 [
-  {
-    "text": "Guide",
-    "link": "/guide/install",
-    "activeMatch": "/guide/"
-  }
+    {
+        "text": "Guide",
+        "link": "/guide/install",
+        "activeMatch": "/guide/"
+    }
 ]

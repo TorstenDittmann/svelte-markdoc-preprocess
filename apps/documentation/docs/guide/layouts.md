@@ -10,18 +10,16 @@ markdoc({
     layouts: {
         default: join(
             dirname(fileURLToPath(import.meta.url)),
-            './src/lib/Layout.svelte'
-        )
-    }
-})
+            './src/lib/Layout.svelte',
+        ),
+    },
+});
 ```
 
 Layout files are basically Svelte components with a slot. The `default` slot is used for all files.
 
 ```html title="./src/lib/Layout.svelte"
-<nav>
-    ...
-</nav>
+<nav>...</nav>
 
 <slot />
 ```
@@ -38,14 +36,14 @@ markdoc({
     layouts: {
         default: join(
             dirname(fileURLToPath(import.meta.url)),
-            './src/lib/Layout.svelte'
+            './src/lib/Layout.svelte',
         ),
         some_other_layout: join(
             dirname(fileURLToPath(import.meta.url)),
-            './src/lib/SomeOtherLayout.svelte'
-        )
-    }
-})
+            './src/lib/SomeOtherLayout.svelte',
+        ),
+    },
+});
 ```
 
 ```md title="+page.markdoc"
@@ -68,7 +66,7 @@ Layouts will be passed the frontmatter as props from the Markdoc file.
 
 <svelte:head>
     <title>{title}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content="{description}" />
 </svelte:head>
 ```
 

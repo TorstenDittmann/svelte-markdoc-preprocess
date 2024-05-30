@@ -17,8 +17,11 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 markdoc({
-    tags: join(dirname(fileURLToPath(import.meta.url)), './src/lib/Tags.svelte'),
-})
+    tags: join(
+        dirname(fileURLToPath(import.meta.url)),
+        './src/lib/Tags.svelte',
+    ),
+});
 ```
 
 ```html
@@ -33,6 +36,7 @@ markdoc({
 
 ```md
 <!-- ./src/routes/+page.markdoc -->
+
 # I am in a markdoc file
 
 {% multiply a=2 b=3 /%}
