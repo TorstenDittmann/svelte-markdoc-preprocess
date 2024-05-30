@@ -32,7 +32,6 @@ markdoc({
 ```
 
 ```md title="./src/routes/+page.markdoc"
-
 # I am in a markdoc file
 
 {% multiply a=2 b=3 /%}
