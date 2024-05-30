@@ -8,10 +8,10 @@ hero:
     actions:
         - theme: brand
           text: Quick Start
-          link: /guide/
+          link: /guide/install
         - theme: alt
           text: Github
-          link: https://github.com/web-infra-dev/rspress
+          link: https://github.com/TorstenDittmann/svelte-markdoc-preprocess
     image:
         src: /logo.svg
         alt: svelte-markdoc-preprocess Logo
