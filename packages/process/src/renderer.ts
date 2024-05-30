@@ -3,11 +3,8 @@ import { sanitize_for_svelte } from './transformer';
 import { escape } from 'html-escaper';
 import { IMAGE_PREFIX, IMPORT_PREFIX, NODES_IMPORT } from './constants';
 import {
-    is_relative_path,
-    parse_query_params_from_string,
-    replace_query_params_from_string,
+    is_relative_path
 } from './utils';
-import { Config } from './config';
 
 export function render_html(
     node: RenderableTreeNodes,

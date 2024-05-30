@@ -1,0 +1,30 @@
+# Nodes
+
+You can use Svelte components in your markdown files, you can define Svelte Component for each node.
+
+Create a Svelte file and export Svelte components with the same name as the node from the module context.
+
+```html title="src/lib/Nodes.svelte"
+<script context="module">
+    export { default as Heading } from './Heading.svelte';
+</script>
+```
+
+```js title="svelte.config.js"
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+markdoc({
+    nodes: join(dirname(fileURLToPath(import.meta.url)), './src/lib/Nodes.svelte'),
+})
+```
+
+```html title="./src/lib/Heading.svelte"
+<script>
+    export let level;
+</script>
+
+<svelte:element this={`h${level}`}><slot /></svelte:element>
+```
+
+You can find a list of available nodes [here](https://markdoc.dev/docs/nodes#built-in-nodes).

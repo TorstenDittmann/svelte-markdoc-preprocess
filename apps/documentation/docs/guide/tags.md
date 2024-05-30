@@ -1,0 +1,39 @@
+# Tags
+
+You can use Svelte components for tags, the same way you do for nodes.
+
+Create a Svelte file and export Svelte components with the same name as the node from the module context.
+
+```html
+<!-- ./src/lib/Tags.svelte -->
+<script context="module">
+    export { default as Multiply } from './Multiply.svelte';
+</script>
+```
+
+```js
+// svelte.config.js
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+markdoc({
+    tags: join(dirname(fileURLToPath(import.meta.url)), './src/lib/Tags.svelte'),
+})
+```
+
+```html
+<!-- ./src/lib/Multiply.svelte -->
+<script>
+    export let a;
+    export let b;
+</script>
+
+<p>{a} * {b} = {a * b}</p>
+```
+
+```md
+<!-- ./src/routes/+page.markdoc -->
+# I am in a markdoc file
+
+{% multiply a=2 b=3 /%}
+```
