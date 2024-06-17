@@ -17,7 +17,7 @@
         "@sveltejs/adapter-cloudflare": "^4.4.0",
         "@sveltejs/kit": "*",
         "@sveltejs/vite-plugin-svelte": "^3.0.0",
-        "@typescript-eslint/eslint-plugin": "^7.0.0",
+        "@typescript-eslint/eslint-plugin": "^7.13.0",
         "@typescript-eslint/parser": "*",
         "eslint": "^8.53.0",
         "eslint-config-prettier": "^9.1.0",
