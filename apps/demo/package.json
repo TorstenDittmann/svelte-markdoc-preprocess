@@ -27,7 +27,7 @@
         "svelte": "*",
         "svelte-check": "^3.6.2",
         "svelte-markdoc-preprocess": "*",
-        "tslib": "^2.4.1",
+        "tslib": "^2.6.3",
         "typescript": "^5.5.2",
         "vite": "^5.0.0"
     },
