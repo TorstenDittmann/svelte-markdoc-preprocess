@@ -11,7 +11,8 @@ jobs:
               with:
                   node-version: '20.x'
                   registry-url: 'https://registry.npmjs.org'
-            - run: npm ci
-            - run: npm run publish-packages
+            - run: corepack enable
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm run build && pnpm publish -r
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

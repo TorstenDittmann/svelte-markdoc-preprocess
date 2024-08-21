@@ -86,7 +86,7 @@ export function transformer({
      * get layout from frontmatter, use default or no at all
      */
     const selected_layout = layouts
-        ? layouts[frontmatter?.layout ?? 'default'] ?? undefined
+        ? (layouts[frontmatter?.layout ?? 'default'] ?? undefined)
         : undefined;
     const has_layout = selected_layout !== undefined;
 
@@ -487,7 +487,7 @@ function create_schema(tags: Record<string, Schema>): void {
     // and then remove the double quotes from the json
     const object = JSON.stringify(tags, (key, value) =>
         key === 'type' && [Number, String, Boolean].includes(value)
-            ? (value + '').match(/.*([A-Z].*)\(\).*/)?.pop() ?? value
+            ? ((value + '').match(/.*([A-Z].*)\(\).*/)?.pop() ?? value)
             : value,
     ).replaceAll(/"(Number|String|Boolean)"/g, '$1');
 
