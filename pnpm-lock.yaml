@@ -100,7 +100,7 @@ importers:
   apps/documentation:
     dependencies:
       rspress:
-        specifier: ^1.21.1
+        specifier: ^1.28.0
         version: 1.28.1(webpack@5.93.0)
     devDependencies:
       '@types/node':
