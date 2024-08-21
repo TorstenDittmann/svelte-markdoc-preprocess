@@ -13,6 +13,6 @@ jobs:
                   registry-url: 'https://registry.npmjs.org'
             - run: corepack enable
             - run: pnpm install --frozen-lockfile
-            - run: pnpm run build && pnpm publish -r
+            - run: pnpm run build && pnpm publish -r --no-git-checks
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
