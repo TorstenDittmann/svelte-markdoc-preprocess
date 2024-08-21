@@ -1,6 +1,6 @@
 {
     "name": "svelte-markdoc-preprocess",
-    "version": "2.0.0",
+    "version": "2.0.2",
     "description": "A Svelte preprocessor that allows you to use Markdoc.",
     "type": "commonjs",
     "keywords": [
@@ -33,7 +33,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/TorstenDittmann/svelte-markdoc-preprocess.git"
+        "url": "git+https://github.com/TorstenDittmann/svelte-markdoc-preprocess.git"
     },
     "homepage": "https://svelte-markdoc-preprocess.pages.dev",
     "devDependencies": {
