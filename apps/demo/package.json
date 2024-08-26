@@ -16,7 +16,7 @@
         "@playwright/test": "^1.28.1",
         "@sveltejs/adapter-cloudflare": "^4.4.0",
         "@sveltejs/kit": "catalog:default",
-        "@sveltejs/vite-plugin-svelte": "^3.0.0",
+        "@sveltejs/vite-plugin-svelte": "^3.1.2",
         "@typescript-eslint/eslint-plugin": "^7.0.0",
         "@typescript-eslint/parser": "catalog:default",
         "eslint": "^8.53.0",
