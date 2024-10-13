@@ -3,23 +3,40 @@ import { sanitize_for_svelte } from './transformer';
 import { escape } from 'html-escaper';
 import { IMAGE_PREFIX, IMPORT_PREFIX, NODES_IMPORT } from './constants';
 import { is_relative_path } from './utils';
+import { Config } from './config';
 
-export function render_html(
+export async function render_html(
     node: RenderableTreeNodes,
     dependencies: Map<string, string>,
-): string {
+    highlighter: Config['highlighter'],
+    escape_html = true,
+): Promise<string> {
     /**
      * if the node is a string or number, it's a text node.
      */
     if (typeof node === 'string' || typeof node === 'number') {
-        return sanitize_for_svelte(escape(String(node)));
+        if (escape_html) {
+            return sanitize_for_svelte(escape(String(node)));
+        } else {
+            return sanitize_for_svelte(String(node));
+        }
     }
 
     /**
      * if the node is an array, render its items.
      */
     if (Array.isArray(node)) {
-        return node.map((item) => render_html(item, dependencies)).join('');
+        return Promise.all(
+            node.map(
+                async (item) =>
+                    await render_html(
+                        item,
+                        dependencies,
+                        highlighter,
+                        escape_html,
+                    ),
+            ),
+        ).then((items) => items.join(''));
     }
 
     /**
@@ -29,10 +46,10 @@ export function render_html(
         return '';
     }
 
-    const { name, attributes, children = [] } = node;
+    let { name, attributes, children = [] } = node;
 
     if (!name) {
-        return render_html(children, dependencies);
+        return await render_html(children, dependencies, highlighter);
     }
 
     const is_svelte = is_svelte_component(node);
@@ -41,9 +58,10 @@ export function render_html(
      * add attributes to the tag.
      */
     let output = `<${name}`;
-    for (const [key, value] of Object.entries(attributes ?? {})) {
+    for (let [key, value] of Object.entries(attributes ?? {})) {
         const is_src_key = key === 'src';
         const is_imported_image = is_src_key && is_relative_path(value);
+
         if (is_svelte) {
             switch (name.toLowerCase()) {
                 case `${NODES_IMPORT}.image`.toLowerCase():
@@ -97,11 +115,39 @@ export function render_html(
         return output;
     }
 
+    let escape_next = true;
+
+    if (highlighter) {
+        const run_highlighter =
+            name.toLowerCase() === `${NODES_IMPORT}.fence`.toLowerCase() ||
+            name.toLowerCase() === 'pre'.toLowerCase();
+        if (run_highlighter) {
+            escape_next = false;
+            children = await Promise.all(
+                children.map(async (child) =>
+                    typeof child === 'string'
+                        ? await highlighter(
+                              child,
+                              (is_svelte
+                                  ? attributes?.language
+                                  : attributes['data-language']) ?? '',
+                          )
+                        : child,
+                ),
+            );
+        }
+    }
+
     /**
      * render the children if present.
      */
     if (children.length) {
-        output += render_html(children, dependencies);
+        output += await render_html(
+            children,
+            dependencies,
+            highlighter,
+            escape_next,
+        );
     }
 
     /**
