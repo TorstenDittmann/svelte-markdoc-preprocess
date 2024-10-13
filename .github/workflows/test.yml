@@ -18,5 +18,5 @@ jobs:
             - run: corepack enable
             - run: pnpm install --frozen-lockfile
             - run: pnpm run build
-            - run: pnpm exec playwright install --with-deps
+            - run: pnpx playwright install --with-deps
             - run: pnpm test
