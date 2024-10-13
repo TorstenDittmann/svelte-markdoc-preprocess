@@ -40,4 +40,8 @@ export type Config = {
      * Configuration for the markdoc compiler.
      */
     config: ConfigType | null;
+    /**
+     * A function that will provide a custom highlighter for code blocks.
+     */
+    highlighter: ((code: string, language: string) => Promise<string>) | null;
 };

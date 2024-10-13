@@ -1,0 +1,1 @@
+<article><pre data-language="javascript">javascript:console.log('hello world');\n</pre><pre data-language="html">html:<b>bold</b>\n</pre></article>

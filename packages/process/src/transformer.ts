@@ -39,7 +39,7 @@ type Var = {
     type: StringConstructor | NumberConstructor | BooleanConstructor;
 };
 
-export function transformer({
+export async function transformer({
     content,
     filename,
     nodes_file,
@@ -50,6 +50,7 @@ export function transformer({
     config,
     validation_threshold,
     allow_comments,
+    highlighter,
 }: {
     content: string;
     filename: string;
@@ -61,7 +62,8 @@ export function transformer({
     config: Config['config'];
     validation_threshold: Config['validationThreshold'];
     allow_comments: Config['allowComments'];
-}): string {
+    highlighter: Config['highlighter'];
+}): Promise<string> {
     /**
      * create tokenizer
      */
@@ -189,7 +191,7 @@ export function transformer({
     /**
      * render to html
      */
-    const code = render_html(nast, dependencies);
+    const code = await render_html(nast, dependencies, highlighter);
 
     let transformed = '';
 
@@ -406,14 +408,9 @@ function prepare_nodes(
     if (nodes_file) {
         for (const [name] of each_exported_var(nodes_file)) {
             const type = name.toLowerCase() as NodeType;
-            if (type === 'image') {
-            }
             nodes[name.toLowerCase()] = {
                 ...get_node_defaults(type),
                 transform(node, config) {
-                    if (type === 'image') {
-                        node.attributes.src;
-                    }
                     return new Tag(
                         `${NODES_IMPORT}.${name}`,
                         node.transformAttributes(config),
@@ -470,7 +467,8 @@ function each_exported_var(filepath: string): Array<[string, string]> {
             if (node.type === 'ExportSpecifier') {
                 if (
                     parent?.type === 'ExportNamedDeclaration' &&
-                    parent?.source
+                    parent?.source &&
+                    node.exported.type === 'Identifier'
                 ) {
                     tup.push([node.exported.name, String(parent.source.value)]);
                 }

@@ -12,6 +12,7 @@ const default_config: Config = {
     config: null,
     validationThreshold: 'error',
     allowComments: false,
+    highlighter: null,
 };
 
 const processor = ({
@@ -24,6 +25,7 @@ const processor = ({
     config = default_config.config,
     validationThreshold = default_config.validationThreshold,
     allowComments = default_config.allowComments,
+    highlighter: highlighter = default_config.highlighter,
 }: Partial<Config> = default_config): PreprocessorGroup => {
     return {
         name: 'svelte-markdoc-preprocess',
@@ -40,7 +42,7 @@ const processor = ({
             /**
              * Add svelte components to be used with markdoc tags
              */
-            const code = transformer({
+            const code = await transformer({
                 filename,
                 config,
                 content,
@@ -51,6 +53,7 @@ const processor = ({
                 partials_dir: partials,
                 validation_threshold: validationThreshold,
                 allow_comments: allowComments,
+                highlighter,
             });
 
             return {
