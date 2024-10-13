@@ -69,7 +69,10 @@ test('preprocessor', async (context) => {
         files.map(async (entry) => {
             return context.test('tests ' + basename(entry), async () => {
                 const before = read_file(join(entry, 'source.markdoc'));
-                const after = read_file(join(entry, 'compiled.txt')).replace(/\\n/g, '\n');
+                const after = read_file(join(entry, 'compiled.txt')).replace(
+                    /\\n/g,
+                    '\n',
+                );
                 const config = await import('../' + join(entry, 'config.mjs'));
                 const preprocess = config.default;
                 const exception = config.exception ?? false;
