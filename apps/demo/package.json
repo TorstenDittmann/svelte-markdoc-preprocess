@@ -23,7 +23,7 @@
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-svelte": "^2.35.1",
         "prettier": "catalog:default",
-        "prettier-plugin-svelte": "^3.0.3",
+        "prettier-plugin-svelte": "^3.2.7",
         "svelte": "catalog:default",
         "svelte-check": "^3.6.2",
         "svelte-markdoc-preprocess": "workspace:*",
