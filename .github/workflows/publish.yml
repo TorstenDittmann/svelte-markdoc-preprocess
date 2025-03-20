@@ -11,7 +11,7 @@ jobs:
               with:
                   node-version: '22.x'
                   registry-url: 'https://registry.npmjs.org'
-            - run: npm install -g corepack@latest
+            - run: npm install -g --force corepack@latest
             - run: corepack enable
             - run: pnpm install --frozen-lockfile
             - run: pnpm run build && pnpm publish -r --no-git-checks

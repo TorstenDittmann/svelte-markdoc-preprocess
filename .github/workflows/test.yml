@@ -15,7 +15,7 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
-            - run: npm install -g corepack@latest
+            - run: npm install -g --force corepack@latest
             - run: corepack enable
             - run: pnpm install --frozen-lockfile
             - run: pnpm run build
