@@ -5,14 +5,13 @@
         "dev": "pnpm run -r --parallel --stream dev",
         "test": "pnpm run -r test",
         "check": "pnpm run -r check",
-        "lint": "prettier --check \"**/*.{json,md}\" && pnpm run -r lint",
-        "format": "prettier --write \"**/*.{json,md}\" && pnpm run -r format"
+        "lint": "pnpm run -r lint",
+        "format": "pnpm run -r format"
     },
     "devDependencies": {
         "@typescript-eslint/parser": "catalog:default",
-        "prettier": "catalog:default",
         "svelte": "catalog:default",
         "typescript": "catalog:default"
     },
-    "packageManager": "pnpm@9.7.0+sha512.dc09430156b427f5ecfc79888899e1c39d2d690f004be70e05230b72cb173d96839587545d09429b55ac3c429c801b4dc3c0e002f653830a420fa2dd4e3cf9cf"
+    "packageManager": "pnpm@10.6.5+sha512.cdf928fca20832cd59ec53826492b7dc25dc524d4370b6b4adbf65803d32efaa6c1c88147c0ae4e8d579a6c9eec715757b50d4fa35eea179d868eada4ed043af"
 }
