@@ -5,12 +5,11 @@
         "dev": "pnpm run -r --parallel --stream dev",
         "test": "pnpm run -r test",
         "check": "pnpm run -r check",
-        "lint": "prettier --check \"**/*.{json,md}\" && pnpm run -r lint",
-        "format": "prettier --write \"**/*.{json,md}\" && pnpm run -r format"
+        "lint": "pnpm run -r lint",
+        "format": "pnpm run -r format"
     },
     "devDependencies": {
         "@typescript-eslint/parser": "catalog:default",
-        "prettier": "catalog:default",
         "svelte": "catalog:default",
         "typescript": "catalog:default"
     },
