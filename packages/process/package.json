@@ -1,6 +1,6 @@
 {
     "name": "svelte-markdoc-preprocess",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "description": "A Svelte preprocessor that allows you to use Markdoc.",
     "type": "commonjs",
     "keywords": [
@@ -24,12 +24,12 @@
     "author": "Torsten Dittmann",
     "license": "MIT",
     "dependencies": {
-        "@markdoc/markdoc": "^0.4.0",
+        "@markdoc/markdoc": "^0.5.1",
         "html-escaper": "^3.0.3",
         "js-yaml": "^4.1.0",
-        "lovely-logs": "^1.2.0",
-        "svelte": "^4.0.0",
-        "typescript": "^5.5.2"
+        "lovely-logs": "^1.2.2",
+        "svelte": "^4.2.19",
+        "typescript": "^5.8.2"
     },
     "repository": {
         "type": "git",
@@ -37,11 +37,11 @@
     },
     "homepage": "https://svelte-markdoc-preprocess.pages.dev",
     "devDependencies": {
-        "@types/html-escaper": "^3.0.2",
-        "@types/js-yaml": "^4.0.8",
-        "@types/node": "^20.10.7",
-        "fast-glob": "^3.3.2",
-        "prettier": "*",
-        "publint": "^0.2.5"
+        "@types/html-escaper": "^3.0.4",
+        "@types/js-yaml": "^4.0.9",
+        "@types/node": "^20.17.24",
+        "fast-glob": "^3.3.3",
+        "prettier": "^3.5.3",
+        "publint": "^0.3.9"
     }
 }
