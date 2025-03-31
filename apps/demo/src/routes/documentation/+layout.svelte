@@ -90,7 +90,7 @@
 				</div>
 				<h3>Side navigation</h3>
 				<ul>
-					{#each links as link}
+					{#each links as link (link.path)}
 						<li aria-current={link.is_selected ? 'page' : null}>
 							<a class:is-active={link.is_selected} href={link.path}>{link.name}</a>
 						</li>

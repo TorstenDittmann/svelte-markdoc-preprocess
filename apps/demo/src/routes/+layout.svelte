@@ -45,7 +45,7 @@
 		</div>
 		<nav class="p-navigation__nav" aria-label="Navigation">
 			<ul class="p-navigation__items">
-				{#each links as link}
+				{#each links as link (link.path)}
 					<li
 						class="p-navigation__item"
 						class:is-selected={link.is_selected}
