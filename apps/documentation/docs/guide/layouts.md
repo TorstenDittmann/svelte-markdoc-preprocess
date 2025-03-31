@@ -60,8 +60,7 @@ Layouts will be passed the frontmatter as props from the Markdoc file.
 
 ```html title="./src/lib/Layout.svelte"
 <script>
-    export let title;
-    export let description;
+    let { title, description } = $props;
 </script>
 
 <svelte:head>

@@ -1,8 +1,8 @@
 <script>
 	let {
-		number = 123,
-		string = 'test',
-		boolean = true
+		number,
+		string,
+		boolean
 	} = $props();
 </script>
 

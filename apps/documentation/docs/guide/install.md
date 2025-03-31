@@ -3,7 +3,7 @@
 Install the package:
 
 ```sh
-npm i -D svelte-markdoc-preprocess
+npx nypm add -D svelte-markdoc-preprocess
 ```
 
 Add the preprocessor and new extensions to your `svelte.config.js`:

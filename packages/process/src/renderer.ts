@@ -1,9 +1,11 @@
-import { RenderableTreeNodes, Tag } from '@markdoc/markdoc';
-import { sanitize_for_svelte } from './transformer';
+import type { RenderableTreeNodes } from '@markdoc/markdoc';
+import { sanitize_for_svelte } from './transformer.js';
 import { escape } from 'html-escaper';
-import { IMAGE_PREFIX, IMPORT_PREFIX, NODES_IMPORT } from './constants';
-import { is_relative_path } from './utils';
-import { Config } from './config';
+import { IMAGE_PREFIX, IMPORT_PREFIX, NODES_IMPORT } from './constants.js';
+import { is_relative_path } from './utils.js';
+import { Config } from './config.js';
+import md from '@markdoc/markdoc';
+const { Tag } = md;
 
 export async function render_html(
     node: RenderableTreeNodes,

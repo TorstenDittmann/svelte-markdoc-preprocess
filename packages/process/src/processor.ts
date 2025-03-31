@@ -1,5 +1,5 @@
-import { Config } from './config';
-import { transformer } from './transformer';
+import { Config } from './config.js';
+import { transformer } from './transformer.js';
 import type { PreprocessorGroup } from 'svelte/compiler';
 
 const default_config: Config = {

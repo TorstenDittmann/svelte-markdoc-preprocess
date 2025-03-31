@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
-        "lib": ["ES2021"],
+        "lib": ["ESNext"],
         "strict": true,
         "strictNullChecks": true,
-        "module": "commonjs",
-        "target": "es2020",
+        "module": "NodeNext",
+        "target": "ESNext",
         "rootDir": "./src",
         "outDir": "./dist",
-        "moduleResolution": "node",
+        "moduleResolution": "nodenext",
         "skipLibCheck": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
