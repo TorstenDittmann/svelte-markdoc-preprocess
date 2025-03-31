@@ -1,7 +1,7 @@
-import { createLogger, Logger } from 'lovely-logs';
+import { createLogger } from 'lovely-logs';
 import type { ValidateError } from '@markdoc/markdoc';
 
-createLogger({
+const logger = createLogger({
     platform: 'console',
     timestampEnabled: false,
 });
@@ -20,21 +20,21 @@ export function log_validation_error(
     switch (error.level) {
         case 'debug':
         case 'info':
-            return Logger.info(prefix, error.message);
+            return logger.info(prefix, error.message);
         case 'warning':
-            return Logger.warn(prefix, error.message);
+            return logger.warn(prefix, error.message);
         case 'error':
         case 'critical':
-            Logger.error(prefix, error.message);
+            logger.error(prefix, error.message);
     }
 }
 
 export function log_error(message: string) {
-    Logger.error(`${NAMESPACE} ${message}`);
+    logger.error(`${NAMESPACE} ${message}`);
 }
 export function log_warning(message: string) {
-    Logger.warn(`${NAMESPACE} ${message}`);
+    logger.warn(`${NAMESPACE} ${message}`);
 }
 export function log_info(message: string) {
-    Logger.info(`${NAMESPACE} ${message}`);
+    logger.info(`${NAMESPACE} ${message}`);
 }
