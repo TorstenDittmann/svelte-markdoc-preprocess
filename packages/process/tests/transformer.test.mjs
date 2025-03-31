@@ -39,7 +39,6 @@ test('get component vars', async (context) => {
     await context.test('untyped', () => {
         const path = './untyped.svelte';
         const vars = get_component_vars(path, layout);
-        console.log(vars);
         assert.ok(vars.number.required === true);
         assert.ok(vars.string.required === true);
         assert.ok(vars.boolean.required === true);
@@ -47,7 +46,6 @@ test('get component vars', async (context) => {
     await context.test('typescript', () => {
         const path = './typescript.svelte';
         const vars = get_component_vars(path, layout);
-        console.log(vars);
         assert.ok(vars.number.required === true);
         assert.ok(vars.string.required === true);
         assert.ok(vars.boolean.required === true);
