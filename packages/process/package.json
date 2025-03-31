@@ -18,9 +18,13 @@
         "dev": "tsc --watch",
         "build": "tsc"
     },
-    "source": "src/module.ts",
-    "main": "dist/module.js",
-    "types": "dist/module.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/module.d.ts",
+            "import": "./dist/module.js",
+            "require": "./dist/module.js"
+        }
+    },
     "author": "Torsten Dittmann",
     "license": "MIT",
     "dependencies": {
