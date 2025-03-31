@@ -291,7 +291,7 @@ export function get_component_vars(
             }
         },
     });
-    if (path.toLowerCase().includes('youtube')) console.log(props);
+
     return props;
 }
 

@@ -3,5 +3,3 @@
 {% multiply a=3 b=8 /%}
 
 {% types string="lorem ipsum" number=123 boolean=true /%}
-
-{% youtube src="https://www.youtube-nocookie.com/embed/5NtrYks2dqE?si=0vjkBCZYg8yf2GUW" thumbnail="/images/blog/a-recap-of-init/thumbnails/thumbnail-1.png" /%}
