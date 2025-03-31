@@ -24,7 +24,7 @@ markdoc({
 
 ```html title="./src/lib/Heading.svelte"
 <script>
-    export let level;
+    let { level } = $props;
 </script>
 
 <svelte:element this="{`h${level}`}"><slot /></svelte:element>

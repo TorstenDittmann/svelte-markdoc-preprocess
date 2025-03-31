@@ -24,8 +24,7 @@ markdoc({
 
 ```html title="./src/lib/Multiply.svelte"
 <script>
-    export let a;
-    export let b;
+    let { a, b } = $props;
 </script>
 
 <p>{a} * {b} = {a * b}</p>
