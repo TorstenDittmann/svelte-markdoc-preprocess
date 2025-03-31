@@ -5,4 +5,5 @@
 	export { default as CTA } from './tags/CTA.svelte';
 	export { default as Matrix } from './tags/Matrix.svelte';
 	export { default as Matrix_Item } from './tags/MatrixItem.svelte';
+	export { default as Youtube } from './tags/Youtube.svelte';
 </script>

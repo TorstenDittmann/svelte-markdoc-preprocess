@@ -1,16 +1,10 @@
 <script>
-    /**
-     * @type {number}
-     */
-    export let number;
-    /**
-     * @type {string}
-     */
-    export let string;
-    /**
-     * @type {boolean}
-     */
-    export let boolean;
+	/** @type {{ nunmber: number, string: string, boolean: boolean }} */
+	let {
+		number,
+		string,
+		boolean
+	} = $props();
 </script>
 
 {number}

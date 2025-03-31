@@ -1,5 +1,5 @@
 <script>
-    export let fallback;
+	let { fallback } = $props();
 </script>
 
 {fallback}
