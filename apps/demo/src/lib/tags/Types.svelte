@@ -1,7 +1,11 @@
 <script lang="ts">
-    export let string: string;
-    export let number: number;
-    export let boolean: boolean;
+	interface Props {
+		string: string;
+		number: number;
+		boolean: boolean;
+	}
+
+	let { string, number, boolean }: Props = $props();
 </script>
 
 <b>Types</b>

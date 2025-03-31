@@ -1,6 +1,5 @@
 import { createLogger, Logger } from 'lovely-logs';
 import type { ValidateError } from '@markdoc/markdoc';
-import { th } from './default_schema';
 
 createLogger({
     platform: 'console',

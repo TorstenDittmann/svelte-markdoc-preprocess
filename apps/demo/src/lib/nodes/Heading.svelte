@@ -1,7 +1,12 @@
 <script lang="ts">
-    export let level: number;
+	interface Props {
+		level: number;
+		children?: import('svelte').Snippet;
+	}
 
-    let tag = `h${level}`;
+	let { level, children }: Props = $props();
+
+	let tag = `h${level}`;
 </script>
 
-<svelte:element this={tag}><slot /></svelte:element>
+<svelte:element this={tag}>{@render children?.()}</svelte:element>

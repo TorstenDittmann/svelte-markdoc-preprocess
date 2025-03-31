@@ -1,1 +1,1 @@
-export { default as markdoc } from './processor';
+export { default as markdoc } from './processor.js';

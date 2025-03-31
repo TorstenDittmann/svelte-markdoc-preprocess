@@ -2,7 +2,7 @@
     "name": "svelte-markdoc-preprocess",
     "version": "2.2.0",
     "description": "A Svelte preprocessor that allows you to use Markdoc.",
-    "type": "commonjs",
+    "type": "module",
     "keywords": [
         "svelte",
         "preprocessor",
@@ -25,10 +25,11 @@
     "license": "MIT",
     "dependencies": {
         "@markdoc/markdoc": "^0.5.1",
+        "estree-walker": "^3.0.3",
         "html-escaper": "^3.0.3",
         "js-yaml": "^4.1.0",
         "lovely-logs": "^1.2.2",
-        "svelte": "^4.2.19",
+        "svelte": "^5.0.0",
         "typescript": "^5.8.2"
     },
     "repository": {

@@ -1,38 +1,27 @@
-import {
+import type {
     Schema,
     SchemaAttribute,
-    parse as markdocParse,
-    transform,
     NodeType,
-    Tag,
     ConfigType,
-    validate,
-    Tokenizer,
 } from '@markdoc/markdoc';
-import {
-    ScriptTarget,
-    SyntaxKind,
-    VariableDeclaration,
-    createSourceFile,
-    getJSDocType,
-    getNameOfDeclaration,
-    isVariableStatement,
-} from 'typescript';
 import { dirname, join } from 'path';
 import { load as loadYaml } from 'js-yaml';
-import { parse as svelteParse, walk } from 'svelte/compiler';
-import { render_html } from './renderer';
+import { parse as svelteParse } from 'svelte/compiler';
+import { render_html } from './renderer.js';
 import {
     get_all_files,
     path_exists,
     read_file,
     relative_posix_path,
     write_to_file,
-} from './utils';
-import * as default_schema from './default_schema';
-import type { Config } from './config';
-import { LAYOUT_IMPORT, NODES_IMPORT, TAGS_IMPORT } from './constants';
-import { log_error, log_validation_error } from './log';
+} from './utils.js';
+import * as default_schema from './default_schema.js';
+import type { Config } from './config.js';
+import { LAYOUT_IMPORT, NODES_IMPORT, TAGS_IMPORT } from './constants.js';
+import { log_error, log_validation_error } from './log.js';
+import { walk } from 'estree-walker';
+import md from '@markdoc/markdoc';
+const { parse: markdocParse, transform, Tag, validate, Tokenizer } = md;
 
 type Var = {
     name: string;
@@ -238,58 +227,72 @@ export function create_module_context(
     );
 }
 
-const script_tags_regular_expression = new RegExp(
-    '<script[^>]*>(.*?)</script>',
-    's',
-);
-
 export function get_component_vars(
     path: string,
     layout: string,
 ): Record<string, SchemaAttribute> {
     const target = join(dirname(layout), path);
     const data = read_file(target);
-    const match = data.match(script_tags_regular_expression);
-    if (!match) {
-        return {};
-    }
 
     /**
      * create an ast using typescript
      */
-    const script = match[1];
-    const source = createSourceFile(target, script, ScriptTarget.Latest, true);
+    const ast = svelteParse(data);
 
-    /**
-     * find and return all exported variables
-     */
-    return source.statements.reduce<Record<string, SchemaAttribute>>(
-        (prev, node) => {
-            if (isVariableStatement(node)) {
-                const is_export_keyword = node.modifiers?.some(
-                    (v) => v.kind === SyntaxKind.ExportKeyword,
-                );
-                if (is_export_keyword) {
-                    const declaration = node.declarationList.declarations.find(
-                        (d) => d.name.kind === SyntaxKind.Identifier,
-                    );
-                    const name =
-                        getNameOfDeclaration(declaration)?.getText(source);
-                    if (!declaration || !name) {
-                        return prev;
+    const props: ReturnType<typeof get_component_vars> = {};
+
+    if (!ast.instance) {
+        return props; // No instance script
+    }
+
+    walk(ast.instance.content, {
+        enter(node, parent, prop, index) {
+            // Look for variable declarations like: let { prop1, prop2 = defaultVal } = $props();
+            if (
+                node.type === 'VariableDeclarator' &&
+                node.init?.type === 'CallExpression' &&
+                node.init.callee.type === 'Identifier' &&
+                node.init.callee.name === '$props' &&
+                node.id.type === 'ObjectPattern'
+            ) {
+                // Found the $props() destructuring assignment
+                node.id.properties.forEach((property) => {
+                    if (property.type === 'Property') {
+                        let propName: string | undefined = undefined;
+                        let hasDefault: boolean = false;
+
+                        // Simple case: { propName }
+                        if (
+                            property.key.type === 'Identifier' &&
+                            property.value.type === 'Identifier' &&
+                            property.key.name === property.value.name
+                        ) {
+                            propName = property.key.name;
+                        }
+                        // Case with default value: { propName = defaultValue }
+                        else if (
+                            property.key.type === 'Identifier' &&
+                            property.value.type === 'AssignmentPattern'
+                        ) {
+                            if (property.value.left.type === 'Identifier') {
+                                propName = property.value.left.name;
+                                hasDefault = true;
+                            }
+                        }
+
+                        if (propName !== undefined) {
+                            if (propName === 'children') return;
+                            props[propName] = {
+                                required: !hasDefault,
+                            };
+                        }
                     }
-                    const type = ts_to_type(declaration);
-                    prev[name] = {
-                        type,
-                        required: !declaration.initializer,
-                    };
-                }
+                });
             }
-
-            return prev;
         },
-        {},
-    );
+    });
+
+    return props;
 }
 
 const uc_map: Record<string, string> = {
@@ -303,41 +306,6 @@ export function sanitize_for_svelte(content: string): string {
         uc_regular_expression,
         (matched) => uc_map[matched.toLowerCase()],
     );
-}
-
-export function ts_to_type(declaration: VariableDeclaration): Var['type'] {
-    const kind = declaration.type?.kind
-        ? declaration.type.kind
-        : getJSDocType(declaration.parent.parent)?.kind;
-    if (kind) {
-        switch (kind) {
-            case SyntaxKind.StringKeyword:
-                return String;
-            case SyntaxKind.NumberKeyword:
-                return Number;
-            case SyntaxKind.BooleanKeyword:
-                return Boolean;
-            default:
-                throw new Error('Can only handly primitive types.');
-        }
-    }
-    const initializer = declaration?.initializer;
-    if (initializer) {
-        switch (initializer.kind) {
-            case SyntaxKind.StringLiteral:
-                return String;
-            case SyntaxKind.NumericLiteral:
-            case SyntaxKind.BigIntLiteral:
-                return Number;
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
-                return Boolean;
-            default:
-                throw new Error('Can only handly primitive types.');
-        }
-    }
-
-    return String;
 }
 
 function get_node_defaults(node_type: NodeType): Partial<Schema> {
