@@ -22,7 +22,7 @@
 		"@sveltejs/adapter-auto": "^5.0.0",
 		"@sveltejs/kit": "^2.20.2",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
-		"eslint": "^9.23.0",
+		"eslint": "^9.26.0",
 		"eslint-config-prettier": "^10.1.1",
 		"eslint-plugin-svelte": "^3.4.1",
 		"globals": "^16.0.0",
