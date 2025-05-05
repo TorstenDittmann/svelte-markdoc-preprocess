@@ -34,7 +34,7 @@
         "js-yaml": "^4.1.0",
         "lovely-logs": "^2.6.0",
         "svelte": "^5.25.5",
-        "typescript": "^5.8.2"
+        "typescript": "^5.8.3"
     },
     "repository": {
         "type": "git",
