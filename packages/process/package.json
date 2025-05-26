@@ -44,7 +44,7 @@
     "devDependencies": {
         "@types/html-escaper": "^3.0.4",
         "@types/js-yaml": "^4.0.9",
-        "@types/node": "^22.13.14",
+        "@types/node": "^22.15.21",
         "fast-glob": "^3.3.3",
         "prettier": "^3.5.3",
         "publint": "^0.3.9"
