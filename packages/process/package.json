@@ -33,7 +33,7 @@
         "html-escaper": "^3.0.3",
         "js-yaml": "^4.1.0",
         "lovely-logs": "^2.6.0",
-        "svelte": "^5.25.5",
+        "svelte": "^5.37.3",
         "typescript": "^5.8.2"
     },
     "repository": {
