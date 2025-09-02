@@ -28,7 +28,7 @@
 		"globals": "^16.0.0",
 		"prettier": "^3.5.3",
 		"prettier-plugin-svelte": "^3.3.3",
-		"svelte": "^5.25.5",
+		"svelte": "^5.38.6",
 		"svelte-check": "^4.1.5",
 		"svelte-markdoc-preprocess": "workspace:*",
 		"typescript": "^5.8.2",
