@@ -11,6 +11,6 @@
         "rspress": "^1.43.9"
     },
     "devDependencies": {
-        "@types/node": "^22.13.14"
+        "@types/node": "^24.7.0"
     }
 }
