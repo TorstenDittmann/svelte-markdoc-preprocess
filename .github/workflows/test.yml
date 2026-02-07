@@ -7,7 +7,7 @@ jobs:
         strategy:
             matrix:
                 os: [ubuntu-latest, windows-latest, macos-latest]
-                node-version: [22.x, 23.x]
+                node-version: [22.x, 23.x, 24.x, 25.x]
         runs-on: ${{ matrix.os }}
         steps:
             - uses: actions/checkout@v4
@@ -15,8 +15,9 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
-            - run: npm install -g --force corepack@latest
-            - run: corepack enable
-            - run: pnpm install --frozen-lockfile
-            - run: pnpm run build
-            - run: pnpm run test
+            - uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: '1.3.8'
+            - run: bun install --frozen-lockfile
+            - run: bun run build
+            - run: bun run test

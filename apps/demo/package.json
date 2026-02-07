@@ -13,7 +13,7 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"test:e2e": "playwright install --with-deps && playwright test",
-		"test": "npm run test:e2e"
+		"test": "bun run test:e2e"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.7",

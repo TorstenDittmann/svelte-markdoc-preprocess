@@ -16,7 +16,7 @@ npx sv create my-app
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Once you've created a project and installed dependencies with `bun install` (or `npm install` or `yarn`), start a development server:
 
 ```bash
 npm run dev
