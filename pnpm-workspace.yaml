@@ -1,6 +1,0 @@
-packages:
-    - apps/*
-    - packages/*
-onlyBuiltDependencies:
-    - '@sveltejs/kit'
-    - svelte-preprocess
