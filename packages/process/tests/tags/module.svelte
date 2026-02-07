@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
     export { default as Hello } from './hello.svelte';
     export { default as Slot } from './slot.svelte';
     export { default as Infer } from './infer.svelte';

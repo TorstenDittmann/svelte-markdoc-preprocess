@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -12,37 +12,37 @@
 		{
 			path: '/documentation',
 			name: 'Install',
-			is_selected: $page.url.pathname === '/documentation'
+			is_selected: page.url.pathname === '/documentation'
 		},
 		{
 			path: '/documentation/configuration',
 			name: 'Configuration',
-			is_selected: $page.url.pathname === '/documentation/configuration'
+			is_selected: page.url.pathname === '/documentation/configuration'
 		},
 		{
 			path: '/documentation/nodes',
 			name: 'Nodes',
-			is_selected: $page.url.pathname === '/documentation/nodes'
+			is_selected: page.url.pathname === '/documentation/nodes'
 		},
 		{
 			path: '/documentation/tags',
 			name: 'Tags',
-			is_selected: $page.url.pathname === '/documentation/tags'
+			is_selected: page.url.pathname === '/documentation/tags'
 		},
 		{
 			path: '/documentation/layouts',
 			name: 'Layouts',
-			is_selected: $page.url.pathname === '/documentation/layouts'
+			is_selected: page.url.pathname === '/documentation/layouts'
 		},
 		{
 			path: '/documentation/partials',
 			name: 'Partials',
-			is_selected: $page.url.pathname === '/documentation/partials'
+			is_selected: page.url.pathname === '/documentation/partials'
 		},
 		{
 			path: '/documentation/advanced',
 			name: 'Advanced',
-			is_selected: $page.url.pathname === '/documentation/advanced'
+			is_selected: page.url.pathname === '/documentation/advanced'
 		}
 	]);
 </script>

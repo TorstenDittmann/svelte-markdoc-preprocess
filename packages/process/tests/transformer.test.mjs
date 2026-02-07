@@ -29,7 +29,7 @@ test('create module context', async (context) => {
         });
         assert.equal(
             context,
-            '<script context="module">export const frontmatter = {"string":"text","number":123,"boolean":true};</script>',
+            '<script module>export const frontmatter = {"string":"text","number":123,"boolean":true};</script>',
         );
     });
 });
