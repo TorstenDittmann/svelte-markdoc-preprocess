@@ -1,1 +1,1 @@
-<script context="module">export const frontmatter = {"lorem":"ipsum"};</script><article><h1>Hello World</h1></article>
+<script module>export const frontmatter = {"lorem":"ipsum"};</script><article><h1>Hello World</h1></article>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { dev } from '$app/environment';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -11,19 +11,19 @@
 		{
 			path: '/',
 			name: 'Home',
-			is_selected: $page.url.pathname === '/'
+			is_selected: page.url.pathname === '/'
 		},
 		{
 			path: '/documentation',
 			name: 'Documentation',
-			is_selected: $page.url.pathname.startsWith('/documentation')
+			is_selected: page.url.pathname.startsWith('/documentation')
 		},
 		...(dev
 			? [
 					{
 						path: '/playground',
 						name: 'Playground',
-						is_selected: $page.url.pathname.startsWith('/playground')
+						is_selected: page.url.pathname.startsWith('/playground')
 					}
 				]
 			: [])

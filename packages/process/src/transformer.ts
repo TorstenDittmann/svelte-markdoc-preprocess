@@ -221,7 +221,7 @@ export function create_module_context(
     frontmatter: Record<string, string>,
 ): string {
     return (
-        `<script context="module">` +
+        `<script module>` +
         `export const frontmatter = ${JSON.stringify(frontmatter)};` +
         `</script>`
     );

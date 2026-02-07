@@ -16,12 +16,16 @@ markdoc({
 });
 ```
 
-Layout files are basically Svelte components with a slot. The `default` slot is used for all files.
+Layout files are basically Svelte components that render the `children` snippet. It is used for all files by default.
 
 ```html title="./src/lib/Layout.svelte"
+<script>
+    let { children } = $props();
+</script>
+
 <nav>...</nav>
 
-<slot />
+{@render children?.()}
 ```
 
 ### Named
@@ -60,7 +64,7 @@ Layouts will be passed the frontmatter as props from the Markdoc file.
 
 ```html title="./src/lib/Layout.svelte"
 <script>
-    let { title, description } = $props;
+    let { title, description } = $props();
 </script>
 
 <svelte:head>

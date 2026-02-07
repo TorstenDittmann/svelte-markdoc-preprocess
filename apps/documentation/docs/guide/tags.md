@@ -2,10 +2,10 @@
 
 You can use Svelte components for tags, the same way you do for nodes.
 
-Create a Svelte file and export Svelte components with the same name as the node from the module context.
+Create a Svelte file and export Svelte components with the same name as the node from the module script.
 
 ```html title="./src/lib/Tags.svelte"
-<script context="module">
+<script module>
     export { default as Multiply } from './Multiply.svelte';
 </script>
 ```
@@ -24,7 +24,7 @@ markdoc({
 
 ```html title="./src/lib/Multiply.svelte"
 <script>
-    let { a, b } = $props;
+    let { a, b } = $props();
 </script>
 
 <p>{a} * {b} = {a * b}</p>
