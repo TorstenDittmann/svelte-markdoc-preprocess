@@ -69,7 +69,7 @@ Layouts will be passed the frontmatter as props from the Markdoc file.
 
 <svelte:head>
     <title>{title}</title>
-    <meta name="description" content="{description}" />
+    <meta name="description" content={description} />
 </svelte:head>
 ```
 
