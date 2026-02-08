@@ -1,24 +1,36 @@
-# Install
+# Quickstart
 
-Install the package:
+Get `svelte-markdoc-preprocess` running in a SvelteKit project in three steps.
+
+## 1) Install
 
 ```sh
-npx nypm add -D svelte-markdoc-preprocess
+npm i -D svelte-markdoc-preprocess
 ```
 
-Add the preprocessor and new extensions to your `svelte.config.js`:
+## 2) Configure SvelteKit
 
-```javascript title="svelte.config.js"
+```js title="svelte.config.js"
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { markdoc } from 'svelte-markdoc-preprocess';
 
+/** @type {import('@sveltejs/kit').Config} */
 const config = {
     preprocess: [vitePreprocess(), markdoc()],
     extensions: ['.markdoc', '.svelte'],
 };
+
+export default config;
 ```
 
-```md title="+page.markdoc"
-# I am a heading
+## 3) Create your first page
 
-I am a paragraph with **bold** words. But you can also use Svelte Components:
+```md title="src/routes/+page.markdoc"
+---
+title: Hello from Markdoc
+---
+
+# { $frontmatter.title }
+
+This page is rendered from a `.markdoc` file.
 ```

@@ -15,6 +15,7 @@ Bring the power of Markdoc right into your Svelte applications.
 
 ## Quick links
 
-- [Install](/guide/install/)
+- [Quickstart](/guide/install/)
 - [Configuration](/guide/configuration/)
+- [Advanced](/advanced/content-indexing/)
 - [GitHub](https://github.com/TorstenDittmann/svelte-markdoc-preprocess)

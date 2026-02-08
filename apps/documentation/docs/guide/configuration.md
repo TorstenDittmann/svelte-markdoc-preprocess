@@ -1,82 +1,117 @@
 # Configuration
 
-You can pass the configuration to the preprocessor in the `svelte.config.js` like this:
+Pass options to `markdoc(...)` inside your `svelte.config.js`.
 
 ```js title="svelte.config.js"
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { markdoc } from 'svelte-markdoc-preprocess';
 
+/** @type {import('@sveltejs/kit').Config} */
 const config = {
     preprocess: [
         vitePreprocess(),
         markdoc({
-            // configuration here
+            // options here
         }),
     ],
+    extensions: ['.markdoc', '.svelte'],
 };
+
+export default config;
 ```
 
 ## Options
 
-#### `extensions`
+### `extensions`
 
-**Type**: `string[]`
+**Type:** `string[]`
 
-**Default**: `['.markdoc', '.mdoc', '.markdown', '.md']`
+**Default:** `['.markdoc', '.mdoc', '.markdown', '.md']`
 
-Extensions to be processed.
+File extensions to process with Markdoc.
 
-#### `nodes`
+### `nodes`
 
-**Type**: `string | null`
+**Type:** `string | null`
 
-**Default**: `null`
+**Default:** `null`
 
-Absoulute path to the `.svelte` file exporting components for nodes.
+Absolute path to a `.svelte` file that exports node components from `<script module>`.
 
-#### tags
+### `tags`
 
-**Type**: `string | null`
+**Type:** `string | null`
 
-**Default**: `null`
+**Default:** `null`
 
-Absoulute path to the `.svelte` file exporting components for tags.
+Absolute path to a `.svelte` file that exports tag components from `<script module>`.
 
-#### partials
+### `partials`
 
-**Type**: `string`
+**Type:** `string | null`
 
-**Default**: `null`
+**Default:** `null`
 
-Absoulute path to the folder for partials.
+Absolute path to the partials directory.
 
-#### generateSchema
+### `generateSchema`
 
-**Type**: `boolean`
+**Type:** `boolean`
 
-**Default**: `true`
+**Default:** `true`
 
-Generate schema files under `./svelte-kit/markdoc-schema.json` to be used with the official [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=Stripe.markdoc-language-support).
+Generates `.svelte-kit/markdoc_schema.js` for the official [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=Stripe.markdoc-language-support).
 
-#### layouts
+### `layouts`
 
-**Type**: `Record<string, string> | null`
+**Type:** `Record<string, string> | null`
 
-**Default**: `null`
+**Default:** `null`
 
-Layouts to be used for pages.
+Map of layout names to absolute `.svelte` file paths.
 
-#### validationThreshold
+### `validationThreshold`
 
-**Type**: `"error" | "debug" | "info" | "warning" | "critical"`
+**Type:** `"debug" | "info" | "warning" | "error" | "critical" | null`
 
-**Default**: `error`
+**Default:** `'error'`
 
-The threshold for validation errors to stop the build.
+Minimum validation level that should fail the build.
 
-#### allowComments
+### `allowComments`
 
-**Type**: `boolean`
+**Type:** `boolean`
 
-**Default**: `false`
+**Default:** `false`
 
-Allow comments in the markdown files.
+Allow HTML comments (`<!-- -->`) in Markdoc files.
+
+### `config`
+
+**Type:** `ConfigType | null`
+
+**Default:** `null`
+
+Pass configuration directly to Markdoc (for example `variables`, `functions`, `validation`, `tags`, `nodes`, and `partials`).
+
+### `highlighter`
+
+**Type:** `((code: string, language: string) => Promise<string>) | null`
+
+**Default:** `null`
+
+Custom syntax highlighter used for fenced code blocks. The returned string is rendered as HTML.
+
+```js title="svelte.config.js"
+import { markdoc } from 'svelte-markdoc-preprocess';
+
+markdoc({
+    highlighter: async (code, language) => {
+        if (language === 'js') {
+            return `<span class="language-js">${code}</span>`;
+        }
+
+        return code;
+    },
+});
+```

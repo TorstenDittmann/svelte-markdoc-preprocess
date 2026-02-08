@@ -2,7 +2,7 @@
 
 You can use Svelte components for tags, the same way you do for nodes.
 
-Create a Svelte file and export Svelte components with the same name as the node from the module script.
+Create a Svelte file and export Svelte components with the same name as the tag from the module script.
 
 ```html title="./src/lib/Tags.svelte"
 <script module>
