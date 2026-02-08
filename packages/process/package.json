@@ -28,13 +28,13 @@
     "author": "Torsten Dittmann",
     "license": "MIT",
     "dependencies": {
-        "@markdoc/markdoc": "^0.5.1",
+        "@markdoc/markdoc": "^0.5.4",
         "estree-walker": "^3.0.3",
         "html-escaper": "^3.0.3",
-        "js-yaml": "^4.1.0",
-        "lovely-logs": "^2.6.0",
+        "js-yaml": "^4.1.1",
+        "lovely-logs": "^2.7.2",
         "svelte": "^5.25.5",
-        "typescript": "^5.8.2"
+        "typescript": "^5.9.3"
     },
     "repository": {
         "type": "git",
@@ -44,9 +44,9 @@
     "devDependencies": {
         "@types/html-escaper": "^3.0.4",
         "@types/js-yaml": "^4.0.9",
-        "@types/node": "^22.13.14",
+        "@types/node": "^22.19.10",
         "fast-glob": "^3.3.3",
-        "prettier": "^3.5.3",
-        "publint": "^0.3.9"
+        "prettier": "^3.8.1",
+        "publint": "^0.3.17"
     }
 }
