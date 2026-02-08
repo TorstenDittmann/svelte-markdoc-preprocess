@@ -1,14 +1,14 @@
 {
-    "name": "rspress-doc-template",
+    "name": "documentation",
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "dev": "rspress dev",
-        "build": "rspress build",
-        "preview": "rspress preview"
+        "dev": "docia dev",
+        "build": "docia build",
+        "check": "docia check"
     },
     "dependencies": {
-        "rspress": "^1.43.9"
+        "docia": "^0.0.6"
     },
     "devDependencies": {
         "@types/node": "^22.13.14"
