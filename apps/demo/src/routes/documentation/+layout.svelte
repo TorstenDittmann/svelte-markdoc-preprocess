@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
+	import type { Pathname } from '$app/types';
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -8,7 +11,13 @@
 
 	let is_expanded = $state(false);
 
-	let links = $derived([
+	type Link = {
+		path: Pathname;
+		name: string;
+		is_selected: boolean;
+	};
+
+	let links: Link[] = $derived([
 		{
 			path: '/documentation',
 			name: 'Install',
@@ -92,7 +101,7 @@
 				<ul>
 					{#each links as link (link.path)}
 						<li aria-current={link.is_selected ? 'page' : null}>
-							<a class:is-active={link.is_selected} href={link.path}>{link.name}</a>
+							<a class:is-active={link.is_selected} href={resolve(link.path)}>{link.name}</a>
 						</li>
 					{/each}
 				</ul>

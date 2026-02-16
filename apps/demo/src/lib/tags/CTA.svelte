@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -13,7 +14,9 @@
 			{@render children?.()}
 			<ul class="p-inline-list u-no-margin--bottom">
 				<li class="p-inline-list__item">
-					<a href="/documentation" class="p-button--positive u-no-margin--bottom">Get started</a>
+					<a href={resolve('/documentation')} class="p-button--positive u-no-margin--bottom"
+						>Get started</a
+					>
 				</li>
 				<li class="p-inline-list__item">
 					<a
