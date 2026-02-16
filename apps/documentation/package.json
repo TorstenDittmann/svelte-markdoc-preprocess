@@ -8,9 +8,9 @@
         "check": "docia check"
     },
     "dependencies": {
-        "docia": "^0.0.6"
+        "docia": "^0.0.15"
     },
     "devDependencies": {
-        "@types/node": "^22.13.14"
+        "@types/node": "^22.19.11"
     }
 }

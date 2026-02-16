@@ -1,13 +1,20 @@
 <script lang="ts">
-	import { dev } from '$app/environment';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
+	import type { Pathname } from '$app/types';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
 
 	let { children }: Props = $props();
 
-	let links = $derived([
+	type Link = {
+		path: Pathname;
+		name: string;
+		is_selected: boolean;
+	};
+
+	let links: Link[] = $derived([
 		{
 			path: '/',
 			name: 'Home',
@@ -18,15 +25,11 @@
 			name: 'Documentation',
 			is_selected: page.url.pathname.startsWith('/documentation')
 		},
-		...(dev
-			? [
-					{
-						path: '/playground',
-						name: 'Playground',
-						is_selected: page.url.pathname.startsWith('/playground')
-					}
-				]
-			: [])
+		{
+			path: '/playground',
+			name: 'Playground',
+			is_selected: page.url.pathname.startsWith('/playground')
+		}
 	]);
 </script>
 
@@ -34,7 +37,7 @@
 	<div class="p-navigation__row">
 		<div class="p-navigation__banner">
 			<div class="p-navigation__tagged-logo">
-				<a class="p-navigation__link" href="/">
+				<a class="p-navigation__link" href={resolve('/')}>
 					<span class="p-navigation__logo-title">svelte-markdoc-preprocess</span>
 				</a>
 			</div>
@@ -51,7 +54,7 @@
 						class:is-selected={link.is_selected}
 						aria-current={link.is_selected ? 'page' : null}
 					>
-						<a class="p-navigation__link" href={link.path}>{link.name}</a>
+						<a class="p-navigation__link" href={resolve(link.path)}>{link.name}</a>
 					</li>
 				{/each}
 				<li class="p-navigation__item">
