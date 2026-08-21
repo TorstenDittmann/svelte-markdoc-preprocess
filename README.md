@@ -28,6 +28,14 @@
 
 ### Installation
 
+Install and configure the preprocessor with the `sv` community add-on:
+
+```sh
+npx sv add @dittmann/sv-markdoc
+```
+
+Community add-ons are currently experimental. To configure the preprocessor manually instead:
+
 1. Install the package:
 
 ```sh
@@ -37,6 +45,7 @@ npm i -D svelte-markdoc-preprocess
 2. Add the preprocessor and new extensions to your svelte.config.js:
 
 ```js
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { markdoc } from 'svelte-markdoc-preprocess';
 
 const config = {

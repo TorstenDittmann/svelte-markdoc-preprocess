@@ -20,6 +20,9 @@ jobs:
             - uses: oven-sh/setup-bun@v2.2.0
               with:
                   bun-version: '1.4.0'
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 9.15.9
             - run: bun install --frozen-lockfile
             - run: bun run build
             - run: bun run test

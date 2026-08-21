@@ -14,4 +14,5 @@ jobs:
                   bun-version: '1.4.0'
             - run: bun install --frozen-lockfile
             - run: bun run build
+            - run: bun run check
             - run: bun run lint
