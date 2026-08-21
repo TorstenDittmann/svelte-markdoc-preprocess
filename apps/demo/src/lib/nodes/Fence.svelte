@@ -23,9 +23,9 @@
 
 	let { content, language, process }: Props = $props();
 
-	const result = process
-		? hljs.highlight(content, { language: language ?? 'sh' })
-		: { value: content };
+	const result = $derived(
+		process ? hljs.highlight(content, { language: language ?? 'sh' }) : { value: content }
+	);
 </script>
 
 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
