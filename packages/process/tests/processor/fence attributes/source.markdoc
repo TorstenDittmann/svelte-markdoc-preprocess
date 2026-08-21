@@ -1,0 +1,3 @@
+```javascript {% highlight="{1-2,4}" %}
+console.log('hello world');
+```

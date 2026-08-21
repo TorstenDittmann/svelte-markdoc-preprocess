@@ -1,0 +1,1 @@
+<script>import * as INTERNAL__NODES from 'tests/nodes/module.svelte';</script><article><INTERNAL__NODES.Fence highlight="&lcub;1-2,4&rcub;" content="console.log(&#39;hello world&#39;);\n" language="javascript" process={true}>console.log(&#39;hello world&#39;);\n</INTERNAL__NODES.Fence></article>

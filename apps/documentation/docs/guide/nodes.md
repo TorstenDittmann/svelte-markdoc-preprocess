@@ -31,3 +31,34 @@ markdoc({
 ```
 
 You can find a list of available nodes [here](https://markdoc.dev/docs/nodes#built-in-nodes).
+
+## Custom attributes
+
+Declare additional node attributes through the Markdoc `config` option. They
+will be passed to the corresponding Svelte component alongside the built-in
+attributes.
+
+```js title="svelte.config.js"
+markdoc({
+    nodes: './src/lib/Nodes.svelte',
+    config: {
+        nodes: {
+            fence: {
+                attributes: {
+                    highlight: { type: String },
+                },
+            },
+        },
+    },
+});
+```
+
+Node attributes use Markdoc annotation syntax.
+
+````markdoc title="+page.markdoc"
+```js {% highlight="{1-2,4}" %}
+console.log('highlight me');
+```
+````
+
+The Fence component can then receive `highlight` through `$props()`.
