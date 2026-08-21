@@ -188,7 +188,7 @@ export async function transformer({
      * add module context if frontmatter is used
      */
     if (Object.keys(frontmatter).length > 0) {
-        transformed += create_module_context(frontmatter);
+        transformed += create_module_context(frontmatter, has_layout);
     }
 
     /**
@@ -207,7 +207,7 @@ export async function transformer({
      */
     if (has_layout) {
         transformed += `<${LAYOUT_IMPORT}`;
-        transformed += has_frontmatter ? ' {...frontmatter}>' : '>';
+        transformed += has_frontmatter ? ' {...layout_frontmatter}>' : '>';
         transformed += code;
         transformed += `</${LAYOUT_IMPORT}>`;
     } else {
@@ -219,10 +219,14 @@ export async function transformer({
 
 export function create_module_context(
     frontmatter: Record<string, string>,
+    filter_layout = false,
 ): string {
     return (
         `<script module>` +
         `export const frontmatter = ${JSON.stringify(frontmatter)};` +
+        (filter_layout
+            ? `const layout_frontmatter = {...frontmatter};delete layout_frontmatter.layout;`
+            : '') +
         `</script>`
     );
 }

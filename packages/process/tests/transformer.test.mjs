@@ -32,6 +32,16 @@ test('create module context', async (context) => {
             '<script module>export const frontmatter = {"string":"text","number":123,"boolean":true};</script>',
         );
     });
+    await context.test('filters the layout selector from layout props', () => {
+        const context = create_module_context(
+            { layout: 'named', title: 'Hello' },
+            true,
+        );
+        assert.equal(
+            context,
+            '<script module>export const frontmatter = {"layout":"named","title":"Hello"};const layout_frontmatter = {...frontmatter};delete layout_frontmatter.layout;</script>',
+        );
+    });
 });
 
 test('get component vars', async (context) => {

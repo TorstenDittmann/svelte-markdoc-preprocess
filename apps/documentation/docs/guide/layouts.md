@@ -60,7 +60,8 @@ layout: some_other_layout
 
 ### Props
 
-Layouts will be passed the frontmatter as props from the Markdoc file.
+Layouts will be passed the frontmatter as props from the Markdoc file. The
+`layout` property selects the layout and is not passed to the component.
 
 ```html title="./src/lib/Layout.svelte"
 <script>
