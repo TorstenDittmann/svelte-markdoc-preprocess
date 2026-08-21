@@ -5,6 +5,8 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
         steps:
             - uses: actions/checkout@v7
             - uses: oven-sh/setup-bun@v2.2.0
