@@ -1,1 +1,1 @@
-<script module>export const frontmatter = {"layout":"named"};</script><script>import INTERNAL__LAYOUT from 'tests/layouts/named.svelte';</script><INTERNAL__LAYOUT {...frontmatter}><article><h1>Hello World</h1></article></INTERNAL__LAYOUT>
+<script module>export const frontmatter = {"layout":"named","title":"Hello"};const layout_frontmatter = {...frontmatter};delete layout_frontmatter.layout;</script><script>import INTERNAL__LAYOUT from 'tests/layouts/named.svelte';</script><INTERNAL__LAYOUT {...layout_frontmatter}><article><h1>Hello World</h1></article></INTERNAL__LAYOUT>
