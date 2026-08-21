@@ -46,7 +46,7 @@
     },
     "packages/process": {
       "name": "svelte-markdoc-preprocess",
-      "version": "3.0.0",
+      "version": "3.0.1",
       "dependencies": {
         "@markdoc/markdoc": "^0.5.9",
         "estree-walker": "^3.0.3",
