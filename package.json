@@ -23,6 +23,6 @@
         "cookie": "^0.7.2"
     },
     "devDependencies": {
-        "workspace-utils": "^2.1.1"
+        "workspace-utils": "2.0.3"
     }
 }
