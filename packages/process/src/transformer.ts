@@ -87,7 +87,7 @@ export async function transformer({
     let dependencies = new Map<string, string>();
     const tags = prepare_tags(tags_file);
     const has_tags = Object.keys(tags).length > 0;
-    const nodes = prepare_nodes(nodes_file);
+    const nodes = prepare_nodes(nodes_file, config?.nodes);
     const has_nodes = Object.keys(nodes).length > 0;
     const partials = prepare_partials(partials_dir);
 
@@ -375,13 +375,19 @@ function get_node_defaults(node_type: NodeType): Partial<Schema> {
 
 function prepare_nodes(
     nodes_file: Config['nodes'],
+    configured_nodes: ConfigType['nodes'],
 ): Partial<Record<NodeType, Schema>> {
     const nodes: Record<string, Schema> = {};
     if (nodes_file) {
         for (const [name] of each_exported_var(nodes_file)) {
             const type = name.toLowerCase() as NodeType;
+            const defaults = get_node_defaults(type);
             nodes[name.toLowerCase()] = {
-                ...get_node_defaults(type),
+                ...defaults,
+                attributes: {
+                    ...configured_nodes?.[type]?.attributes,
+                    ...defaults.attributes,
+                },
                 transform(node, config) {
                     return new Tag(
                         `${NODES_IMPORT}.${name}`,
