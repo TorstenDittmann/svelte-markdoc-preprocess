@@ -37,7 +37,7 @@
         "@markdoc/markdoc": "^0.5.9",
         "estree-walker": "^3.0.3",
         "html-escaper": "^3.0.3",
-        "js-yaml": "^5.3.0",
+        "yaml": "^2.9.0",
         "lovely-logs": "^2.7.2",
         "svelte": "^5.56.10"
     },
