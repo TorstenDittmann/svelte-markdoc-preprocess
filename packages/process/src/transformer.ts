@@ -5,7 +5,7 @@ import type {
     ConfigType,
 } from '@markdoc/markdoc';
 import { dirname, join } from 'path';
-import { load as loadYaml } from 'js-yaml';
+import { parse as loadYaml } from 'yaml';
 import { parse as svelteParse } from 'svelte/compiler';
 import { render_html } from './renderer.js';
 import {
