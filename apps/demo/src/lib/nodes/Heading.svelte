@@ -6,7 +6,7 @@
 
 	let { level, children }: Props = $props();
 
-	let tag = `h${level}`;
+	let tag = $derived(`h${level}`);
 </script>
 
 <svelte:element this={tag}>{@render children?.()}</svelte:element>
