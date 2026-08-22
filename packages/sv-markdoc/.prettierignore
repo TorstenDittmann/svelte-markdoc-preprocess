@@ -1,0 +1,4 @@
+dist
+.test-output
+demo
+node_modules

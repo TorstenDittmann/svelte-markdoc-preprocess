@@ -1,0 +1,54 @@
+{
+    "name": "@dittmann/sv-markdoc",
+    "version": "0.0.1",
+    "description": "sv add-on that sets up svelte-markdoc-preprocess in a Svelte project",
+    "type": "module",
+    "license": "MIT",
+    "author": "Torsten Dittmann",
+    "homepage": "https://svelte-markdoc-preprocess.pages.dev",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/TorstenDittmann/svelte-markdoc-preprocess.git",
+        "directory": "packages/sv-markdoc"
+    },
+    "scripts": {
+        "demo-create": "sv create demo --types ts --template minimal --no-add-ons --no-install",
+        "demo-add": "bun run build && sv add file:../ --cwd demo --no-git-check --no-install",
+        "build": "tsdown",
+        "prepublishOnly": "bun run build",
+        "test": "vitest run",
+        "check": "publint",
+        "lint": "prettier --check .",
+        "format": "prettier --write ."
+    },
+    "files": [
+        "dist"
+    ],
+    "exports": {
+        ".": {
+            "default": "./dist/index.mjs"
+        }
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "peerDependencies": {
+        "sv": "^0.17.0"
+    },
+    "devDependencies": {
+        "@sveltejs/sv-utils": "^0.3.3",
+        "@types/node": "^22.20.1",
+        "prettier": "^3.9.6",
+        "publint": "^0.3.24",
+        "sv": "^0.17.0",
+        "tsdown": "^0.22.1",
+        "vitest": "^4.1.8"
+    },
+    "keywords": [
+        "sv-add",
+        "svelte",
+        "sveltekit",
+        "markdoc",
+        "markdown"
+    ]
+}
